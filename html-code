@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Operations Portal - Test Sample Details</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline-variant": "#d3c2c6",
+                        "on-surface-variant": "#504447",
+                        "primary-container": "#3d1b28",
+                        "surface-container-low": "#eff4ff",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#633b49",
+                        "tertiary": "#001605",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#0f2c15",
+                        "on-surface": "#0b1c30",
+                        "inverse-primary": "#eeb8c9",
+                        "secondary-fixed": "#6ffbbe",
+                        "surface-dim": "#cbdbf5",
+                        "surface-container-highest": "#d3e4fe",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed": "#04210b",
+                        "surface": "#f8f9ff",
+                        "primary-fixed": "#ffd9e3",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#b0808f",
+                        "inverse-surface": "#213145",
+                        "on-secondary-fixed-variant": "#005236",
+                        "surface-container": "#e5eeff",
+                        "secondary": "#006c49",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#dce9ff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "secondary-fixed-dim": "#4edea3",
+                        "on-primary-fixed": "#31111d",
+                        "primary-fixed-dim": "#eeb8c9",
+                        "primary": "#240713",
+                        "secondary-container": "#6cf8bb",
+                        "on-tertiary-fixed-variant": "#304d33",
+                        "on-background": "#0b1c30",
+                        "tertiary-fixed": "#c9ecc8",
+                        "surface-variant": "#d3e4fe",
+                        "surface-tint": "#7d5261",
+                        "surface-bright": "#f8f9ff",
+                        "outline": "#827377",
+                        "on-secondary-container": "#00714d",
+                        "on-secondary-fixed": "#002113",
+                        "tertiary-fixed-dim": "#adcfad",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-container": "#759576",
+                        "background": "#f8f9ff",
+                        "error-container": "#ffdad6",
+                        "error": "#ba1a1a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "xl": "32px",
+                        "sidebar-width": "190px",
+                        "gutter": "16px",
+                        "base": "4px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "sm": "8px"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["Plus Jakarta Sans"],
+                        "body-sm": ["Plus Jakarta Sans"],
+                        "table-header": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["11px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "table-header": ["12px", { "lineHeight": "16px", "fontWeight": "600" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+            font-size: 20px;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-background text-on-background overflow-hidden h-screen flex">
+    <!-- Sidebar Navigation -->
+    <aside class="fixed left-0 top-0 h-full w-[190px] bg-primary-container flex flex-col py-sm px-xs space-y-xs z-20">
+        <div class="px-sm py-md mb-md">
+            <h1 class="font-headline-md text-headline-md text-on-primary-container leading-tight">Global Ops</h1>
+            <p class="font-label-caps text-label-caps text-on-primary-container opacity-50">V2.4.1</p>
+        </div>
+        <nav class="flex-1 space-y-1">
+            <a class="flex items-center gap-xs px-sm py-xs text-on-primary-container opacity-70 hover:bg-primary transition-all font-label-caps text-label-caps"
+                href="#">
+                <span class="material-symbols-outlined">dashboard</span> Dashboard
+            </a>
+            <a class="flex items-center gap-xs px-sm py-xs text-on-primary-container opacity-70 hover:bg-primary transition-all font-label-caps text-label-caps"
+                href="#">
+                <span class="material-symbols-outlined">photo_library</span> Image Library
+            </a>
+            <a class="flex items-center gap-xs px-sm py-xs text-on-primary-container opacity-70 hover:bg-primary transition-all font-label-caps text-label-caps"
+                href="#">
+                <span class="material-symbols-outlined">local_shipping</span> Transporters
+            </a>
+            <a class="flex items-center gap-xs px-sm py-xs text-on-primary-container opacity-70 hover:bg-primary transition-all font-label-caps text-label-caps"
+                href="#">
+                <span class="material-symbols-outlined">edit_document</span> PO Drafts
+            </a>
+            <a class="flex items-center gap-xs px-sm py-xs text-on-primary-container opacity-70 hover:bg-primary transition-all font-label-caps text-label-caps"
+                href="#">
+                <span class="material-symbols-outlined">store</span> Local Supplier
+            </a>
+            <a class="flex items-center gap-xs px-sm py-xs text-on-primary-container opacity-70 hover:bg-primary transition-all font-label-caps text-label-caps"
+                href="#">
+                <span class="material-symbols-outlined">shopping_cart</span> Purchase Order
+            </a>
+            <a class="flex items-center gap-xs px-sm py-xs text-on-primary-container opacity-70 hover:bg-primary transition-all font-label-caps text-label-caps"
+                href="#">
+                <span class="material-symbols-outlined">inventory_2</span> Shipment
+            </a>
+            <a class="flex items-center gap-xs px-sm py-xs bg-secondary-container text-on-secondary-container font-bold rounded-sm translate-x-1 duration-200 font-label-caps text-label-caps"
+                href="#">
+                <span class="material-symbols-outlined">science</span> Test Sample
+            </a>
+        </nav>
+    </aside>
+    <!-- Main Content Shell -->
+    <main class="ml-[190px] flex-1 flex flex-col relative overflow-hidden">
+        <!-- Top Nav Bar -->
+        <header
+            class="flex justify-between items-center w-full px-md h-10 bg-surface border-b border-outline-variant z-10">
+            <div class="flex items-center gap-md">
+                <span class="font-headline-md text-headline-md text-primary">Operations Portal</span>
+                <div
+                    class="relative flex items-center bg-surface-container-low px-sm py-1 rounded border border-outline-variant">
+                    <span class="material-symbols-outlined text-on-surface-variant text-sm mr-1">search</span>
+                    <input class="bg-transparent border-none outline-none font-body-sm text-body-sm w-48"
+                        placeholder="Search samples..." type="text" />
+                </div>
+            </div>
+            <div class="flex items-center gap-md">
+                <button
+                    class="material-symbols-outlined text-primary hover:bg-surface-container-high transition-colors p-1 rounded">notifications</button>
+                <button
+                    class="material-symbols-outlined text-primary hover:bg-surface-container-high transition-colors p-1 rounded">settings</button>
+                <button
+                    class="material-symbols-outlined text-primary hover:bg-surface-container-high transition-colors p-1 rounded">help</button>
+                <div
+                    class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold">
+                    JD</div>
+            </div>
+        </header>
+        <!-- Background Content (Simulated Dashboard) -->
+        <div class="p-lg flex-1 overflow-auto bg-surface-container-low opacity-40 select-none">
+            <div class="grid grid-cols-4 gap-md mb-lg">
+                <div class="bg-white p-md border border-outline-variant rounded shadow-sm">
+                    <p class="font-label-caps text-label-caps text-on-surface-variant">TOTAL SAMPLES</p>
+                    <p class="font-headline-md text-headline-md text-primary">1,248</p>
+                </div>
+                <div class="bg-white p-md border border-outline-variant rounded shadow-sm">
+                    <p class="font-label-caps text-label-caps text-on-surface-variant">PENDING TEST</p>
+                    <p class="font-headline-md text-headline-md text-secondary">42</p>
+                </div>
+                <div class="bg-white p-md border border-outline-variant rounded shadow-sm">
+                    <p class="font-label-caps text-label-caps text-on-surface-variant">APPROVED</p>
+                    <p class="font-headline-md text-headline-md text-primary">1,180</p>
+                </div>
+                <div class="bg-white p-md border border-outline-variant rounded shadow-sm">
+                    <p class="font-label-caps text-label-caps text-on-surface-variant">REJECTED</p>
+                    <p class="font-headline-md text-headline-md text-error">26</p>
+                </div>
+            </div>
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr class="bg-primary-container text-white font-table-header text-table-header text-left">
+                        <th class="p-sm">Sample ID</th>
+                        <th class="p-sm">PO Number</th>
+                        <th class="p-sm">Material</th>
+                        <th class="p-sm">Status</th>
+                        <th class="p-sm">Date</th>
+                    </tr>
+                </thead>
+                <tbody class="font-body-sm text-body-sm">
+                    <tr class="border-b border-outline-variant bg-white">
+                        <td class="p-sm">TS-9921</td>
+                        <td class="p-sm">PO-2024-00139</td>
+                        <td class="p-sm">Steel-1</td>
+                        <td class="p-sm"><span
+                                class="bg-secondary-container/20 text-on-secondary-container px-xs py-0.5 rounded border border-secondary-container/40">Success</span>
+                        </td>
+                        <td class="p-sm">24 Oct 2023</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- MODAL OVERLAY -->
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-md">
+            <!-- Modal Content -->
+            <div class="bg-white w-full max-w-[800px] rounded shadow-2xl overflow-hidden flex flex-col">
+                <!-- Modal Header -->
+                <header class="bg-primary-container px-lg py-sm flex justify-between items-center text-white">
+                    <h2 class="font-headline-md text-headline-md">View Test Sample Details</h2>
+                    <button
+                        class="material-symbols-outlined hover:bg-white/10 p-1 rounded transition-colors cursor-pointer">close</button>
+                </header>
+                <!-- Modal Body -->
+                <div class="p-lg overflow-y-auto max-h-[819px] space-y-lg">
+                    <!-- Section: Test Sample Details -->
+                    <section>
+                        <h3 class="font-headline-md text-primary mb-md border-b border-outline-variant pb-xs">Test
+                            Sample Details</h3>
+                        <div class="grid grid-cols-3 gap-x-md gap-y-sm">
+                            <div class="space-y-1">
+                                <label class="font-table-header text-table-header text-on-surface-variant">PO no
+                                    *</label>
+                                <div
+                                    class="bg-surface-container-high px-sm py-1.5 border border-outline-variant rounded font-body-sm text-body-sm font-bold text-primary">
+                                    PO-2024-00139</div>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="font-table-header text-table-header text-on-surface-variant">Shipment no
+                                    *</label>
+                                <div
+                                    class="bg-surface-container-high px-sm py-1.5 border border-outline-variant rounded font-body-sm text-body-sm font-bold text-primary">
+                                    SH-00012</div>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="font-table-header text-table-header text-on-surface-variant">Material/
+                                    item Name *</label>
+                                <div
+                                    class="bg-surface-container-high px-sm py-1.5 border border-outline-variant rounded font-body-sm text-body-sm font-bold text-primary">
+                                    Steel-1</div>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="font-table-header text-table-header text-on-surface-variant">Sample
+                                    qty*</label>
+                                <div
+                                    class="bg-surface-container-high px-sm py-1.5 border border-outline-variant rounded font-body-sm text-body-sm font-bold text-primary">
+                                    70</div>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="font-table-header text-table-header text-on-surface-variant">Sample Batch
+                                    No *</label>
+                                <div
+                                    class="bg-surface-container-high px-sm py-1.5 border border-outline-variant rounded font-body-sm text-body-sm font-bold text-primary">
+                                    Batch-1</div>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="font-table-header text-table-header text-on-surface-variant">Unit of
+                                    measure*</label>
+                                <div
+                                    class="bg-surface-container-high px-sm py-1.5 border border-outline-variant rounded font-body-sm text-body-sm font-bold text-primary">
+                                    Kg</div>
+                            </div>
+                        </div>
+                        <!-- Attachments Row -->
+                        <div class="grid grid-cols-2 gap-md mt-lg">
+                            <div class="space-y-sm">
+                                <label class="font-table-header text-table-header text-on-surface-variant">Sample Image
+                                    *</label>
+                                <div class="flex gap-xs">
+                                    <div class="group relative">
+                                        <img class="w-20 h-20 object-cover rounded border border-outline-variant"
+                                            data-alt="Close-up architectural macro shot of stacked industrial steel pipes with a metallic sheen. The lighting is cold and clinical, emphasizing the heavy-duty industrial nature of the materials within an organized warehouse setting. The color palette is dominated by cool grays and dark shadows, fitting a modern corporate administrative aesthetic."
+                                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlXNtUPtSug28kSuPvyW89bfmC0E7B4vokZIYtaPAahpzBRlalzP2hz6DF1tSzaIQe83XtPC093-OZgdJTcmQF0Fi5DUAx4z3RaUdRfjxoO3FwXB6SqpZRe9UeL7bQxGsAdK7Ozwe7yxFX3N0foX9GxFcm_YNS6dkYujEdV1NC5Xx9kUMcOKtDjs2CPIrmyHd1v5QIqZ43nue75FW7rsCWRuf44AwH_0pRvbJ62r5vQNBZKoKi6bNeHzq0lGC4pru5iAjl40xk41zS" />
+                                        <p class="font-label-caps text-[9px] text-center mt-xs text-on-surface-variant">
+                                            Img-002</p>
+                                    </div>
+                                    <div class="group relative">
+                                        <img class="w-20 h-20 object-cover rounded border border-outline-variant"
+                                            data-alt="A detailed view of a bundle of galvanized steel tubes, showing the cross-section and smooth surface textures. The composition is tight and focused, highlighting industrial logistics and quality control. Lighting is soft yet bright, ensuring every detail of the material sample is visible for a high-density operations portal."
+                                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2groUSohxTYcVPGWsD9uegr4MQeLbZfa-SCkxccx9dlhTzkppDGxDWJ9abRzcQ6k1sVJ4VXTrmPSY7CVcaCAQgMJcD9LgsSO7ZwoqSfqKYA14v6ZV7chbr2cXixaXPRm78Lo2y-l2bS3II2pX1gP4SPhVexJr6hylowu4ujc9p-fD0ed2f5fL1C1H1sGFYcFPW9sQ9htBheZgza_HcgAmB6sOOSD5FoOVr9Yr00Umpqs3spToha8Ht9dOko1E0nYFPB6gHcWaE731" />
+                                        <p class="font-label-caps text-[9px] text-center mt-xs text-on-surface-variant">
+                                            Img-002</p>
+                                    </div>
+                                    <div class="group relative">
+                                        <img class="w-20 h-20 object-cover rounded border border-outline-variant"
+                                            data-alt="Industrial pipes stacked precisely in a grid pattern, showcasing the metallic texture and heavy industrial feel of supply chain inventory. The image uses high-key lighting to maintain a clean light-mode dashboard feel. The overall mood is one of rigorous organization and precision manufacturing excellence."
+                                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAKrvIhuP8B1t06K9p6YVabkKtX6rB1Q4JL6wmed2OY_kTyUfw9n735XKeWQSqlopZw-_94V9vn6IuBahNsUQH-LFDFbD8eeyGFNbD4Jq0JzbTXshzi01-vfZ4-tikMIjx5RM_Ln8lwr8w99v57oBawJ3PqVflunabCpPOB1U5Veb4hufQfI5KKyAr9xMCeTpPXyJufTezv5KZHO_EnGd7gXpEjs7XsepgEm7Xtn7kMgakzj3kcZr-JTf_VYQKd1NCbbR2pHZ-pym9" />
+                                        <p class="font-label-caps text-[9px] text-center mt-xs text-on-surface-variant">
+                                            Img-002</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-sm">
+                                <label class="font-table-header text-table-header text-on-surface-variant">Link Document
+                                    *</label>
+                                <div class="flex gap-xs">
+                                    <div class="flex flex-col items-center">
+                                        <div
+                                            class="w-16 h-16 bg-on-surface-variant/20 rounded flex items-center justify-center text-on-surface-variant hover:bg-on-surface-variant/30 transition-colors cursor-pointer">
+                                            <span class="material-symbols-outlined !text-3xl"
+                                                style="font-variation-settings: 'FILL' 1;">picture_as_pdf</span>
+                                        </div>
+                                        <p
+                                            class="font-label-caps text-[9px] text-center mt-xs text-on-surface-variant uppercase">
+                                            Pdgsd-PDF</p>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div
+                                            class="w-16 h-16 bg-on-surface-variant/20 rounded flex items-center justify-center text-on-surface-variant hover:bg-on-surface-variant/30 transition-colors cursor-pointer">
+                                            <span class="material-symbols-outlined !text-3xl"
+                                                style="font-variation-settings: 'FILL' 1;">picture_as_pdf</span>
+                                        </div>
+                                        <p
+                                            class="font-label-caps text-[9px] text-center mt-xs text-on-surface-variant uppercase">
+                                            Pdgsd-PDF</p>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div
+                                            class="w-16 h-16 bg-on-surface-variant/20 rounded flex items-center justify-center text-on-surface-variant hover:bg-on-surface-variant/30 transition-colors cursor-pointer">
+                                            <span class="material-symbols-outlined !text-3xl"
+                                                style="font-variation-settings: 'FILL' 1;">picture_as_pdf</span>
+                                        </div>
+                                        <p
+                                            class="font-label-caps text-[9px] text-center mt-xs text-on-surface-variant uppercase">
+                                            Pdgsd-PDF</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <!-- Section: Test report -->
+                    <section>
+                        <h3 class="font-headline-md text-primary mb-md border-b border-outline-variant pb-xs">Test
+                            report</h3>
+                        <div class="flex gap-md">
+                            <div class="flex flex-col items-center">
+                                <div
+                                    class="w-20 h-20 bg-on-surface-variant/20 rounded flex items-center justify-center text-on-surface-variant hover:bg-on-surface-variant/30 transition-colors cursor-pointer border border-outline-variant/30 shadow-inner">
+                                    <span class="material-symbols-outlined !text-4xl"
+                                        style="font-variation-settings: 'FILL' 1;">picture_as_pdf</span>
+                                </div>
+                                <p class="font-label-caps text-[10px] text-center mt-xs text-on-surface-variant">Img-002
+                                </p>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div
+                                    class="w-20 h-20 bg-on-surface-variant/20 rounded flex items-center justify-center text-on-surface-variant hover:bg-on-surface-variant/30 transition-colors cursor-pointer border border-outline-variant/30 shadow-inner">
+                                    <span class="material-symbols-outlined !text-4xl"
+                                        style="font-variation-settings: 'FILL' 1;">picture_as_pdf</span>
+                                </div>
+                                <p class="font-label-caps text-[10px] text-center mt-xs text-on-surface-variant">Img-002
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <!-- Modal Footer -->
+                <footer class="bg-surface px-lg py-md flex justify-end border-t border-outline-variant">
+                    <button
+                        class="bg-primary-container text-white px-xl py-1.5 rounded font-table-header text-table-header uppercase tracking-wider hover:opacity-90 active:scale-95 transition-all shadow-md">
+                        Close
+                    </button>
+                </footer>
+            </div>
+        </div>
+    </main>
+    <script>
+        // Simple micro-interactions
+        document.querySelectorAll('button, a').forEach(el => {
+            el.addEventListener('mousedown', () => el.style.opacity = '0.8');
+            el.addEventListener('mouseup', () => el.style.opacity = '1');
+        });
+    </script>
+</body>
+
+</html>
