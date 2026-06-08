@@ -37,6 +37,9 @@ import {
   Attachment01Icon,
   ListFilter,
   ImageAdd01Icon,
+  Download01Icon,
+  PrinterIcon,
+  SentIcon,
 } from "@hugeicons/core-free-icons";
 
 // ── Icon name → HugeIcons data map ────────────────────────────────────────────
@@ -87,6 +90,15 @@ const ICON_MAP: Record<string, IconSvgElement> = {
 
   // Files
   picture_as_pdf: Pdf01Icon,
+  download:       Download01Icon,
+
+  // Actions
+  print: PrinterIcon,
+  send:  SentIcon,
+
+  // List / note variants
+  list_alt:   ListViewIcon,
+  event_note: Calendar01Icon,
 
   // Misc
   security:             Shield01Icon,

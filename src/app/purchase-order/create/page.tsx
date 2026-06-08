@@ -1,31 +1,25 @@
 "use client";
-import { useState } from "react";
-import Link from "next/link";
+import { useState, useCallback } from "react";
 import { AppShell } from "@/components/layout/AppShell";
+import { SectionPanel } from "@/components/cards/SectionPanel";
+import { BackButton } from "@/components/layout/PageHeader";
 import { FormField } from "@/components/ui/FormField";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
+import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
+import { CellInput } from "@/components/ui/CellInput";
+import { Icon } from "@/components/ui/Icon";
 import { Tabs, type TabItem } from "@/components/ui/Tabs";
-import { CompactTable, type CompactTableColumn } from "@/components/table/CompactTable";
+import { DataTable, type TableColumn } from "@/components/table/DataTable";
 import { FormFooter, FormFooterButton } from "@/components/layout/FormFooter";
 import { ImageGalleryModal } from "@/components/ui/ImageGalleryModal";
-import { Icon } from "@/components/ui/Icon";
+import { handleEnterMoveNext, useTableEnterHandler } from "@/hooks/useFormNavigation";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-interface SelectField {
-  type: "select";
-  label: string;
-  options: string[];
-}
-
-interface InputField {
-  type: "input";
-  label: string;
-  placeholder: string;
-  inputType?: string;
-}
-
+interface SelectField { type: "select"; label: string; options: string[] }
+interface InputField { type: "input"; label: string; placeholder: string; inputType?: string }
 type FormFieldDef = SelectField | InputField;
 
 interface PurchaseItem {
@@ -47,27 +41,17 @@ interface ScheduleRow {
   actionLog: string;
 }
 
-// ─── Page data ────────────────────────────────────────────────────────────────
+// ─── Static / constant data ───────────────────────────────────────────────────
 
 const FORM_FIELDS: FormFieldDef[] = [
-  { type: "select", label: "Po Type*", options: ["Paddler", "Direct", "Consignment"] },
-  { type: "input", label: "Truck No*", placeholder: "MH-12-AQ-9082" },
-  { type: "input", label: "Driver Details*", placeholder: "Ramesh Kumar (+91 98...)" },
+  { type: "select", label: "Po Type *", options: ["Paddler", "Direct", "Consignment"] },
+  { type: "input", label: "Truck No *", placeholder: "MH-12-AQ-9082" },
+  { type: "input", label: "Driver Details *", placeholder: "Ramesh Kumar (+91 98...)" },
   { type: "input", label: "Delivery Locations", placeholder: "Mumbai Port Terminal 2" },
-  { type: "select", label: "Currency*", options: ["INR (₹)", "USD ($)", "EUR (€)"] },
+  { type: "select", label: "Currency *", options: ["INR (₹)", "USD ($)", "EUR (€)"] },
   { type: "select", label: "Shipment Terms", options: ["EXW - Ex Works", "FOB - Free on Board"] },
   { type: "select", label: "Payment Terms", options: ["Net 30 Days", "15% Advance"] },
   { type: "select", label: "Transporter", options: ["SafeLogistics Pvt Ltd", "Global Freight"] },
-];
-
-const INITIAL_ITEMS: PurchaseItem[] = [
-  { id: 1, name: "Steel Wire Mesh G12", qty: 150, price: 12500, uom: "Roll", taxCode: "GST_18", packaging: "Boxed" },
-  { id: 2, name: "Hydraulic Seal Kit", qty: 45, price: 3400, uom: "Sets", taxCode: "GST_12", packaging: "Plastic" },
-];
-
-const SCHEDULE_ROWS: ScheduleRow[] = [
-  { id: 1, phase: "Initial Inventory Batch", qty: 100, reqDispatch: "24-Oct-2023", reqDelivery: "26-Oct-2023", actionLog: "Waiting for supplier confirm" },
-  { id: 2, phase: "Residual Balance Shipment", qty: 50, reqDispatch: "02-Nov-2023", reqDelivery: "05-Nov-2023", actionLog: "Scheduled for Q4" },
 ];
 
 const SUMMARY_METRICS = [
@@ -78,164 +62,198 @@ const SUMMARY_METRICS = [
 
 const DRAFT_LABEL = "Draft PO-9284";
 
-const TABS: Omit<TabItem, "content">[] = [
-  { id: "schedule", label: "Schedule" },
-  { id: "shipment-logs", label: "Shipment Logs" },
-  { id: "test-samples", label: "Test Samples" },
-  { id: "remarks", label: "Remarks" },
-];
-
-// ─── Column definitions ───────────────────────────────────────────────────────
-
-// ITEMS_COLUMNS is defined inside the component to close over deleteItem
-
-const SCHEDULE_COLUMNS: CompactTableColumn<ScheduleRow>[] = [
-  { field: "id", header: "#", headerClass: "w-10", cellClass: "text-center" },
-  { field: "phase", header: "Delivery Phase", headerClass: "text-left" },
-  { field: "qty", header: "Qty", headerClass: "w-20 text-center", cellClass: "text-center font-semibold" },
-  { field: "reqDispatch", header: "Req Dispatch", headerClass: "w-32 text-center", cellClass: "text-center" },
-  { field: "reqDelivery", header: "Req Delivery", headerClass: "w-32 text-center", cellClass: "text-center" },
-  { field: "actionLog", header: "Action Logs", headerClass: "text-left", cellClass: "text-on-surface-variant" },
-  {
-    field: "edit",
-    header: "",
-    headerClass: "w-16",
-    cellClass: "text-center",
-    body: () => <Icon name="edit" size={16} className="text-outline cursor-pointer" />,
-  },
-];
-
-// ─── Schedule tab content ─────────────────────────────────────────────────────
-
-function ScheduleTable() {
-  return (
-    <div className="bg-surface-container-lowest rounded-lg border border-outline-variant/30 overflow-hidden flex flex-col">
-      <div className="px-4 py-1.5 bg-surface-container-low flex justify-between items-center border-b border-outline-variant/20">
-        <span className="text-[10px] font-bold uppercase text-on-surface-variant">
-          Logistics Delivery Plan
-        </span>
-        <button className="text-primary-container text-[11px] font-bold flex items-center gap-1 hover:underline">
-          <Icon name="add" size={14} /> Add Schedule
-        </button>
-      </div>
-      <CompactTable columns={SCHEDULE_COLUMNS} data={SCHEDULE_ROWS} rowKey={(row) => row.id} />
-    </div>
-  );
-}
-
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function CreatePurchaseOrderPage() {
-  const [items, setItems] = useState<PurchaseItem[]>(INITIAL_ITEMS);
+  const [items, setItems] = useState<PurchaseItem[]>([
+    { id: 1, name: "Steel Wire Mesh G12", qty: 150, price: 12500, uom: "Roll", taxCode: "GST_18", packaging: "Boxed" },
+    { id: 2, name: "Hydraulic Seal Kit", qty: 45, price: 3400, uom: "Sets", taxCode: "GST_12", packaging: "Plastic" },
+  ]);
+
+  const [scheduleRows, setScheduleRows] = useState<ScheduleRow[]>([
+    { id: 1, phase: "Initial Inventory Batch", qty: 100, reqDispatch: "24-Oct-2023", reqDelivery: "26-Oct-2023", actionLog: "Waiting for supplier confirm" },
+    { id: 2, phase: "Residual Balance Shipment", qty: 50, reqDispatch: "02-Nov-2023", reqDelivery: "05-Nov-2023", actionLog: "Scheduled for Q4" },
+  ]);
+
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
 
-  function addItem() {
+  const addItem = useCallback(() => {
     setItems((prev) => [
       ...prev,
       { id: prev.length + 1, name: "", qty: 0, price: 0, uom: "", taxCode: "", packaging: "" },
     ]);
-  }
+  }, []);
 
-  function deleteItem(id: number) {
+  const deleteItem = useCallback((id: number) => {
     setItems((prev) => prev.filter((item) => item.id !== id));
-  }
+  }, []);
 
-  const ITEMS_COLUMNS: CompactTableColumn<PurchaseItem>[] = [
-    { field: "id", header: "Sr/N", headerClass: "w-10", cellClass: "text-center text-on-surface-variant" },
+  const addSchedule = useCallback(() => {
+    setScheduleRows((prev) => [
+      ...prev,
+      { id: prev.length + 1, phase: "", qty: 0, reqDispatch: "", reqDelivery: "", actionLog: "" },
+    ]);
+  }, []);
+
+  const deleteSchedule = useCallback((id: number) => {
+    setScheduleRows((prev) => prev.filter((r) => r.id !== id));
+  }, []);
+
+  const handleItemsEnter = useTableEnterHandler(addItem);
+  const handleScheduleEnter = useTableEnterHandler(addSchedule);
+
+  // ── Items table columns ────────────────────────────────────────────────────
+
+  const ITEMS_COLUMNS: TableColumn<PurchaseItem>[] = [
+    {
+      field: "id",
+      header: "#",
+      body: (row) => (
+        <span className="text-sm text-gray-400 tabular-nums block text-center select-none">{row.id}</span>
+      ),
+    },
     {
       field: "name",
       header: "Item Name",
-      headerClass: "text-left",
-      body: (row) => (
-        <input className="w-full compact-input border-0 bg-transparent focus:ring-0 text-[12px] p-0 outline-none" defaultValue={row.name} type="text" />
-      ),
+      body: (row) => <CellInput defaultValue={row.name} placeholder="Item name…" />,
     },
     {
       field: "qty",
       header: "Qty",
-      headerClass: "w-20 text-center",
-      cellClass: "text-center",
-      body: (row) => (
-        <input className="w-full compact-input border-0 bg-transparent text-center focus:ring-0 text-[12px] p-0 outline-none" defaultValue={row.qty} type="number" />
-      ),
+      body: (row) => <CellInput align="center" width="w-20" defaultValue={row.qty || ""} type="number" placeholder="0" />,
     },
     {
       field: "price",
       header: "Price (₹)",
-      headerClass: "w-24 text-right",
-      cellClass: "text-right",
-      body: (row) => (
-        <input className="w-full compact-input border-0 bg-transparent text-right focus:ring-0 text-[12px] p-0 font-semibold outline-none" defaultValue={row.price} type="number" />
-      ),
+      body: (row) => <CellInput align="right" width="w-24 font-semibold" defaultValue={row.price || ""} type="number" placeholder="0.00" />,
     },
-    { field: "uom", header: "UOM", headerClass: "w-20 text-center", cellClass: "text-center" },
-    { field: "taxCode", header: "Tax Code", headerClass: "w-24 text-center", cellClass: "text-center" },
-    { field: "packaging", header: "Packaging", headerClass: "w-24 text-center", cellClass: "text-center" },
+    {
+      field: "uom",
+      header: "UOM",
+      body: (row) => <CellInput align="center" width="w-16" defaultValue={row.uom} placeholder="e.g. Kg" />,
+    },
+    {
+      field: "taxCode",
+      header: "Tax Code",
+      body: (row) => <CellInput align="center" width="w-20" defaultValue={row.taxCode} placeholder="GST_18" />,
+    },
+    {
+      field: "packaging",
+      header: "Packaging",
+      body: (row) => <CellInput width="w-28" defaultValue={row.packaging} placeholder="Box / Roll…" />,
+    },
     {
       field: "image",
-      header: "Image",
-      headerClass: "w-10 text-center",
-      cellClass: "text-center text-secondary",
+      header: "Img",
       body: (row) => (
-        <span
-          className="cursor-pointer hover:text-primary transition-colors"
-          onClick={() => { setSelectedItemId(row.id); setIsGalleryOpen(true); }}
-        >
-          <Icon name="attachment" size={16} />
-        </span>
+        <button tabIndex={-1} className="text-black/25 hover:text-primary transition-colors mx-auto block"
+          title="Attach image" onClick={() => { setSelectedItemId(row.id); setIsGalleryOpen(true); }}>
+          <Icon name="attachment" size={15} />
+        </button>
       ),
     },
     {
       field: "delete",
       header: "",
-      headerClass: "w-10",
-      cellClass: "text-center text-error",
       body: (row) => (
-        <span className="cursor-pointer hover:opacity-70" onClick={() => deleteItem(row.id)}>
-          <Icon name="delete" size={16} />
-        </span>
+        <button tabIndex={-1} className="text-black/25 hover:text-red-500 transition-colors mx-auto block"
+          title="Remove row" onClick={() => deleteItem(row.id)}>
+          <Icon name="delete" size={15} />
+        </button>
       ),
     },
   ];
 
-  const tabItems: TabItem[] = TABS.map((t) => ({
-    ...t,
-    content:
-      t.id === "schedule" ? (
-        <ScheduleTable />
-      ) : (
-        <div className="p-4 text-sm text-on-surface-variant">{t.label} content</div>
+  // ── Schedule columns ───────────────────────────────────────────────────────
+
+  const SCHEDULE_COLUMNS: TableColumn<ScheduleRow>[] = [
+    {
+      field: "id",
+      header: "#",
+      body: (row) => (
+        <span className="text-sm text-gray-400 tabular-nums block text-center select-none">{row.id}</span>
       ),
-  }));
+    },
+    {
+      field: "phase",
+      header: "Delivery Phase",
+      body: (row) => <CellInput width="min-w-[160px]" defaultValue={row.phase} placeholder="Phase name…" />,
+    },
+    {
+      field: "qty",
+      header: "Qty",
+      body: (row) => <CellInput align="center" width="w-20 font-semibold" defaultValue={row.qty || ""} type="number" placeholder="0" />,
+    },
+    {
+      field: "reqDispatch",
+      header: "Req. Dispatch",
+      body: (row) => <CellInput width="w-28" defaultValue={row.reqDispatch} placeholder="dd-Mon-yyyy" />,
+    },
+    {
+      field: "reqDelivery",
+      header: "Req. Delivery",
+      body: (row) => <CellInput width="w-28" defaultValue={row.reqDelivery} placeholder="dd-Mon-yyyy" />,
+    },
+    {
+      field: "actionLog",
+      header: "Action Log",
+      body: (row) => <CellInput width="min-w-[160px]" defaultValue={row.actionLog} placeholder="Notes…" />,
+    },
+    {
+      field: "delete",
+      header: "",
+      body: (row) => (
+        <button tabIndex={-1} className="text-black/25 hover:text-red-500 transition-colors mx-auto block"
+          title="Remove" onClick={() => deleteSchedule(row.id)}>
+          <Icon name="delete" size={15} />
+        </button>
+      ),
+    },
+  ];
+
+  const tabItems: TabItem[] = [
+    {
+      id: "schedule",
+      label: "Schedule",
+      content: (
+        <div onKeyDown={handleScheduleEnter}>
+          <DataTable
+            title="Delivery Schedules"
+            titleClassName="text-sm font-semibold text-gray-900"
+            columns={SCHEDULE_COLUMNS}
+            data={scheduleRows}
+            emptyMessage="No schedules yet. Press Enter on the last row to add one."
+            rowStyle={(_, i) => ({ backgroundColor: i % 2 === 0 ? "#ffffff" : "var(--color-row-alt)" })}
+            headerActions={
+              <Button variant="add" icon="add" onClick={addSchedule}>Add Schedule</Button>
+            }
+          />
+        </div>
+      ),
+    },
+    { id: "shipment-logs", label: "Shipment Logs", content: <PlaceholderTab label="Shipment Logs" /> },
+    { id: "test-samples", label: "Test Samples", content: <PlaceholderTab label="Test Samples" /> },
+    { id: "remarks", label: "Remarks", content: <PlaceholderTab label="Remarks" /> },
+  ];
 
   return (
-    <AppShell title="Purchase order" userName="Shivam Chaudhari" userRole="Operations Lead">
-      <div className="p-4 flex-1 bg-background flex flex-col gap-3">
+    <AppShell title="Create Purchase Order" activeNavLabel="All Purchase order">
+      <div className="p-6 space-y-5">
 
-        {/* Breadcrumb / Header Action */}
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <Link href="/purchase-order">
-              <button className="w-6 h-6 bg-primary-container text-on-primary-container rounded flex items-center justify-center hover:opacity-90 transition-opacity shrink-0">
-                <Icon name="arrow_back" size={16} />
-              </button>
-            </Link>
-            <div>
-              <h3 className="text-[14px] font-bold leading-none">Create Purchase Order</h3>
-              <p className="text-[10px] text-on-surface-variant mt-0.5">
-                List of purchase order fields for high-density logistics management.
-              </p>
-            </div>
-          </div>
-          <span className="px-2 py-0.5 bg-surface-container rounded text-[10px] font-bold text-primary-container border border-outline-variant/20 uppercase tracking-wider">
-            {DRAFT_LABEL}
-          </span>
-        </div>
-
-        {/* Primary Form Section */}
-        <div className="bg-surface-container-lowest rounded-lg border border-outline-variant/30 p-3 shadow-sm">
-          <div className="grid grid-cols-4 gap-x-3 gap-y-2">
+        {/* ── Order Details form ───────────────────────────────────────────────── */}
+        <SectionPanel
+          headerPrefix={<BackButton href="/purchase-order" />}
+          title="Order Details"
+          action={
+            <>
+              <span className="text-xs text-gray-400">Tab or Enter to move between fields</span>
+              <Badge variant="warning" label={DRAFT_LABEL} shape="pill" size="sm" />
+            </>
+          }
+          bodyClassName="px-5 py-5"
+        >
+          <div className="grid grid-cols-4 gap-x-4 gap-y-4" onKeyDown={handleEnterMoveNext}>
             {FORM_FIELDS.map((field) => (
               <FormField key={field.label} label={field.label}>
                 {field.type === "select" ? (
@@ -246,34 +264,31 @@ export default function CreatePurchaseOrderPage() {
               </FormField>
             ))}
           </div>
-        </div>
+        </SectionPanel>
 
-        {/* Items Table Section */}
-        <div className="bg-surface-container-lowest rounded-lg border border-outline-variant/30 shadow-sm overflow-hidden flex flex-col">
-          <div className="px-4 py-1.5 flex justify-between items-center border-b border-outline-variant/30 bg-surface-container-low">
-            <h4 className="font-table-header text-table-header uppercase text-primary font-bold">
-              Purchase Items
-            </h4>
-            <button
-              onClick={addItem}
-              className="bg-primary text-white px-2 py-1 rounded text-[11px] font-bold flex items-center gap-1 hover:bg-primary/90 transition-colors"
-            >
-              <Icon name="add_circle" size={16} /> Add Item
-            </button>
-          </div>
-          <CompactTable
+        {/* ── Purchase Items ───────────────────────────────────────────────────── */}
+        {/* Enter key on a row moves to the same column in the next row;
+            pressing Enter on the last row appends a new item row. */}
+        <div onKeyDown={handleItemsEnter}>
+          <DataTable
+            title="Purchase Items"
+            titleClassName="text-sm font-semibold text-gray-900"
             columns={ITEMS_COLUMNS}
             data={items}
-            rowKey={(row) => row.id}
-            rowClassName={(_, i) => (i % 2 === 1 ? "bg-surface-container-lowest" : "")}
+            emptyMessage="No items yet. Click Add Item or press Enter on the last row."
+            rowStyle={(_, i) => ({ backgroundColor: i % 2 === 0 ? "#ffffff" : "var(--color-row-alt)" })}
+            headerActions={
+              <Button variant="add" icon="add" onClick={addItem}>Add Item</Button>
+            }
           />
         </div>
 
-        {/* Tabs Section */}
+        {/* ── Tabs ────────────────────────────────────────────────────────────── */}
         <Tabs items={tabItems} defaultActiveId="schedule" />
 
       </div>
 
+      {/* ── Summary footer ───────────────────────────────────────────────────── */}
       <FormFooter
         metrics={SUMMARY_METRICS}
         actions={
@@ -290,9 +305,14 @@ export default function CreatePurchaseOrderPage() {
         onClose={() => setIsGalleryOpen(false)}
         onSelectImage={(image) => {
           console.log("Selected image for item", selectedItemId, ":", image);
-          // Here you can update the item with the selected image
         }}
       />
     </AppShell>
+  );
+}
+
+function PlaceholderTab({ label }: { label: string }) {
+  return (
+    <div className="py-10 text-center text-sm text-gray-400">{label} — coming soon</div>
   );
 }

@@ -5,7 +5,8 @@ import { FormField } from "@/components/ui/FormField";
 import { Input } from "@/components/ui/Input";
 import { Badge } from "@/components/ui/Badge";
 import { Tabs, type TabItem } from "@/components/ui/Tabs";
-import { CompactTable, type CompactTableColumn } from "@/components/table/CompactTable";
+import { DataTable } from "@/components/table/DataTable";
+import { type TableColumn } from "@/components/ui/Table";
 import { Icon } from "@/components/ui/Icon";
 import { FormFooterButton } from "@/components/layout/FormFooter";
 
@@ -104,60 +105,18 @@ const SCHEDULE_ROWS: ScheduleRow[] = [
 
 // ─── Column definitions ───────────────────────────────────────────────────────
 
-const ITEMS_COLUMNS: CompactTableColumn<PurchaseItem>[] = [
-  {
-    field: "id",
-    header: "Sr/N",
-    headerClass: "w-12 text-center uppercase",
-    cellClass: "text-center border-r border-outline-variant/30",
-  },
-  {
-    field: "name",
-    header: "Item name",
-    headerClass: "uppercase",
-    cellClass: "border-r border-outline-variant/30 font-semibold",
-  },
-  {
-    field: "qty",
-    header: "Qty",
-    headerClass: "w-16 text-center uppercase",
-    cellClass: "text-center border-r border-outline-variant/30",
-  },
-  {
-    field: "price",
-    header: "Price",
-    headerClass: "w-20 text-center uppercase",
-    cellClass: "text-center border-r border-outline-variant/30",
-  },
-  {
-    field: "uom",
-    header: "UOM",
-    headerClass: "w-16 text-center uppercase",
-    cellClass: "text-center border-r border-outline-variant/30",
-  },
-  {
-    field: "taxCode",
-    header: "Tax Code",
-    headerClass: "w-20 text-center uppercase",
-    cellClass: "text-center border-r border-outline-variant/30",
-  },
-  {
-    field: "packagingType",
-    header: "packaging type",
-    headerClass: "text-center uppercase",
-    cellClass: "border-r border-outline-variant/30",
-  },
-  {
-    field: "containers",
-    header: "No of Container",
-    headerClass: "text-center uppercase",
-    cellClass: "text-center border-r border-outline-variant/30",
-  },
+const ITEMS_COLUMNS: TableColumn<PurchaseItem>[] = [
+  { field: "id", header: "Sr/N", body: (row) => <span className="text-center">{row.id}</span> },
+  { field: "name", header: "Item name", body: (row) => <span className="font-semibold">{row.name}</span> },
+  { field: "qty", header: "Qty", body: (row) => <span className="text-center">{row.qty}</span> },
+  { field: "price", header: "Price", body: (row) => <span className="text-center">{row.price}</span> },
+  { field: "uom", header: "UOM", body: (row) => <span className="text-center">{row.uom}</span> },
+  { field: "taxCode", header: "Tax Code", body: (row) => <span className="text-center">{row.taxCode}</span> },
+  { field: "packagingType", header: "packaging type" },
+  { field: "containers", header: "No of Container", body: (row) => <span className="text-center">{row.containers}</span> },
   {
     field: "imgSrc",
     header: "Link Image",
-    headerClass: "uppercase",
-    cellClass: "border-r border-outline-variant/30",
     body: (row) => (
       <div className="flex items-center gap-2">
         <img className="w-6 h-6 rounded object-cover shrink-0" src={row.imgSrc} alt={row.imgLabel} />
@@ -170,51 +129,21 @@ const ITEMS_COLUMNS: CompactTableColumn<PurchaseItem>[] = [
   },
 ];
 
-const SCHEDULE_COLUMNS: CompactTableColumn<ScheduleRow>[] = [
-  {
-    field: "id",
-    header: "Sr/N",
-    headerClass: "w-12 text-center uppercase",
-    cellClass: "text-center border-r border-outline-variant/30",
-  },
-  {
-    field: "itemName",
-    header: "Item name",
-    headerClass: "uppercase",
-    cellClass: "border-r border-outline-variant/30",
-  },
-  {
-    field: "schedule",
-    header: "Schedule",
-    headerClass: "uppercase",
-    cellClass: "border-r border-outline-variant/30 text-primary font-medium",
-  },
-  {
-    field: "qty",
-    header: "Qty",
-    headerClass: "w-16 text-center uppercase",
-    cellClass: "text-center border-r border-outline-variant/30",
-  },
-  {
-    field: "reqDispatch",
-    header: "Requested Dispatch",
-    headerClass: "uppercase",
-    cellClass: "text-center border-r border-outline-variant/30",
-  },
-  {
-    field: "reqDelivery",
-    header: "Requested Delivery",
-    headerClass: "uppercase",
-    cellClass: "text-center",
-  },
+const SCHEDULE_COLUMNS: TableColumn<ScheduleRow>[] = [
+  { field: "id", header: "Sr/N", body: (row) => <span className="text-center">{row.id}</span> },
+  { field: "itemName", header: "Item name" },
+  { field: "schedule", header: "Schedule", body: (row) => <span className="text-primary font-medium">{row.schedule}</span> },
+  { field: "qty", header: "Qty", body: (row) => <span className="text-center">{row.qty}</span> },
+  { field: "reqDispatch", header: "Requested Dispatch", body: (row) => <span className="text-center">{row.reqDispatch}</span> },
+  { field: "reqDelivery", header: "Requested Delivery", body: (row) => <span className="text-center">{row.reqDelivery}</span> },
 ];
 
 // ─── Tab content ──────────────────────────────────────────────────────────────
 
 function ScheduleTabContent() {
   return (
-    <div className="border border-outline-variant rounded overflow-hidden">
-      <CompactTable columns={SCHEDULE_COLUMNS} data={SCHEDULE_ROWS} rowKey={(r) => r.id} />
+    <div className="[&>section]:space-y-0">
+      <DataTable title="" columns={SCHEDULE_COLUMNS} data={SCHEDULE_ROWS} />
     </div>
   );
 }
@@ -230,8 +159,8 @@ export default function ViewPurchaseOrderPage() {
   ];
 
   return (
-    <AppShell title="Purchase order" userName="Shivam Chaudhari" userRole="Purchase Order">
-      <div className="p-4 flex-1 bg-background flex flex-col gap-3">
+    <AppShell title="View Purchase Order" activeNavLabel="Purchase order details">
+      <div className="p-4 flex-1 flex flex-col gap-3">
 
         {/* Breadcrumb / Header */}
         <div className="flex justify-between items-center">
@@ -239,7 +168,7 @@ export default function ViewPurchaseOrderPage() {
             <Link
               href={PO_META.backHref}
               aria-label="Go back"
-              className="w-6 h-6 bg-primary-container text-on-primary-container rounded flex items-center justify-center hover:opacity-90 transition-opacity shrink-0"
+              className="w-7 h-7 bg-gray-100 text-gray-700 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors shrink-0"
             >
               <Icon name="arrow_back" className="text-sm" />
             </Link>
@@ -254,7 +183,7 @@ export default function ViewPurchaseOrderPage() {
         </div>
 
         {/* Form Fields (Read-only) */}
-        <div className="bg-surface-container-lowest rounded-lg border border-outline-variant/30 p-3 shadow-sm">
+        <div className="bg-white/80 rounded-2xl border border-white shadow-sm p-3 shadow-sm">
           <div className="grid grid-cols-4 gap-x-3 gap-y-2">
             <FormField label="Po Type*">
               <Input value={FORM_DATA.poType} readOnly />
@@ -284,26 +213,19 @@ export default function ViewPurchaseOrderPage() {
         </div>
 
         {/* Purchase Items Table */}
-        <div className="bg-surface-container-lowest rounded-lg border border-outline-variant/30 shadow-sm overflow-hidden flex flex-col">
-          <div className="px-4 py-1.5 flex justify-between items-center border-b border-outline-variant/30 bg-surface-container-low">
-            <h4 className="font-table-header text-table-header uppercase text-primary font-bold">
-              Purchase Items
-            </h4>
-          </div>
-          <CompactTable
-            columns={ITEMS_COLUMNS}
-            data={PURCHASE_ITEMS}
-            rowKey={(r) => r.id}
-            rowClassName={(_, i) => (i % 2 === 1 ? "bg-surface-container-lowest" : "")}
-          />
-        </div>
+        <DataTable
+          title="Purchase Items"
+          columns={ITEMS_COLUMNS}
+          data={PURCHASE_ITEMS}
+          rowStyle={(_, i) => ({ backgroundColor: i % 2 === 1 ? "rgba(249, 250, 251, 0.6)" : "#ffffff" })}
+        />
 
         {/* Notes Section */}
-        <div className="bg-surface-container-lowest rounded-lg border border-outline-variant/30 p-3 shadow-sm">
+        <div className="bg-white/80 rounded-2xl border border-white shadow-sm p-3 shadow-sm">
           <label className="font-label-caps text-label-caps text-on-surface-variant uppercase mb-1 flex items-center gap-1">
             Notes* <Icon name="info" size={10} />
           </label>
-          <div className="border border-outline-variant rounded p-2 bg-surface-container-lowest min-h-[60px] text-[12px] text-on-surface-variant italic">
+          <div className="border border-gray-200 rounded p-2 bg-gray-50 min-h-[60px] text-[12px] text-gray-500 italic">
             {FORM_DATA.notes}
           </div>
         </div>

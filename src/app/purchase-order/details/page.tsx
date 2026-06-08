@@ -3,7 +3,8 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { SummaryFooter, type SummaryFooterItem } from "@/components/layout/SummaryFooter";
 import { DetailGridCard, type DetailGridItem } from "@/components/cards/DetailGridCard";
 import { SectionPanel } from "@/components/cards/SectionPanel";
-import { CompactTable, type CompactTableColumn } from "@/components/table/CompactTable";
+import { DataTable } from "@/components/table/DataTable";
+import { type TableColumn } from "@/components/ui/Table";
 import { Tabs, type TabItem } from "@/components/ui/Tabs";
 import { Button } from "@/components/ui/Button";
 import { ButtonLink } from "@/components/ui/ButtonLink";
@@ -296,20 +297,20 @@ const SUMMARY_RIGHT: SummaryFooterItem[] = [
   { label: "Tax Total", value: "$3,267.00" },
 ];
 
-const LINE_ITEM_COLUMNS: CompactTableColumn<LineItem>[] = [
+const LINE_ITEM_COLUMNS: TableColumn<LineItem>[] = [
   {
     field: "materialCode",
     header: "Mat Code",
     body: (row) => <span className="font-bold text-primary">{row.materialCode}</span>,
   },
-  { field: "materialName", header: "Material Name", headerClass: "text-left" },
+  { field: "materialName", header: "Material Name" },
   { field: "totalQty", header: "Tot Qty" },
   { field: "delivered", header: "Delivered" },
   {
     field: "pending",
     header: "Pending",
     body: (row) => (
-      <span className={row.complete ? "text-on-secondary-container" : "text-error font-bold"}>
+      <span className={row.complete ? "text-green-600" : "text-error font-bold"}>
         {row.pending}
       </span>
     ),
@@ -327,10 +328,10 @@ const LINE_ITEM_COLUMNS: CompactTableColumn<LineItem>[] = [
   },
 ];
 
-const SCHEDULE_COLUMNS: CompactTableColumn<ScheduleRow>[] = [
+const SCHEDULE_COLUMNS: TableColumn<ScheduleRow>[] = [
   { field: "scheduleNo", header: "Sch #" },
   { field: "code", header: "Code" },
-  { field: "name", header: "Name", headerClass: "text-left" },
+  { field: "name", header: "Name" },
   {
     field: "qty",
     header: "Sch Qty",
@@ -341,7 +342,7 @@ const SCHEDULE_COLUMNS: CompactTableColumn<ScheduleRow>[] = [
   { field: "containers", header: "Containers" },
 ];
 
-const SHIPMENT_COLUMNS: CompactTableColumn<ShipmentRow>[] = [
+const SHIPMENT_COLUMNS: TableColumn<ShipmentRow>[] = [
   { field: "blNumber", header: "BL Number", body: (row) => <span className="font-bold">{row.blNumber}</span> },
   { field: "vesselName", header: "Vessel Name" },
   { field: "etd", header: "ETD" },
@@ -364,7 +365,7 @@ const SHIPMENT_COLUMNS: CompactTableColumn<ShipmentRow>[] = [
   },
 ];
 
-const TEST_SAMPLE_COLUMNS: CompactTableColumn<TestSampleRow>[] = [
+const TEST_SAMPLE_COLUMNS: TableColumn<TestSampleRow>[] = [
   { field: "sampleNo", header: "Sample No", body: (row) => <span className="font-bold">{row.sampleNo}</span> },
   { field: "itemNo", header: "Item No" },
   {
@@ -387,7 +388,7 @@ const TEST_SAMPLE_COLUMNS: CompactTableColumn<TestSampleRow>[] = [
   },
 ];
 
-const GOODS_RECEIPT_COLUMNS: CompactTableColumn<GoodsReceiptRow>[] = [
+const GOODS_RECEIPT_COLUMNS: TableColumn<GoodsReceiptRow>[] = [
   {
     field: "transactionNo",
     header: "Transaction No",
@@ -408,7 +409,7 @@ const GOODS_RECEIPT_COLUMNS: CompactTableColumn<GoodsReceiptRow>[] = [
   { field: "sampleRefNo", header: "Sample Ref No" },
 ];
 
-const BOOKING_COLUMNS: CompactTableColumn<BookingRow>[] = [
+const BOOKING_COLUMNS: TableColumn<BookingRow>[] = [
   {
     field: "bookingId",
     header: "Booking ID",
@@ -434,15 +435,20 @@ function LineItemsSection() {
       title="PO Line Items (4)"
       icon="list_alt"
       tone="primary"
-      bodyClassName="max-h-64 overflow-y-auto"
-      action={<span className="text-label-caps font-label-caps text-on-primary/60">Selected: 1 item</span>}
+      bodyClassName="max-h-64 overflow-y-auto p-0"
+      action={<span className="text-label-caps font-label-caps text-white/70">Selected: 1 item</span>}
     >
-      <CompactTable
-        columns={LINE_ITEM_COLUMNS}
-        data={LINE_ITEMS}
-        rowKey={(row) => row.materialCode}
-        rowClassName={(row) => (row.active ? "cursor-pointer bg-secondary-container/10" : "cursor-pointer")}
-      />
+      <div className="[&>section]:space-y-0 [&_.bg-white\/80]:bg-transparent [&_.border]:border-0 [&_.rounded-2xl]:rounded-none">
+        <DataTable
+          title=""
+          columns={LINE_ITEM_COLUMNS}
+          data={LINE_ITEMS}
+          rowStyle={(row, i) => ({
+            backgroundColor: row.active ? "rgba(219, 234, 254, 0.4)" : i % 2 === 0 ? "#ffffff" : "#f9fafb",
+            cursor: "pointer"
+          })}
+        />
+      </div>
     </SectionPanel>
   );
 }
@@ -454,12 +460,13 @@ function DeliverySchedulesSection() {
       icon="event_note"
       action={<Button variant="text">+ New Schedule</Button>}
     >
-      <CompactTable
-        columns={SCHEDULE_COLUMNS}
-        data={DELIVERY_SCHEDULES}
-        rowKey={(row) => row.scheduleNo}
-        headerTheme="blue"
-      />
+      <div className="[&>section]:space-y-0 [&_.bg-white\/80]:bg-transparent [&_.border]:border-0 [&_.rounded-2xl]:rounded-none">
+        <DataTable
+          title=""
+          columns={SCHEDULE_COLUMNS}
+          data={DELIVERY_SCHEDULES}
+        />
+      </div>
     </SectionPanel>
   );
 }
@@ -469,34 +476,47 @@ function RelatedActivityTabs() {
     {
       id: "shipment",
       label: "Shipment",
-      content: <CompactTable columns={SHIPMENT_COLUMNS} data={SHIPMENTS} rowKey={(row) => row.blNumber} headerTheme="blue" />,
+      content: (
+        <div className="[&>section]:space-y-0 [&_.bg-white\/80]:bg-transparent [&_.border]:border-0 [&_.rounded-2xl]:rounded-none">
+          <DataTable title="" columns={SHIPMENT_COLUMNS} data={SHIPMENTS} />
+        </div>
+      ),
     },
     {
       id: "test-sample",
       label: "Test Sample",
-      content: <CompactTable columns={TEST_SAMPLE_COLUMNS} data={TEST_SAMPLES} rowKey={(row) => row.sampleNo} headerTheme="blue" />,
+      content: (
+        <div className="[&>section]:space-y-0 [&_.bg-white\/80]:bg-transparent [&_.border]:border-0 [&_.rounded-2xl]:rounded-none">
+          <DataTable title="" columns={TEST_SAMPLE_COLUMNS} data={TEST_SAMPLES} />
+        </div>
+      ),
     },
     {
       id: "goods-receipts",
       label: "Goods Receipts",
       content: (
-        <CompactTable
-          columns={GOODS_RECEIPT_COLUMNS}
-          data={GOODS_RECEIPTS}
-          rowKey={(row) => row.transactionNo}
-          headerTheme="blue"
-        />
+        <div className="[&>section]:space-y-0 [&_.bg-white\/80]:bg-transparent [&_.border]:border-0 [&_.rounded-2xl]:rounded-none">
+          <DataTable
+            title=""
+            columns={GOODS_RECEIPT_COLUMNS}
+            data={GOODS_RECEIPTS}
+          />
+        </div>
       ),
     },
     {
       id: "bookings",
       label: "Bookings",
-      content: <CompactTable columns={BOOKING_COLUMNS} data={BOOKINGS} rowKey={(row) => row.bookingId} headerTheme="blue" />,
+      content: (
+        <div className="[&>section]:space-y-0 [&_.bg-white\/80]:bg-transparent [&_.border]:border-0 [&_.rounded-2xl]:rounded-none">
+          <DataTable title="" columns={BOOKING_COLUMNS} data={BOOKINGS} />
+        </div>
+      ),
     },
   ];
 
   return (
-    <SectionPanel bodyClassName="px-4 pt-2 bg-surface-container-low">
+    <SectionPanel bodyClassName="px-4 pt-2 bg-gray-50/60">
       <Tabs items={tabs} defaultActiveId="goods-receipts" />
     </SectionPanel>
   );
@@ -504,8 +524,8 @@ function RelatedActivityTabs() {
 
 export default function PurchaseOrderDetailsPage() {
   return (
-    <AppShell title="Purchase order" userName="Shivam Chaudhari" userRole="Operations Lead">
-      <div className="p-4 flex-1 bg-background flex flex-col gap-3">
+    <AppShell title="Purchase order" activeNavLabel="Purchase order details">
+      <div className="p-4 flex-1 flex flex-col gap-3">
         <PageHeader
           title="Purchase Order Details"
           description="Status, line items, schedules, shipments, samples, receipts, and bookings."

@@ -4,24 +4,20 @@ export type BadgeVariant =
   | "success"
   | "planned"
   | "muted"
-  | "danger";
+  | "danger"
+  | "warning";
 
 type BadgeShape = "rounded" | "pill";
 type BadgeSize = "xs" | "sm";
 
 const variantStyles: Record<BadgeVariant, string> = {
-  created:
-    "bg-[#6cf8bb]/10 text-[#00714d] border-[#6cf8bb]/30",
-  pending:
-    "bg-surface-container-high text-on-surface-variant border-outline-variant",
-  success:
-    "bg-secondary-container text-on-secondary-container border-secondary-container",
-  planned:
-    "bg-tertiary-container text-on-tertiary-container border-tertiary-container",
-  muted:
-    "bg-surface-variant text-on-surface-variant border-surface-variant",
-  danger:
-    "bg-error-container text-on-error-container border-error-container",
+  created:  "bg-[#6cf8bb]/10 text-[#00714d] border-[#6cf8bb]/30",
+  pending:  "bg-gray-100 text-gray-500 border-gray-200",
+  success:  "bg-green-100 text-green-700 border-green-200",
+  planned:  "bg-blue-100 text-blue-700 border-blue-200",
+  muted:    "bg-gray-100 text-gray-500 border-gray-200",
+  danger:   "bg-red-100 text-red-700 border-red-200",
+  warning:  "bg-amber-50 text-amber-600 border-amber-100",
 };
 
 const shapeStyles: Record<BadgeShape, string> = {

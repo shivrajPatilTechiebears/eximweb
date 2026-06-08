@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { NavLink } from "./NavLink";
 import { Icon } from "@/components/ui/Icon";
+import { SpeedDial, type SpeedDialAction } from "@/components/ui/SpeedDial";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -43,9 +44,9 @@ const NAV_SECTIONS: NavSection[] = [
         label: "Purchase Request",
         href: "#",
         children: [
-          { icon: "format_list_bulleted", label: "All Requests",  href: "/purchase-request" },
-          { icon: "pending_actions",      label: "Open Requests", href: "/purchase-request/open" },
-          { icon: "description",          label: "PR Details",    href: "/purchase-request/details" },
+          { icon: "format_list_bulleted", label: "All Requests", href: "/purchase-request" },
+          { icon: "pending_actions", label: "Open Requests", href: "/purchase-request/open" },
+          { icon: "description", label: "PR Details", href: "/purchase-request/details" },
         ],
       },
       {
@@ -53,9 +54,9 @@ const NAV_SECTIONS: NavSection[] = [
         label: "Purchase Order",
         href: "#",
         children: [
-          { icon: "format_list_bulleted", label: "All Purchase order",     href: "/purchase-order" },
-          { icon: "pending_actions",      label: "Open Purchase order",    href: "/purchase-order/open" },
-          { icon: "receipt_long",         label: "Purchase order details", href: "/purchase-order/details" },
+          { icon: "format_list_bulleted", label: "All Purchase order", href: "/purchase-order" },
+          { icon: "pending_actions", label: "Open Purchase order", href: "/purchase-order/open" },
+          { icon: "receipt_long", label: "Purchase order details", href: "/purchase-order/details" },
         ],
       },
       {
@@ -63,9 +64,9 @@ const NAV_SECTIONS: NavSection[] = [
         label: "Shipments",
         href: "#",
         children: [
-          { icon: "format_list_bulleted", label: "All Shipments",       href: "/shipments" },
-          { icon: "task_alt",             label: "Confirmed Shipments", href: "/shipments/confirmed" },
-          { icon: "directions_boat",      label: "Intransit Shipment",  href: "/shipments/intransit" },
+          { icon: "format_list_bulleted", label: "All Shipments", href: "/shipments" },
+          { icon: "task_alt", label: "Confirmed Shipments", href: "/shipments/confirmed" },
+          { icon: "directions_boat", label: "Intransit Shipment", href: "/shipments/intransit" },
         ],
       },
       {
@@ -73,12 +74,39 @@ const NAV_SECTIONS: NavSection[] = [
         label: "Bookings",
         href: "#",
         children: [
-          { icon: "format_list_bulleted", label: "All Bookings",       href: "/bookings" },
-          { icon: "event_available",      label: "Booking Confirmed",  href: "/bookings/confirmed" },
-          { icon: "flight_takeoff",       label: "Intransit Bookings", href: "/bookings/intransit" },
+          { icon: "format_list_bulleted", label: "All Bookings", href: "/bookings" },
+          { icon: "event_available", label: "Booking Confirmed", href: "/bookings/confirmed" },
+          { icon: "flight_takeoff", label: "Intransit Bookings", href: "/bookings/intransit" },
         ],
       },
     ],
+  },
+];
+
+const FAB_ACTIONS: SpeedDialAction[] = [
+  {
+    icon: "description",
+    label: "Create PO",
+    sub: "New purchase order",
+    href: "/purchase-order/create",
+    iconBg: "bg-indigo-100",
+    iconColor: "text-indigo-500",
+  },
+  {
+    icon: "request_quote",
+    label: "Create PR",
+    sub: "Purchase request",
+    href: "#",
+    iconBg: "bg-amber-100",
+    iconColor: "text-amber-500",
+  },
+  {
+    icon: "local_shipping",
+    label: "New Shipment",
+    sub: "Add shipment",
+    href: "#",
+    iconBg: "bg-emerald-100",
+    iconColor: "text-emerald-500",
   },
 ];
 
@@ -127,9 +155,8 @@ function CollapsibleNavItem({
       <button
         type="button"
         onClick={onToggle}
-        className={`flex items-center gap-3 px-2 py-1.5 rounded-lg w-full transition-colors ${
-          isActive ? "text-black" : "text-black/60 hover:text-black/80"
-        }`}
+        className={`flex items-center gap-3 px-2 py-1.5 rounded-lg w-full transition-colors ${isActive ? "text-black" : "text-black/60 hover:text-black/80"
+          }`}
       >
         <Icon
           name={item.icon}
@@ -142,9 +169,8 @@ function CollapsibleNavItem({
         <Icon
           name="expand_less"
           size={14}
-          className={`pointer-events-none transition-transform duration-200 ${expanded ? "rotate-0" : "rotate-180"} ${
-            isActive ? "text-black" : "text-black/60"
-          }`}
+          className={`pointer-events-none transition-transform duration-200 ${expanded ? "rotate-0" : "rotate-180"} ${isActive ? "text-black" : "text-black/60"
+            }`}
         />
       </button>
 
@@ -174,8 +200,6 @@ interface SidebarProps {
 }
 
 export function Sidebar({ activeNavLabel }: SidebarProps) {
-  // Single source of truth for all expand/collapse state — lives in Sidebar,
-  // never resets when child components re-render or remount.
   const [expandedItems, setExpandedItems] = useState<Set<string>>(
     () => getInitialExpanded(activeNavLabel)
   );
@@ -241,8 +265,9 @@ export function Sidebar({ activeNavLabel }: SidebarProps) {
         </nav>
       </div>
 
-      {/* Bottom */}
-      <div className="px-4 pb-4">
+      {/* Bottom — FAB + Settings */}
+      <div className="px-4 pb-4 space-y-2">
+        <SpeedDial actions={FAB_ACTIONS} />
         <a
           href="#"
           className="flex items-center gap-3 px-2 py-1.5 rounded-lg text-black/40 hover:text-black/65 transition-colors"
@@ -251,6 +276,7 @@ export function Sidebar({ activeNavLabel }: SidebarProps) {
           <span className="text-sm font-normal">Settings</span>
         </a>
       </div>
+
     </aside>
   );
 }

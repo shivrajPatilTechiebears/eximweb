@@ -156,15 +156,10 @@ export default function TestSamplePage() {
     },
   ];
   return (
-    <AppShell
-      title="Test sample"
-      userName="Shivam Chaudhari"
-      userRole="Purchase order"
-      activeNavLabel="Test sample"
-    >
-      <main className="p-lg space-y-lg flex-1 overflow-x-hidden">
+    <AppShell title="Test Samples">
+      <main className="p-6 space-y-5 flex-1 overflow-x-hidden">
         {/* Metric Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-md">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {METRICS.map((metric) => (
             <MetricCard key={metric.title} {...metric} />
           ))}
@@ -178,7 +173,13 @@ export default function TestSamplePage() {
             <>
               <SearchBar />
               {TABLE_FILTERS.map((f) => (
-                <FilterDropdown key={f.label} icon={f.icon} label={f.label} />
+                <FilterDropdown
+                  key={f.label}
+                  label={f.label}
+                  options={[]}
+                  active={new Set()}
+                  onChange={() => {}}
+                />
               ))}
               <ColumnVisibilitySelector
                 columns={COLUMNS}

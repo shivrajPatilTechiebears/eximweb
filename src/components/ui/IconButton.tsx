@@ -28,7 +28,7 @@ export function IconButton({
       variant={tone === "danger" ? "icon-danger" : "icon"}
       title={label}
       aria-label={label}
-      className={`p-1 rounded hover:bg-surface-container-high ${toneStyles[tone]}${className ? ` ${className}` : ""}`}
+      className={`p-1 rounded hover:bg-gray-100 ${toneStyles[tone]}${className ? ` ${className}` : ""}`}
       {...props}
     >
       <Icon name={icon} className="text-sm" />

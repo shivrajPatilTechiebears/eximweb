@@ -1,38 +1,41 @@
 interface PaginationProps {
   current: number;
-  total: number;
   totalPages: number;
+  onPageChange?: (page: number) => void;
 }
 
-export function Pagination({ current, total, totalPages }: PaginationProps) {
+export function Pagination({ current, totalPages, onPageChange }: PaginationProps) {
   return (
-    <div className="px-4 py-2 flex items-center justify-between bg-white border-t border-outline-variant">
-      <p className="text-[11px] text-on-surface-variant">
-        Showing {current} of {total}
-      </p>
-      <div className="flex items-center gap-1">
+    <div className="flex items-center gap-1">
+      <button
+        onClick={() => onPageChange?.(current - 1)}
+        disabled={current === 1}
+        className="h-7 px-2.5 text-xs font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+      >
+        Prev
+      </button>
+
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
         <button
-          className="h-6 px-2 text-[10px] border border-outline-variant rounded hover:bg-surface-container-low disabled:opacity-50"
-          disabled={current === 1}
+          key={page}
+          onClick={() => onPageChange?.(page)}
+          className={
+            page === current
+              ? "h-7 w-7 text-xs font-bold rounded-lg text-white bg-gradient-to-br from-primary to-surface-tint shadow-sm"
+              : "h-7 w-7 text-xs font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+          }
         >
-          Prev
+          {page}
         </button>
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-          <button
-            key={page}
-            className={
-              page === current
-                ? "h-6 w-6 text-[10px] bg-primary-container text-white font-bold rounded"
-                : "h-6 w-6 text-[10px] border border-outline-variant rounded hover:bg-surface-container-low"
-            }
-          >
-            {page}
-          </button>
-        ))}
-        <button className="h-6 px-2 text-[10px] border border-outline-variant rounded hover:bg-surface-container-low">
-          Next
-        </button>
-      </div>
+      ))}
+
+      <button
+        onClick={() => onPageChange?.(current + 1)}
+        disabled={current === totalPages}
+        className="h-7 px-2.5 text-xs font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+      >
+        Next
+      </button>
     </div>
   );
 }

@@ -2,6 +2,19 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { Icon } from "@/components/ui/Icon";
 
+// ─── Standalone back button ────────────────────────────────────────────────────
+
+interface BackButtonProps { href: string; label?: string }
+
+export function BackButton({ href, label = "Go back" }: BackButtonProps) {
+  return (
+    <Link href={href} aria-label={label} title={label}
+      className="w-7 h-7 rounded-lg bg-gradient-to-br from-app-bg-1 to-app-bg-3 shadow-sm hover:shadow-md flex items-center justify-center transition-all shrink-0">
+      <Icon name="arrow_back" size={14} className="text-primary" />
+    </Link>
+  );
+}
+
 interface PageHeaderProps {
   title: string;
   description?: string;
@@ -27,9 +40,9 @@ export function PageHeader({
             href={backHref}
             aria-label={backLabel}
             title={backLabel}
-            className="w-7 h-7 bg-primary-container text-on-primary rounded flex items-center justify-center hover:opacity-90 transition-opacity shrink-0"
+            className="w-7 h-7 rounded-lg bg-gradient-to-br from-app-bg-1 to-app-bg-3 shadow-sm hover:shadow-md flex items-center justify-center transition-all shrink-0"
           >
-            <Icon name="arrow_back" className="text-sm" />
+            <Icon name="arrow_back" size={14} className="text-primary" />
           </Link>
         )}
         <div className="min-w-0">
@@ -39,7 +52,7 @@ export function PageHeader({
             </h3>
             {meta && (
               <>
-                <div className="hidden sm:block h-5 w-px bg-outline-variant" />
+                <div className="hidden sm:block h-5 w-px bg-gray-200" />
                 <span className="hidden sm:block text-body-sm text-on-surface-variant truncate">
                   {meta}
                 </span>

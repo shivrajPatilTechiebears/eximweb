@@ -20,7 +20,7 @@ export function Tabs({ items, defaultActiveId }: TabsProps) {
   return (
     <div className="flex flex-col">
       {/* Tab bar */}
-      <div className="flex border-b border-outline-variant/30 mb-2 gap-6">
+      <div className="flex border-b border-gray-200 mb-2 gap-6">
         {items.map((tab) => (
           <button
             key={tab.id}
@@ -28,7 +28,7 @@ export function Tabs({ items, defaultActiveId }: TabsProps) {
             className={
               activeId === tab.id
                 ? "px-1 py-1.5 text-primary border-b-2 border-primary font-bold text-xs uppercase tracking-wider"
-                : "px-1 py-1.5 text-on-surface-variant hover:text-primary transition-colors text-xs uppercase tracking-wider"
+                : "px-1 py-1.5 text-gray-400 hover:text-primary transition-colors text-xs uppercase tracking-wider"
             }
           >
             {tab.label}

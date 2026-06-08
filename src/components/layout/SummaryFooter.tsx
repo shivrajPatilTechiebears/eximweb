@@ -27,13 +27,13 @@ export function SummaryFooter({
   total,
 }: SummaryFooterProps) {
   return (
-    <footer className="border-t border-outline-variant bg-surface-container-low px-4 py-2 flex flex-wrap items-center justify-between gap-3">
+    <footer className="border-t border-gray-100 bg-white/80 backdrop-blur-sm px-4 py-2 flex flex-wrap items-center justify-between gap-3">
       <SummaryGroup items={leftItems} />
       <div className="flex flex-wrap gap-x-4 gap-y-1 items-center">
         <SummaryGroup items={rightItems} />
         {total && (
           <>
-            <div className="hidden sm:block h-4 w-px bg-outline-variant mx-1" />
+            <div className="hidden sm:block h-4 w-px bg-gray-200 mx-1" />
             <span className="text-body-sm font-bold text-primary">
               {total.label}: {total.value}
             </span>

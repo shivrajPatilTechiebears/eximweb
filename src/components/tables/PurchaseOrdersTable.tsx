@@ -2,7 +2,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Icon } from "@/components/ui/Icon";
-import { Table, type TableColumn } from "@/components/ui/Table";
+import { type TableColumn } from "@/components/ui/Table";
+import { DataTable } from "@/components/table/DataTable";
 import { TimeframeToggle } from "@/components/ui/TimeframeToggle";
 import { DateRangeDropdown } from "@/components/ui/DateRangeDropdown";
 import { FilterDropdown } from "@/components/ui/FilterDropdown";
@@ -167,11 +168,43 @@ export function PurchaseOrdersTable() {
   // ── Render ─────────────────────────────────────────────────────────────────
 
   return (
-    <section className="space-y-4">
-      {/* Title + controls */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold text-gray-900">Purchase Orders</h2>
-        <div className="flex items-center gap-3">
+    <DataTable
+      title="Purchase Orders"
+      columns={columns}
+      data={filteredOrders}
+      emptyMessage="No orders match the current filters."
+      rowStyle={(row, i) => ({
+        backgroundColor: deleteId === row.id
+          ? "var(--color-row-danger)"
+          : i % 2 === 0
+          ? "#ffffff"
+          : "var(--color-row-alt)",
+      })}
+      expandedRow={(row) =>
+        deleteId === row.id ? (
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-red-700 font-medium">
+              Delete <strong>{row.id}</strong>? This cannot be undone.
+            </span>
+            <div className="flex gap-2">
+              <button
+                onClick={() => handleDelete(row.id)}
+                className="px-3 py-1 bg-red-500 text-white text-xs font-semibold rounded-lg hover:bg-red-600 transition-colors"
+              >
+                Confirm
+              </button>
+              <button
+                onClick={() => setDeleteId(null)}
+                className="px-3 py-1 bg-white text-gray-700 text-xs font-semibold rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : null
+      }
+      headerActions={
+        <>
           <TimeframeToggle value={timeframeOn} onChange={setTimeframeOn} />
           <DateRangeDropdown
             value={selectedRange}
@@ -189,44 +222,8 @@ export function PurchaseOrdersTable() {
               </span>
             )}
           />
-        </div>
-      </div>
-
-      <Table
-        columns={columns}
-        data={filteredOrders}
-        emptyMessage="No orders match the current filters."
-        rowStyle={(row, i) => ({
-          backgroundColor: deleteId === row.id
-            ? "var(--color-row-danger)"
-            : i % 2 === 0
-            ? "#ffffff"
-            : "var(--color-row-alt)",
-        })}
-        expandedRow={(row) =>
-          deleteId === row.id ? (
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-red-700 font-medium">
-                Delete <strong>{row.id}</strong>? This cannot be undone.
-              </span>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleDelete(row.id)}
-                  className="px-3 py-1 bg-red-500 text-white text-xs font-semibold rounded-lg hover:bg-red-600 transition-colors"
-                >
-                  Confirm
-                </button>
-                <button
-                  onClick={() => setDeleteId(null)}
-                  className="px-3 py-1 bg-white text-gray-700 text-xs font-semibold rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          ) : null
-        }
-      />
-    </section>
+        </>
+      }
+    />
   );
 }
