@@ -1,0 +1,112 @@
+@theme {
+  /* Brand Colors */
+  --color-primary: #240713;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #3d1b28;
+  --color-on-primary-container: #b0808f;
+  --color-primary-fixed: #ffd9e3;
+  --color-primary-fixed-dim: #eeb8c9;
+  --color-on-primary-fixed: #31111d;
+  --color-on-primary-fixed-variant: #633b49;
+  --color-inverse-primary: #eeb8c9;
+
+  --color-secondary: #006c49;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #6cf8bb;
+  --color-on-secondary-container: #00714d;
+  --color-secondary-fixed: #6ffbbe;
+  --color-secondary-fixed-dim: #4edea3;
+  --color-on-secondary-fixed: #002113;
+  --color-on-secondary-fixed-variant: #005236;
+
+  --color-tertiary: #001605;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #0f2c15;
+  --color-on-tertiary-container: #759576;
+  --color-tertiary-fixed: #c9ecc8;
+  --color-tertiary-fixed-dim: #adcfad;
+  --color-on-tertiary-fixed: #04210b;
+  --color-on-tertiary-fixed-variant: #304d33;
+
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+
+  /* Surface / Background */
+  --color-background: #f8f9ff;
+  --color-on-background: #0b1c30;
+  --color-surface: #f8f9ff;
+  --color-on-surface: #0b1c30;
+  --color-surface-variant: #d3e4fe;
+  --color-on-surface-variant: #504447;
+  --color-surface-tint: #7d5261;
+  --color-surface-dim: #cbdbf5;
+  --color-surface-bright: #f8f9ff;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #eff4ff;
+  --color-surface-container: #e5eeff;
+  --color-surface-container-high: #dce9ff;
+  --color-surface-container-highest: #d3e4fe;
+
+  --color-inverse-surface: #213145;
+  --color-inverse-on-surface: #eaf1ff;
+  --color-outline: #827377;
+  --color-outline-variant: #d3c2c6;
+
+  /* Border Radius */
+  --radius: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-full: 9999px;
+
+  /* Custom Spacing Tokens */
+  --spacing-xs: 2px;
+  --spacing-sm: 6px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 20px;
+  --spacing-gutter: 12px;
+  --spacing-sidebar-width: 240px;
+
+  /* Font Families */
+  --font-headline-lg-mobile: var(--font-plus-jakarta-sans), sans-serif;
+  --font-display-lg: var(--font-plus-jakarta-sans), sans-serif;
+  --font-headline-md: var(--font-plus-jakarta-sans), sans-serif;
+  --font-body-sm: var(--font-plus-jakarta-sans), sans-serif;
+  --font-body-md: var(--font-plus-jakarta-sans), sans-serif;
+  --font-label-caps: var(--font-plus-jakarta-sans), sans-serif;
+  --font-table-header: var(--font-plus-jakarta-sans), sans-serif;
+
+  /* ── Dashboard semantic tokens ───────────────────────────────────────────── */
+
+  /* Table */
+  --color-table-header:  #F0F0F0;   /* bg-table-header  */
+  --color-row-alt:       #F6F6F6;   /* bg-row-alt       */
+  --color-row-danger:    #fef2f2;   /* bg-row-danger    */
+
+  /* KPI cards */
+  --color-card:          rgb(255 255 255 / 0.75); /* bg-card */
+
+  /* PO Status chart card gradient stops */
+  --color-chart-from:    #F6EAF4;   /* bg-chart-from    */
+  --color-chart-to:      #FCF3F2;   /* bg-chart-to      */
+
+  /* App background gradient stops */
+  --color-app-bg-1:      #f5d8cc;
+  --color-app-bg-2:      #f9e5db;
+  --color-app-bg-3:      #fdf0ea;
+  --color-app-bg-4:      #fef9f6;
+
+  /* Chart hatch pattern fills */
+  --color-hatch-line:    #d1d5db;   /* bg-hatch-line    */
+  --color-hatch-fill:    #f3f4f6;   /* bg-hatch-fill    */
+
+  /* Sidebar / header glass border */
+  --color-glass-border:  rgb(255 255 255 / 0.60); /* border-glass-border */
+
+  /* ── Background-image tokens (reference via var() in CSS/inline styles) ── */
+  --app-bg:          linear-gradient(to top right, #f5d8cc 0%, #f9e5db 30%, #fdf0ea 65%, #fef9f6 100%);
+  --chart-card-bg:   linear-gradient(180deg, #F6EAF4 0%, #FCF3F2 100%);
+  --hatch-pattern:   repeating-linear-gradient(135deg, #d1d5db 0px, #d1d5db 1.5px, transparent 1.5px, transparent 7px);
+}
