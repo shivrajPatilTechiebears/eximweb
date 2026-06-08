@@ -337,24 +337,18 @@ export default function EditPurchaseOrderPage() {
               <p className="text-[9px] text-on-surface-variant truncate w-24">{row.imgDesc}</p>
             </div>
             <span
-              className="material-symbols-outlined text-sm cursor-pointer hover:text-primary transition-colors ml-auto"
-              onClick={() => {
-                setSelectedItemId(row.id);
-                setIsGalleryOpen(true);
-              }}
+              className="cursor-pointer hover:text-primary transition-colors ml-auto"
+              onClick={() => { setSelectedItemId(row.id); setIsGalleryOpen(true); }}
             >
-              add_photo_alternate
+              <Icon name="add_photo_alternate" size={16} />
             </span>
           </div>
         ) : (
           <span
-            className="material-symbols-outlined text-sm cursor-pointer hover:text-primary transition-colors"
-            onClick={() => {
-              setSelectedItemId(row.id);
-              setIsGalleryOpen(true);
-            }}
+            className="cursor-pointer hover:text-primary transition-colors"
+            onClick={() => { setSelectedItemId(row.id); setIsGalleryOpen(true); }}
           >
-            add_photo_alternate
+            <Icon name="add_photo_alternate" size={16} />
           </span>
         ),
     },
@@ -365,10 +359,10 @@ export default function EditPurchaseOrderPage() {
       cellClass: "text-center text-error",
       body: (row) => (
         <span
-          className="material-symbols-outlined text-sm cursor-pointer hover:opacity-70"
+          className="cursor-pointer hover:opacity-70"
           onClick={() => deleteItem(row.id)}
         >
-          delete
+          <Icon name="delete" size={16} />
         </span>
       ),
     },
@@ -434,7 +428,7 @@ export default function EditPurchaseOrderPage() {
               onClick={addItem}
               className="bg-primary text-white px-2 py-1 rounded text-[11px] font-bold flex items-center gap-1 hover:bg-primary/90 transition-colors"
             >
-              <span className="material-symbols-outlined text-sm">add_circle</span> Add Item
+              <Icon name="add_circle" size={16} /> Add Item
             </button>
           </div>
           <CompactTable

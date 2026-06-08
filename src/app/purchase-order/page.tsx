@@ -9,6 +9,7 @@ import { Pagination } from "@/components/table/Pagination";
 import { SearchBar } from "@/components/ui/SearchBar";
 import { FilterDropdown } from "@/components/ui/FilterDropdown";
 import { Button } from "@/components/ui/Button";
+import { Icon } from "@/components/ui/Icon";
 import { Badge } from "@/components/ui/Badge";
 import { ColumnVisibilitySelector } from "@/components/ui/ColumnVisibilitySelector";
 
@@ -208,29 +209,29 @@ export default function PurchaseOrderListPage() {
             <>
               <Link href="/purchase-order/view">
                 <Button variant="icon" title="View">
-                  <span className="material-symbols-outlined">visibility</span>
+                  <Icon name="visibility" size={18} />
                 </Button>
               </Link>
               <Link href="/purchase-order/details">
                 <Button variant="icon" title="Details">
-                  <span className="material-symbols-outlined">info</span>
+                  <Icon name="info" size={18} />
                 </Button>
               </Link>
               <Link href="/purchase-order/edit">
                 <Button variant="icon" title="Edit">
-                  <span className="material-symbols-outlined">edit</span>
+                  <Icon name="edit" size={18} />
                 </Button>
               </Link>
               <Button variant="icon-danger" title="Delete">
-                <span className="material-symbols-outlined">delete</span>
+                <Icon name="delete" size={18} />
               </Button>
             </>
           ) : (
             <>
-              <span className="material-symbols-outlined opacity-30">visibility</span>
-              <span className="material-symbols-outlined opacity-30">info</span>
-              <span className="material-symbols-outlined opacity-30">edit</span>
-              <span className="material-symbols-outlined opacity-30">delete</span>
+              <Icon name="visibility" size={18} className="opacity-30" />
+              <Icon name="info" size={18} className="opacity-30" />
+              <Icon name="edit" size={18} className="opacity-30" />
+              <Icon name="delete" size={18} className="opacity-30" />
             </>
           )}
         </div>

@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { Modal } from "./Modal";
 import { Button } from "./Button";
+import { Icon } from "./Icon";
 
 interface GalleryImage {
   id: string;
@@ -146,9 +147,7 @@ export function ImageGalleryModal({ isOpen, onClose, onSelectImage }: ImageGalle
       <div className="p-4 space-y-2">
         {/* Search Bar */}
         <div className="relative">
-          <span className="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-outline text-[18px]">
-            search
-          </span>
+          <Icon name="search" size={18} className="absolute left-2 top-1/2 -translate-y-1/2 text-outline" />
           <input
             className="w-full h-[36px] bg-background border border-outline-variant rounded-md pl-9 pr-4 text-body-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
             placeholder="Search"
@@ -161,19 +160,19 @@ export function ImageGalleryModal({ isOpen, onClose, onSelectImage }: ImageGalle
         {/* Filters Row */}
         <div className="flex flex-wrap gap-2">
           <button className="flex items-center gap-1 px-2 py-1 border border-outline-variant rounded hover:bg-surface-container transition-colors active:scale-95">
-            <span className="material-symbols-outlined text-primary text-[18px]">calendar_today</span>
+            <Icon name="calendar_today" size={18} className="text-primary" />
             <span className="text-body-sm font-semibold">Last 30 Days</span>
-            <span className="material-symbols-outlined text-outline text-[18px]">expand_more</span>
+            <Icon name="expand_more" size={18} className="text-outline" />
           </button>
           <button className="flex items-center gap-1 px-2 py-1 border border-outline-variant rounded hover:bg-surface-container transition-colors active:scale-95">
-            <span className="material-symbols-outlined text-primary text-[18px]">sell</span>
+            <Icon name="sell" size={18} className="text-primary" />
             <span className="text-body-sm font-semibold">Tags</span>
-            <span className="material-symbols-outlined text-outline text-[18px]">expand_more</span>
+            <Icon name="expand_more" size={18} className="text-outline" />
           </button>
           <button className="flex items-center gap-1 px-2 py-1 border border-outline-variant rounded hover:bg-surface-container transition-colors active:scale-95">
-            <span className="material-symbols-outlined text-primary text-[18px]">person</span>
+            <Icon name="person" size={18} className="text-primary" />
             <span className="text-body-sm font-semibold">Created by</span>
-            <span className="material-symbols-outlined text-outline text-[18px]">expand_more</span>
+            <Icon name="expand_more" size={18} className="text-outline" />
           </button>
           <div className="ml-auto self-center text-body-sm text-on-surface-variant">
             Showing <span className="font-bold">{filteredImages.length}</span> records out of{" "}

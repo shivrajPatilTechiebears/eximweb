@@ -301,7 +301,7 @@ export default function ViewPurchaseOrderPage() {
         {/* Notes Section */}
         <div className="bg-surface-container-lowest rounded-lg border border-outline-variant/30 p-3 shadow-sm">
           <label className="font-label-caps text-label-caps text-on-surface-variant uppercase mb-1 flex items-center gap-1">
-            Notes* <span className="material-symbols-outlined text-[10px]">info</span>
+            Notes* <Icon name="info" size={10} />
           </label>
           <div className="border border-outline-variant rounded p-2 bg-surface-container-lowest min-h-[60px] text-[12px] text-on-surface-variant italic">
             {FORM_DATA.notes}
@@ -315,7 +315,7 @@ export default function ViewPurchaseOrderPage() {
         <div className="flex justify-end pt-2">
           <Link href="/purchase-order">
             <FormFooterButton variant="primary">
-              <span className="material-symbols-outlined text-[16px]">close</span>
+              <Icon name="close" size={16} />
               Close
             </FormFooterButton>
           </Link>

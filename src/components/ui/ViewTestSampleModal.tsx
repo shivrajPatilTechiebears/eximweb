@@ -2,6 +2,7 @@
 "use client";
 import { Modal } from "./Modal";
 import { Button } from "./Button";
+import { Icon } from "./Icon";
 
 interface TestSampleDetails {
   poNo: string;
@@ -145,9 +146,7 @@ export function ViewTestSampleModal({ isOpen, onClose, sampleDetails = DEFAULT_S
                 {sampleDetails.documents.map((doc, index) => (
                   <div key={index} className="flex flex-col items-center">
                     <div className="w-16 h-16 bg-on-surface-variant/20 rounded flex items-center justify-center text-on-surface-variant hover:bg-on-surface-variant/30 transition-colors cursor-pointer">
-                      <span className="material-symbols-outlined text-[32px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-                        picture_as_pdf
-                      </span>
+                      <Icon name="picture_as_pdf" size={32} />
                     </div>
                     <p className="font-label-caps text-[9px] text-center mt-1 text-on-surface-variant uppercase">
                       {doc.label}
@@ -168,9 +167,7 @@ export function ViewTestSampleModal({ isOpen, onClose, sampleDetails = DEFAULT_S
             {sampleDetails.testReports.map((report, index) => (
               <div key={index} className="flex flex-col items-center">
                 <div className="w-20 h-20 bg-on-surface-variant/20 rounded flex items-center justify-center text-on-surface-variant hover:bg-on-surface-variant/30 transition-colors cursor-pointer border border-outline-variant/30 shadow-inner">
-                  <span className="material-symbols-outlined text-[36px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-                    picture_as_pdf
-                  </span>
+                  <Icon name="picture_as_pdf" size={36} />
                 </div>
                 <p className="font-label-caps text-[10px] text-center mt-1 text-on-surface-variant">
                   {report.label}

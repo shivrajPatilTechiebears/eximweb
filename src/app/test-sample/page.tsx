@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { ViewTestSampleModal } from "@/components/ui/ViewTestSampleModal";
 import { ColumnVisibilitySelector } from "@/components/ui/ColumnVisibilitySelector";
+import { Icon } from "@/components/ui/Icon";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -148,7 +149,7 @@ export default function TestSamplePage() {
       body: () => (
         <div className="flex items-center justify-center gap-1.5">
           <Button variant="icon" title="View" onClick={() => setIsModalOpen(true)}>
-            <span className="material-symbols-outlined">visibility</span>
+            <Icon name="visibility" size={18} />
           </Button>
         </div>
       ),

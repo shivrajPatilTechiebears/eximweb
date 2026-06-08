@@ -9,6 +9,7 @@ import { Tabs, type TabItem } from "@/components/ui/Tabs";
 import { CompactTable, type CompactTableColumn } from "@/components/table/CompactTable";
 import { FormFooter, FormFooterButton } from "@/components/layout/FormFooter";
 import { ImageGalleryModal } from "@/components/ui/ImageGalleryModal";
+import { Icon } from "@/components/ui/Icon";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -100,7 +101,7 @@ const SCHEDULE_COLUMNS: CompactTableColumn<ScheduleRow>[] = [
     header: "",
     headerClass: "w-16",
     cellClass: "text-center",
-    body: () => <span className="material-symbols-outlined text-sm text-outline cursor-pointer">edit</span>,
+    body: () => <Icon name="edit" size={16} className="text-outline cursor-pointer" />,
   },
 ];
 
@@ -114,7 +115,7 @@ function ScheduleTable() {
           Logistics Delivery Plan
         </span>
         <button className="text-primary-container text-[11px] font-bold flex items-center gap-1 hover:underline">
-          <span className="material-symbols-outlined text-xs">add</span> Add Schedule
+          <Icon name="add" size={14} /> Add Schedule
         </button>
       </div>
       <CompactTable columns={SCHEDULE_COLUMNS} data={SCHEDULE_ROWS} rowKey={(row) => row.id} />
@@ -178,13 +179,10 @@ export default function CreatePurchaseOrderPage() {
       cellClass: "text-center text-secondary",
       body: (row) => (
         <span
-          className="material-symbols-outlined text-sm cursor-pointer hover:text-primary transition-colors"
-          onClick={() => {
-            setSelectedItemId(row.id);
-            setIsGalleryOpen(true);
-          }}
+          className="cursor-pointer hover:text-primary transition-colors"
+          onClick={() => { setSelectedItemId(row.id); setIsGalleryOpen(true); }}
         >
-          attachment
+          <Icon name="attachment" size={16} />
         </span>
       ),
     },
@@ -194,11 +192,8 @@ export default function CreatePurchaseOrderPage() {
       headerClass: "w-10",
       cellClass: "text-center text-error",
       body: (row) => (
-        <span
-          className="material-symbols-outlined text-sm cursor-pointer hover:opacity-70"
-          onClick={() => deleteItem(row.id)}
-        >
-          delete
+        <span className="cursor-pointer hover:opacity-70" onClick={() => deleteItem(row.id)}>
+          <Icon name="delete" size={16} />
         </span>
       ),
     },
@@ -223,7 +218,7 @@ export default function CreatePurchaseOrderPage() {
           <div className="flex items-center gap-2">
             <Link href="/purchase-order">
               <button className="w-6 h-6 bg-primary-container text-on-primary-container rounded flex items-center justify-center hover:opacity-90 transition-opacity shrink-0">
-                <span className="material-symbols-outlined text-sm">arrow_back</span>
+                <Icon name="arrow_back" size={16} />
               </button>
             </Link>
             <div>
@@ -263,7 +258,7 @@ export default function CreatePurchaseOrderPage() {
               onClick={addItem}
               className="bg-primary text-white px-2 py-1 rounded text-[11px] font-bold flex items-center gap-1 hover:bg-primary/90 transition-colors"
             >
-              <span className="material-symbols-outlined text-sm">add_circle</span> Add Item
+              <Icon name="add_circle" size={16} /> Add Item
             </button>
           </div>
           <CompactTable

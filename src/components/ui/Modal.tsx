@@ -1,5 +1,6 @@
 "use client";
 import { ReactNode, useEffect } from "react";
+import { Icon } from "@/components/ui/Icon";
 
 interface ModalProps {
   isOpen: boolean;
@@ -49,7 +50,7 @@ export function Modal({ isOpen, onClose, title, children, footer, maxWidth = "2x
             onClick={onClose}
             className="text-on-primary-container hover:opacity-80 transition-opacity active:scale-95"
           >
-            <span className="material-symbols-outlined text-[18px]">close</span>
+            <Icon name="close" size={18} />
           </button>
         </header>
 

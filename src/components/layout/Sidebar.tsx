@@ -116,6 +116,8 @@ function CollapsibleNavItem({
         label={item.label}
         href={item.href}
         active={item.label === activeLabel}
+        iconSize={16}
+        textSize="text-[13px]"
       />
     );
   }
@@ -131,21 +133,23 @@ function CollapsibleNavItem({
       >
         <Icon
           name={item.icon}
-          className={`text-[12px] shrink-0 ${isActive ? "text-black" : "text-black/60"}`}
+          size={16}
+          className={`shrink-0 pointer-events-none ${isActive ? "text-black" : "text-black/60"}`}
         />
-        <span className={`text-[12px] flex-1 leading-none text-left ${isActive ? "font-bold" : "font-normal"}`}>
+        <span className={`text-[13px] flex-1 leading-none text-left pointer-events-none ${isActive ? "font-bold" : "font-normal"}`}>
           {item.label}
         </span>
         <Icon
           name="expand_less"
-          className={`text-[12px] transition-transform duration-200 ${expanded ? "rotate-0" : "rotate-180"} ${
+          size={14}
+          className={`pointer-events-none transition-transform duration-200 ${expanded ? "rotate-0" : "rotate-180"} ${
             isActive ? "text-black" : "text-black/60"
           }`}
         />
       </button>
 
       {expanded && (
-        <div className="ml-[22px] mt-0.5 pb-1 border-l border-black/10 space-y-0.5">
+        <div className="ml-[22px] mt-1 pb-1 border-l border-black/10 space-y-1.5">
           {item.children!.map((child) => (
             <div key={child.label} className="relative pl-4">
               <div className="absolute left-0 top-[50%] w-3.5 h-px bg-black/10 -translate-y-px" />
@@ -220,7 +224,7 @@ export function Sidebar({ activeNavLabel }: SidebarProps) {
               <p className="text-[10px] font-semibold text-black/35 uppercase tracking-widest mb-1.5 px-2">
                 {section.label}
               </p>
-              <ul className="space-y-0.5">
+              <ul className="space-y-1.5">
                 {section.items.map((item) => (
                   <li key={item.label}>
                     <CollapsibleNavItem

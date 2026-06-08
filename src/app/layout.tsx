@@ -21,16 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={plusJakartaSans.variable}>
-      <head>
-        {/* Establish early connections to Google Fonts servers */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {/* display=block: icons are invisible during load instead of showing raw text names */}
-        <link
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block"
-          rel="stylesheet"
-        />
-      </head>
+      <head></head>
       <body>{children}</body>
     </html>
   );

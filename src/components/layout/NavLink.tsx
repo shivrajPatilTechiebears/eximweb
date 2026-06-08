@@ -6,9 +6,11 @@ interface NavLinkProps {
   label: string;
   href: string;
   active?: boolean;
+  iconSize?: number;
+  textSize?: string;
 }
 
-export function NavLink({ icon, label, href, active = false }: NavLinkProps) {
+export function NavLink({ icon, label, href, active = false, iconSize = 14, textSize = "text-[12px]" }: NavLinkProps) {
   return (
     <Link
       href={href}
@@ -20,9 +22,10 @@ export function NavLink({ icon, label, href, active = false }: NavLinkProps) {
     >
       <Icon
         name={icon}
-        className={`text-[12px] shrink-0 ${active ? "text-black" : "text-black/60"}`}
+        size={iconSize}
+        className={`shrink-0 ${active ? "text-black" : "text-black/60"}`}
       />
-      <span className={`text-[12px] leading-none ${active ? "font-bold" : "font-normal"}`}>
+      <span className={`${textSize} leading-none ${active ? "font-bold" : "font-normal"}`}>
         {label}
       </span>
     </Link>

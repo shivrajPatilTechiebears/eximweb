@@ -1,3 +1,5 @@
+import { Icon } from "@/components/ui/Icon";
+
 interface SearchBarProps {
   placeholder?: string;
   className?: string;
@@ -16,9 +18,7 @@ export function SearchBar({
         placeholder={placeholder}
         type="text"
       />
-      <span className="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-base">
-        search
-      </span>
+      <Icon name="search" size={16} className="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant" />
     </div>
   );
 }
