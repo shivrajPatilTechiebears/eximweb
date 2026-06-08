@@ -79,6 +79,41 @@
   --font-body-md: var(--font-plus-jakarta-sans), sans-serif;
   --font-label-caps: var(--font-plus-jakarta-sans), sans-serif;
   --font-table-header: var(--font-plus-jakarta-sans), sans-serif;
+
+  /* ── Dashboard design tokens ──────────────────────────────────────────────
+     Tailwind v4 maps --color-* → bg-*, text-*, border-*, ring-* utilities.
+     e.g. --color-table-header → bg-table-header / text-table-header
+  ───────────────────────────────────────────────────────────────────────── */
+
+  /* Table */
+  --color-table-header:  #F0F0F0;   /* bg-table-header  */
+  --color-row-alt:       #F6F6F6;   /* bg-row-alt       */
+  --color-row-danger:    #fef2f2;   /* bg-row-danger    */
+
+  /* KPI cards */
+  --color-card:          rgb(255 255 255 / 0.75); /* bg-card */
+
+  /* PO Status chart card gradient stops */
+  --color-chart-from:    #F6EAF4;   /* bg-chart-from    */
+  --color-chart-to:      #FCF3F2;   /* bg-chart-to      */
+
+  /* App background gradient stops */
+  --color-app-bg-1:      #f5d8cc;
+  --color-app-bg-2:      #f9e5db;
+  --color-app-bg-3:      #fdf0ea;
+  --color-app-bg-4:      #fef9f6;
+
+  /* Chart hatch pattern fills */
+  --color-hatch-line:    #d1d5db;   /* bg-hatch-line    */
+  --color-hatch-fill:    #f3f4f6;   /* bg-hatch-fill    */
+
+  /* Sidebar / header glass border */
+  --color-glass-border:  rgb(255 255 255 / 0.60); /* border-glass-border */
+
+  /* ── Background-image tokens (reference via var() in CSS/inline styles) ── */
+  --app-bg: linear-gradient(to top right, #f5d8cc 0%, #f9e5db 30%, #fdf0ea 65%, #fef9f6 100%);
+  --chart-card-bg: linear-gradient(180deg, #F6EAF4 0%, #FCF3F2 100%);
+  --hatch-pattern: repeating-linear-gradient(135deg, #d1d5db 0px, #d1d5db 1.5px, transparent 1.5px, transparent 7px);
 }
 
 /* ── Custom text-size utilities ─────────────────────────────────────────── */
@@ -123,8 +158,10 @@
 /* ── Global base ──────────────────────────────────────────────────────────── */
 body {
   font-family: var(--font-plus-jakarta-sans), sans-serif;
-  background-color: var(--color-background);
   color: var(--color-on-background);
+  background-image: var(--app-bg);
+  background-attachment: fixed;
+  min-height: 100vh;
 }
 
 /* ── Material Symbols ─────────────────────────────────────────────────────── */
