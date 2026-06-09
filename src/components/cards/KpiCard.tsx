@@ -38,7 +38,7 @@ export function KpiCard({
   detailsHref = "#",
 }: KpiCardProps) {
   return (
-    <div className={`${bgColor} p-3.5 rounded-2xl border border-white flex flex-col gap-2`}>
+    <div className={`${bgColor} p-3.5 rounded-xl border border-white flex flex-col gap-2`}>
       {/* Icon + See Details */}
       <div className="flex justify-between items-center">
         <div className={`${iconBgColor} p-1.5 rounded-lg`}>

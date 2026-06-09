@@ -183,7 +183,7 @@ export default function ViewPurchaseOrderPage() {
         </div>
 
         {/* Form Fields (Read-only) */}
-        <div className="bg-white/80 rounded-2xl border border-white shadow-sm p-3 shadow-sm">
+        <div className="bg-white/80 rounded-xl border border-white shadow-sm p-3 shadow-sm">
           <div className="grid grid-cols-4 gap-x-3 gap-y-2">
             <FormField label="Po Type*">
               <Input value={FORM_DATA.poType} readOnly />
@@ -221,7 +221,7 @@ export default function ViewPurchaseOrderPage() {
         />
 
         {/* Notes Section */}
-        <div className="bg-white/80 rounded-2xl border border-white shadow-sm p-3 shadow-sm">
+        <div className="bg-white/80 rounded-xl border border-white shadow-sm p-3 shadow-sm">
           <label className="font-label-caps text-label-caps text-on-surface-variant uppercase mb-1 flex items-center gap-1">
             Notes* <Icon name="info" size={10} />
           </label>

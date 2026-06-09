@@ -36,7 +36,7 @@ export function SectionPanel({
 
   return (
     <section
-      className={`bg-white/75 border border-white rounded-2xl overflow-hidden shadow-sm${className ? ` ${className}` : ""}`}
+      className={`bg-white/75 border border-white rounded-xl overflow-hidden shadow-sm${className ? ` ${className}` : ""}`}
     >
       {hasHeader && (
         <div className={headerStyles[tone]}>

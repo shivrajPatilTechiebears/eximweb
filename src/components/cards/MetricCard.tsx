@@ -18,7 +18,7 @@ export function MetricCard({
   iconColor = "text-gray-500",
 }: MetricCardProps) {
   return (
-    <div className="bg-white/75 px-4 py-3 rounded-2xl border border-white shadow-sm hover:shadow-md transition-shadow flex items-center gap-3">
+    <div className="bg-white/75 px-4 py-3 rounded-xl border border-white shadow-sm hover:shadow-md transition-shadow flex items-center gap-3">
       {icon && (
         <div className={`${iconBg} w-9 h-9 rounded-xl flex items-center justify-center shrink-0`}>
           <Icon name={icon} size={18} className={iconColor} />

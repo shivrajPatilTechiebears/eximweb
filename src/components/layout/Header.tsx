@@ -85,7 +85,7 @@ export function Header({ title }: HeaderProps) {
           </button>
 
           {notifOpen && (
-            <div className="absolute right-0 top-12 w-80 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden">
+            <div className="absolute right-0 top-12 w-80 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden">
               <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-bold text-gray-900">Notifications</span>

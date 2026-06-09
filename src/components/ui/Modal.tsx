@@ -40,11 +40,11 @@ export function Modal({ isOpen, onClose, title, children, footer, maxWidth = "2x
       onClick={onClose}
     >
       <div
-        className={`bg-white w-full ${maxWidthClasses[maxWidth]} rounded-2xl shadow-xl flex flex-col overflow-hidden animate-in fade-in zoom-in duration-300`}
+        className={`bg-white w-full ${maxWidthClasses[maxWidth]} rounded-xl shadow-xl flex flex-col overflow-hidden animate-in fade-in zoom-in duration-300`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <header className="bg-gray-900 px-4 py-2 flex justify-between items-center rounded-t-2xl">
+        <header className="bg-gray-900 px-4 py-2 flex justify-between items-center rounded-t-xl">
           <h2 className="text-white font-headline-md text-headline-md font-bold">{title}</h2>
           <button
             onClick={onClose}
