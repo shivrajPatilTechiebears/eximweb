@@ -1,326 +1,422 @@
 "use client";
-import React, { useState, useCallback } from "react";
-import { AppShell } from "@/components/layout/AppShell";
-import { SectionPanel } from "@/components/cards/SectionPanel";
-import { BackButton } from "@/components/layout/PageHeader";
-import { FormField } from "@/components/ui/FormField";
-import { Input } from "@/components/ui/Input";
-import { Select } from "@/components/ui/Select";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
-import { CellInput } from "@/components/ui/CellInput";
+
+import { useState, useEffect, useRef, useCallback } from "react";
+import Link from "next/link";
 import { Icon } from "@/components/ui/Icon";
-import { DataTable } from "@/components/table/DataTable";
-import { type TableColumn } from "@/components/ui/Table";
-import { Tabs, type TabItem } from "@/components/ui/Tabs";
-import { FormFooter, FormFooterButton, type FooterMetric } from "@/components/layout/FormFooter";
 import { ImageGalleryModal } from "@/components/ui/ImageGalleryModal";
-import { handleEnterMoveNext, useTableEnterHandler } from "@/hooks/useFormNavigation";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// ── Nav ────────────────────────────────────────────────────────────────────────
 
-interface SelectField { type: "select"; label: string; options: string[]; defaultValue?: string }
-interface InputField  { type: "input";  label: string; defaultValue?: string }
-type FormFieldDef = SelectField | InputField;
+type SubItem = { label: string; href: string; icon: string };
+type NavItemDef = { label: string; href: string; active: boolean; muted: boolean; sub?: SubItem[] };
+
+const NAV_ITEMS: NavItemDef[] = [
+  { label: "Dashboard", href: "/", active: false, muted: false },
+  { label: "Image Library", href: "/", active: false, muted: false },
+  {
+    label: "Purchase Request", href: "/purchase-request", active: false, muted: false,
+    sub: [
+      { label: "All Requests",   href: "/purchase-request",         icon: "format_list_bulleted" },
+      { label: "Open Requests",  href: "/purchase-request/open",    icon: "pending_actions" },
+      { label: "PR Details",     href: "/purchase-request/details", icon: "description" },
+    ],
+  },
+  {
+    label: "Purchase Order", href: "/purchase-order", active: true, muted: false,
+    sub: [
+      { label: "All Purchase order",      href: "/purchase-order",         icon: "format_list_bulleted" },
+      { label: "Open Purchase order",     href: "/purchase-order/open",    icon: "pending_actions" },
+      { label: "Purchase order details",  href: "/purchase-order/details", icon: "receipt_long" },
+    ],
+  },
+  {
+    label: "Shipments", href: "/shipments", active: false, muted: false,
+    sub: [
+      { label: "All Shipments",       href: "/shipments",           icon: "format_list_bulleted" },
+      { label: "Confirmed Shipments", href: "/shipments/confirmed", icon: "task_alt" },
+      { label: "Intransit Shipment",  href: "/shipments/intransit", icon: "directions_boat" },
+    ],
+  },
+  {
+    label: "Bookings", href: "/bookings", active: false, muted: false,
+    sub: [
+      { label: "All Bookings",       href: "/bookings",           icon: "format_list_bulleted" },
+      { label: "Booking Confirmed",  href: "/bookings/confirmed", icon: "event_available" },
+      { label: "Intransit Bookings", href: "/bookings/intransit", icon: "flight_takeoff" },
+    ],
+  },
+];
+
+function NavItem({ item }: { item: NavItemDef }) {
+  return (
+    <div className="relative group">
+      <Link
+        href={item.href}
+        className={`flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-medium transition-all whitespace-nowrap ${
+          item.active ? "bg-white text-black shadow-sm" : "text-gray-400 hover:text-white hover:bg-white/[0.05]"
+        }`}
+      >
+        {item.label}
+        {item.sub && (
+          <svg className="w-2 h-2 opacity-30 transition-transform duration-150 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M19 9l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" />
+          </svg>
+        )}
+      </Link>
+      {item.sub && (
+        <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2.5 z-[60] opacity-0 -translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-150">
+          <div className="bg-white border border-gray-100 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.12)] p-1.5 min-w-[168px]">
+            {item.sub.map((s) => (
+              <Link key={s.label} href={s.href} className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[11px] text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition-colors">
+                <Icon name={s.icon} size={13} className="shrink-0 text-gray-400" strokeWidth={1.5} />
+                <span className="flex-1">{s.label}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Types & data ───────────────────────────────────────────────────────────────
 
 interface PurchaseItem {
-  id: number;
-  name: string;
-  qty: number;
-  price: string;
-  uom: string;
-  taxCode: string;
-  containers: string;
-  packaging: string;
+  id: number; name: string; qty: number; price: string;
+  uom: string; taxCode: string; containers: string; packaging: string;
 }
 
 interface ScheduleRow {
-  id: number;
-  itemName: string;
-  schedule: string;
-  qty: string;
-  reqDispatch: string;
-  reqDelivery: string;
+  id: number; itemName: string; schedule: string;
+  qty: string; reqDispatch: string; reqDelivery: string;
 }
-
-// ─── Static data ──────────────────────────────────────────────────────────────
 
 const PO_ID = "PO-2024-00139";
 
-const FORM_FIELDS: FormFieldDef[] = [
-  { type: "select", label: "Po Type *",          options: ["Paddler", "Standard"],            defaultValue: "Paddler" },
-  { type: "input",  label: "Truck No *",          defaultValue: "MH-05-1234" },
-  { type: "input",  label: "Driver Details *",    defaultValue: "Shivraj Patil" },
-  { type: "input",  label: "Delivery Locations",  defaultValue: "Pune, maharastra" },
-  { type: "select", label: "Currency *",          options: ["USD", "EUR", "INR"],              defaultValue: "USD" },
-  { type: "select", label: "Shipment Terms",      options: ["EWS", "FOB"],                    defaultValue: "EWS" },
-  { type: "select", label: "Payment Terms",       options: ["After Delivered", "Pre-paid"] },
-  { type: "select", label: "Transporter",         options: ["DHL", "FedEx"] },
+const FORM_FIELDS = [
+  { key: "poType",    label: "PO Type",           type: "select", options: ["Paddler", "Standard"],           defaultValue: "Paddler" },
+  { key: "truckNo",   label: "Truck No",           type: "input",  options: [],                               defaultValue: "MH-05-1234" },
+  { key: "driver",    label: "Driver Details",     type: "input",  options: [],                               defaultValue: "Shivraj Patil" },
+  { key: "delivery",  label: "Delivery Location",  type: "input",  options: [],                               defaultValue: "Pune, Maharashtra" },
+  { key: "currency",  label: "Currency",           type: "select", options: ["USD ($)", "EUR (€)", "INR (₹)"], defaultValue: "USD ($)" },
+  { key: "shipTerm",  label: "Shipment Terms",     type: "select", options: ["EXW - Ex Works", "FOB - Free on Board"], defaultValue: "EXW - Ex Works" },
+  { key: "payTerm",   label: "Payment Terms",      type: "select", options: ["After Delivered", "Pre-paid"],  defaultValue: "" },
+  { key: "transport", label: "Transporter",        type: "select", options: ["DHL", "FedEx"],                 defaultValue: "" },
 ];
 
-const INITIAL_ITEMS: PurchaseItem[] = [
-  { id: 1, name: "Steel-01",  qty: 100, price: "$100", uom: "Kg", taxCode: "GST", containers: "2", packaging: "Box Packaging" },
-  { id: 2, name: "Steel-01",  qty: 100, price: "$100", uom: "Kg", taxCode: "GST", containers: "2", packaging: "Box Packaging" },
-];
+const TABS = ["Schedule", "Shipment", "Test Sample", "Goods Receipt"];
 
-const INITIAL_SCHEDULE: ScheduleRow[] = [
-  { id: 1, itemName: "", schedule: "", qty: "", reqDispatch: "", reqDelivery: "" },
-];
-
-const FOOTER_METRICS: FooterMetric[] = [
-  { label: "Total Qty",    value: "200.00"     },
-  { label: "Net Amount",   value: "$20,000.00" },
-  { label: "Tax Estimate", value: "$1,600.00"  },
-];
-
-// ─── Page ─────────────────────────────────────────────────────────────────────
+// ── Page ───────────────────────────────────────────────────────────────────────
 
 export default function EditPurchaseOrderPage() {
-  const [items, setItems]               = useState<PurchaseItem[]>(INITIAL_ITEMS);
-  const [scheduleRows, setScheduleRows] = useState<ScheduleRow[]>(INITIAL_SCHEDULE);
-  const [isGalleryOpen, setIsGalleryOpen]   = useState(false);
+  const [visible, setVisible] = useState(true);
+  const lastY = useRef(0);
+  const [activeTab, setActiveTab] = useState("Schedule");
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
 
-  const addItem = useCallback(() => {
-    setItems((prev) => [
-      ...prev,
-      { id: prev.length + 1, name: "", qty: 0, price: "", uom: "", taxCode: "", containers: "", packaging: "" },
-    ]);
+  const [items, setItems] = useState<PurchaseItem[]>([
+    { id: 1, name: "Steel-01", qty: 100, price: "$100", uom: "Kg", taxCode: "GST", containers: "2", packaging: "Box Packaging" },
+    { id: 2, name: "Steel-01", qty: 100, price: "$100", uom: "Kg", taxCode: "GST", containers: "2", packaging: "Box Packaging" },
+  ]);
+
+  const [scheduleRows, setScheduleRows] = useState<ScheduleRow[]>([
+    { id: 1, itemName: "", schedule: "", qty: "", reqDispatch: "", reqDelivery: "" },
+  ]);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY;
+      setVisible(y < 20 || y < lastY.current);
+      lastY.current = y;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const deleteItem = useCallback((id: number) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
+  const addItem = useCallback(() => {
+    setItems((p) => [...p, { id: p.length + 1, name: "", qty: 0, price: "", uom: "", taxCode: "", containers: "", packaging: "" }]);
   }, []);
+  const deleteItem = useCallback((id: number) => setItems((p) => p.filter((r) => r.id !== id)), []);
 
   const addSchedule = useCallback(() => {
-    setScheduleRows((prev) => [
-      ...prev,
-      { id: prev.length + 1, itemName: "", schedule: "", qty: "", reqDispatch: "", reqDelivery: "" },
-    ]);
+    setScheduleRows((p) => [...p, { id: p.length + 1, itemName: "", schedule: "", qty: "", reqDispatch: "", reqDelivery: "" }]);
   }, []);
+  const deleteSchedule = useCallback((id: number) => setScheduleRows((p) => p.filter((r) => r.id !== id)), []);
 
-  const deleteSchedule = useCallback((id: number) => {
-    setScheduleRows((prev) => prev.filter((r) => r.id !== id));
-  }, []);
-
-  const handleItemsEnter    = useTableEnterHandler(addItem);
-  const handleScheduleEnter = useTableEnterHandler(addSchedule);
-
-  // ── Items columns ──────────────────────────────────────────────────────────
-
-  const ITEMS_COLUMNS: TableColumn<PurchaseItem>[] = [
-    {
-      field: "id",
-      header: "#",
-      body: (row) => <span className="text-sm text-gray-400 tabular-nums block text-center select-none">{row.id}</span>,
-    },
-    {
-      field: "name",
-      header: "Item Name",
-      body: (row) => <CellInput defaultValue={row.name} placeholder="Item name…" />,
-    },
-    {
-      field: "qty",
-      header: "Qty",
-      body: (row) => <CellInput align="center" width="w-20" defaultValue={row.qty || ""} type="number" placeholder="0" />,
-    },
-    {
-      field: "price",
-      header: "Price",
-      body: (row) => <CellInput align="right" width="w-24 font-semibold" defaultValue={row.price} placeholder="0.00" />,
-    },
-    {
-      field: "uom",
-      header: "UOM",
-      body: (row) => <CellInput align="center" width="w-16" defaultValue={row.uom} placeholder="e.g. Kg" />,
-    },
-    {
-      field: "taxCode",
-      header: "Tax Code",
-      body: (row) => <CellInput align="center" width="w-20" defaultValue={row.taxCode} placeholder="GST_18" />,
-    },
-    {
-      field: "containers",
-      header: "Containers",
-      body: (row) => <CellInput align="center" width="w-20" defaultValue={row.containers} placeholder="0" />,
-    },
-    {
-      field: "packaging",
-      header: "Packaging",
-      body: (row) => <CellInput width="w-28" defaultValue={row.packaging} placeholder="Box / Roll…" />,
-    },
-    {
-      field: "image",
-      header: "Img",
-      body: (row) => (
-        <button tabIndex={-1} className="text-black/25 hover:text-primary transition-colors mx-auto block"
-          title="Attach image" onClick={() => { setSelectedItemId(row.id); setIsGalleryOpen(true); }}>
-          <Icon name="attachment" size={15} />
-        </button>
-      ),
-    },
-    {
-      field: "delete",
-      header: "",
-      body: (row) => (
-        <button tabIndex={-1} className="text-black/25 hover:text-red-500 transition-colors mx-auto block"
-          title="Remove row" onClick={() => deleteItem(row.id)}>
-          <Icon name="delete" size={15} />
-        </button>
-      ),
-    },
-  ];
-
-  // ── Schedule columns ───────────────────────────────────────────────────────
-
-  const SCHEDULE_COLUMNS: TableColumn<ScheduleRow>[] = [
-    {
-      field: "id",
-      header: "#",
-      body: (row) => <span className="text-sm text-gray-400 tabular-nums block text-center select-none">{row.id}</span>,
-    },
-    {
-      field: "itemName",
-      header: "Item Name",
-      body: (row) => <CellInput width="min-w-[120px]" defaultValue={row.itemName} placeholder="Item name…" />,
-    },
-    {
-      field: "schedule",
-      header: "Schedule",
-      body: (row) => <CellInput width="w-28" defaultValue={row.schedule} placeholder="Schedule…" />,
-    },
-    {
-      field: "qty",
-      header: "Qty",
-      body: (row) => <CellInput align="center" width="w-16" defaultValue={row.qty} placeholder="0" />,
-    },
-    {
-      field: "reqDispatch",
-      header: "Req. Dispatch",
-      body: (row) => <CellInput width="w-28" defaultValue={row.reqDispatch} placeholder="dd/mm/yyyy" />,
-    },
-    {
-      field: "reqDelivery",
-      header: "Req. Delivery",
-      body: (row) => <CellInput width="w-28" defaultValue={row.reqDelivery} placeholder="dd/mm/yyyy" />,
-    },
-    {
-      field: "delete",
-      header: "",
-      body: (row) => (
-        <button tabIndex={-1} className="text-black/25 hover:text-red-500 transition-colors mx-auto block"
-          title="Remove" onClick={() => deleteSchedule(row.id)}>
-          <Icon name="delete" size={15} />
-        </button>
-      ),
-    },
-  ];
-
-  // ── Tabs ───────────────────────────────────────────────────────────────────
-
-  const tabItems: TabItem[] = [
-    {
-      id: "schedule",
-      label: "Schedule",
-      content: (
-        <div onKeyDown={handleScheduleEnter}>
-          <DataTable
-            title="Delivery Schedules"
-            titleClassName="text-sm font-semibold text-gray-900"
-            columns={SCHEDULE_COLUMNS}
-            data={scheduleRows}
-            emptyMessage="No schedules yet. Press Enter on the last row to add one."
-            rowStyle={(_, i) => ({ backgroundColor: i % 2 === 0 ? "#ffffff" : "var(--color-row-alt)" })}
-            headerActions={<Button variant="add" icon="add" onClick={addSchedule}>Add Schedule</Button>}
-          />
-        </div>
-      ),
-    },
-    { id: "shipment",      label: "Shipment",      content: <PlaceholderTab label="Shipment" /> },
-    { id: "test-sample",   label: "Test Sample",   content: <PlaceholderTab label="Test Sample" /> },
-    { id: "goods-receipt", label: "Goods Receipt", content: <PlaceholderTab label="Goods Receipt" /> },
-  ];
+  const totalQty  = items.reduce((s, i) => s + i.qty, 0);
+  const netAmount = items.reduce((s, i) => s + i.qty * parseFloat(i.price.replace(/[$,]/g, "") || "0"), 0);
+  const taxEst    = Math.round(netAmount * 0.08);
 
   return (
-    <AppShell title="Edit Purchase Order" activeNavLabel="Purchase order details">
-      <div className="p-6 space-y-5">
+    <div className="min-h-screen flex flex-col antialiased text-slate-800 bg-[#eaecf1]">
 
-        {/* ── Order Details ─────────────────────────────────────────────────── */}
-        <SectionPanel
-          headerPrefix={<BackButton href="/purchase-order" />}
-          title="Order Details"
-          action={
-            <>
-              <span className="text-xs text-gray-400">{PO_ID}</span>
-              <Badge variant="warning" label="Draft" shape="pill" size="sm" />
-            </>
-          }
-          bodyClassName="px-5 py-5"
-        >
-          <div className="grid grid-cols-4 gap-x-4 gap-y-4" onKeyDown={handleEnterMoveNext}>
-            {FORM_FIELDS.map((field) => (
-              <FormField key={field.label} label={field.label}>
-                {field.type === "select" ? (
-                  <Select options={field.options} defaultValue={field.defaultValue} />
-                ) : (
-                  <Input defaultValue={field.defaultValue} type="text" />
-                )}
-              </FormField>
-            ))}
+      {/* ═══ FLOATING PILL NAVBAR ═══ */}
+      <div className={`fixed top-3 inset-x-0 z-50 flex justify-center transition-all duration-300 ease-out ${visible ? "translate-y-0 opacity-100" : "-translate-y-3 opacity-0 pointer-events-none"}`}>
+        <div className="flex items-center bg-[#2e0f3a] border border-white/[0.07] rounded-full shadow-[0_4px_28px_rgba(80,10,90,0.5)] px-1.5 py-1.5 gap-0.5">
+          <div className="flex items-center gap-1.5 px-2.5 pr-3 shrink-0">
+            <div className="w-4 h-4 bg-[#8470ff] rounded flex items-center justify-center"><div className="w-2 h-2 bg-white rounded-sm" /></div>
+            <span className="text-white font-bold text-[11px] tracking-tight">EXIM</span>
           </div>
-        </SectionPanel>
-
-        {/* ── Purchase Items ────────────────────────────────────────────────── */}
-        <div onKeyDown={handleItemsEnter}>
-          <DataTable
-            title="Purchase Items"
-            titleClassName="text-sm font-semibold text-gray-900"
-            columns={ITEMS_COLUMNS}
-            data={items}
-            emptyMessage="No items yet. Press Enter on the last row to add one."
-            rowStyle={(_, i) => ({ backgroundColor: i % 2 === 0 ? "#ffffff" : "var(--color-row-alt)" })}
-            headerActions={<Button variant="add" icon="add" onClick={addItem}>Add Item</Button>}
-          />
+          <div className="w-px h-3.5 bg-white/[0.08] shrink-0" />
+          <div className="flex items-center gap-0.5 px-1.5">{NAV_ITEMS.map((item) => <NavItem key={item.label} item={item} />)}</div>
+          <div className="w-px h-3.5 bg-white/[0.08] shrink-0" />
+          <button className="p-1.5 mx-0.5 text-gray-500 hover:text-gray-300 hover:bg-white/[0.05] rounded-full transition-colors">
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" /></svg>
+          </button>
+          <button className="flex items-center gap-1.5 px-2 py-1 hover:bg-white/[0.05] rounded-full transition-colors shrink-0">
+            <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-[8px] font-bold text-white">S</div>
+            <span className="text-[11px] text-gray-400">Shivam</span>
+            <svg className="w-2.5 h-2.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" /></svg>
+          </button>
         </div>
-
-        {/* ── Notes ────────────────────────────────────────────────────────── */}
-        <SectionPanel title="Notes" bodyClassName="px-5 py-4">
-          <textarea
-            className="w-full rounded border border-gray-300 bg-gray-50/60 focus:border-gray-400 focus:ring-0 outline-none p-2 text-sm resize-none text-gray-800 placeholder:text-gray-400"
-            rows={3}
-            placeholder="Enter material grade and special handling instructions…"
-          />
-        </SectionPanel>
-
-        {/* ── Tabs ─────────────────────────────────────────────────────────── */}
-        <Tabs items={tabItems} defaultActiveId="schedule" />
-
       </div>
 
-      <FormFooter
-        metrics={FOOTER_METRICS}
-        actions={
-          <>
-            <FormFooterButton variant="ghost">Cancel</FormFooterButton>
-            <FormFooterButton variant="secondary">Save Changes</FormFooterButton>
-            <FormFooterButton variant="primary">Submit PO</FormFooterButton>
-          </>
-        }
-      />
+      {/* ═══ PAGE HEADER ═══ */}
+      <div className="pt-16 bg-white border-b border-gray-200/70 px-10 py-3 flex items-center justify-between shrink-0">
+        <div>
+          <div className="flex items-center gap-1.5 text-[10px] text-gray-400 mb-0.5">
+            <Link href="/" className="hover:text-slate-600 transition-colors">Dashboard</Link>
+            <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" /></svg>
+            <Link href="/purchase-order" className="hover:text-slate-600 transition-colors">Purchase Orders</Link>
+            <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" /></svg>
+            <span className="text-slate-600 font-medium">{PO_ID}</span>
+            <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" /></svg>
+            <span className="text-slate-600 font-medium">Edit</span>
+          </div>
+          <p className="text-sm font-bold text-slate-800">Edit Purchase Order</p>
+        </div>
+        <div className="flex items-center gap-2.5">
+          <span className="text-[10px] font-semibold text-gray-500 bg-gray-100 border border-gray-200 px-2.5 py-1 rounded-full font-mono">{PO_ID}</span>
+          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-600 bg-amber-50 border border-amber-200/70 px-2.5 py-1 rounded-full">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+            Draft
+          </span>
+          <div className="w-px h-4 bg-gray-200" />
+          <button className="text-[12px] font-medium text-gray-500 px-3.5 py-1.5 border border-gray-200 rounded-full hover:bg-gray-50 transition-colors">
+            Save Changes
+          </button>
+          <button className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#8470ff] text-white text-[12px] font-semibold rounded-full hover:bg-[#7360ef] transition-colors shadow-md">
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" /></svg>
+            Submit PO
+          </button>
+        </div>
+      </div>
+
+      {/* ═══ MAIN CONTENT ═══ */}
+      <main className="flex-1 px-6 py-4 pb-20 bg-[#eaecf1] space-y-3">
+
+        {/* ── Order Details ── */}
+        <div className="bg-white rounded-xl border border-gray-200/60 shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
+          <div className="px-5 py-2.5 border-b border-gray-100 flex items-center justify-between">
+            <h2 className="text-[10px] font-semibold text-slate-600 uppercase tracking-widest">Order Details</h2>
+            <span className="text-[10px] text-gray-400">Tab · Enter to move between fields</span>
+          </div>
+          <div className="px-5 py-4 grid grid-cols-4 gap-x-4 gap-y-3">
+            {FORM_FIELDS.map((f) => (
+              <div key={f.key}>
+                <label className="block text-[9px] font-semibold text-gray-400 uppercase tracking-wider mb-1">{f.label}</label>
+                {f.type === "select" ? (
+                  <select defaultValue={f.defaultValue} className="w-full px-3 py-2 text-[12px] bg-[#f8f9fc] border border-gray-200 rounded-lg outline-none focus:border-[#8470ff]/50 focus:ring-1 focus:ring-[#8470ff]/10 text-slate-700 appearance-none cursor-pointer transition-all">
+                    {f.options.map((o) => <option key={o}>{o}</option>)}
+                  </select>
+                ) : (
+                  <input
+                    type="text"
+                    defaultValue={f.defaultValue}
+                    className="w-full px-3 py-2 text-[12px] bg-[#f8f9fc] border border-gray-200 rounded-lg outline-none focus:border-[#8470ff]/50 focus:ring-1 focus:ring-[#8470ff]/10 text-slate-700 transition-all"
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── Purchase Items ── */}
+        <div className="bg-white rounded-xl border border-gray-200/60 shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
+          <div className="px-5 py-2.5 border-b border-gray-100 flex items-center justify-between">
+            <h2 className="text-[10px] font-semibold text-slate-600 uppercase tracking-widest">Purchase Items</h2>
+            <button onClick={addItem} className="flex items-center gap-1 text-[11px] font-medium text-[#8470ff] hover:bg-[#8470ff]/8 px-2.5 py-1 rounded-lg transition-colors">
+              <Icon name="add" size={13} />
+              Add Row
+            </button>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr>
+                  <th className="w-8 bg-[#e8eaed] border-b border-r border-gray-300 select-none" />
+                  {["Item Name", "Qty", "Price", "UOM", "Tax Code", "Containers", "Packaging", "Img", ""].map((h) => (
+                    <th key={h} className="bg-[#e8eaed] border-b border-r border-gray-300 px-3 py-2 text-left text-[9px] font-semibold text-gray-600 uppercase tracking-wider whitespace-nowrap select-none">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {items.map((row, i) => (
+                  <tr key={row.id} className={`group ${i % 2 === 0 ? "bg-white" : "bg-[#f2f4f8]"} hover:bg-[#eef3fe] transition-colors`}>
+                    <td className="w-8 text-center text-[10px] text-gray-400 tabular-nums font-mono border-b border-r border-gray-200 bg-[#f2f4f7] group-hover:bg-[#e4e9f7] transition-colors select-none py-1.5">{i + 1}</td>
+                    <td className="border-b border-r border-gray-200 px-1 py-0.5">
+                      <input defaultValue={row.name} placeholder="Item name…" className="w-full min-w-[140px] px-2 py-1.5 text-[11px] text-slate-800 bg-transparent outline-none focus:bg-[#f5f3ff] focus:ring-1 focus:ring-[#8470ff]/20 rounded placeholder:text-gray-300 transition-all" />
+                    </td>
+                    <td className="border-b border-r border-gray-200 px-1 py-0.5">
+                      <input defaultValue={row.qty || ""} placeholder="0" type="number" className="w-16 px-2 py-1.5 text-[11px] text-slate-800 bg-transparent outline-none focus:bg-[#f5f3ff] focus:ring-1 focus:ring-[#8470ff]/20 rounded text-center tabular-nums placeholder:text-gray-300 transition-all" />
+                    </td>
+                    <td className="border-b border-r border-gray-200 px-1 py-0.5">
+                      <input defaultValue={row.price} placeholder="0.00" className="w-24 px-2 py-1.5 text-[11px] font-semibold text-slate-900 bg-transparent outline-none focus:bg-[#f5f3ff] focus:ring-1 focus:ring-[#8470ff]/20 rounded text-right tabular-nums placeholder:text-gray-300 transition-all" />
+                    </td>
+                    <td className="border-b border-r border-gray-200 px-1 py-0.5">
+                      <input defaultValue={row.uom} placeholder="Kg" className="w-14 px-2 py-1.5 text-[11px] text-slate-800 bg-transparent outline-none focus:bg-[#f5f3ff] focus:ring-1 focus:ring-[#8470ff]/20 rounded text-center placeholder:text-gray-300 transition-all" />
+                    </td>
+                    <td className="border-b border-r border-gray-200 px-1 py-0.5">
+                      <input defaultValue={row.taxCode} placeholder="GST_18" className="w-20 px-2 py-1.5 text-[11px] text-slate-800 bg-transparent outline-none focus:bg-[#f5f3ff] focus:ring-1 focus:ring-[#8470ff]/20 rounded text-center placeholder:text-gray-300 transition-all" />
+                    </td>
+                    <td className="border-b border-r border-gray-200 px-1 py-0.5">
+                      <input defaultValue={row.containers} placeholder="0" className="w-20 px-2 py-1.5 text-[11px] text-slate-800 bg-transparent outline-none focus:bg-[#f5f3ff] focus:ring-1 focus:ring-[#8470ff]/20 rounded text-center tabular-nums placeholder:text-gray-300 transition-all" />
+                    </td>
+                    <td className="border-b border-r border-gray-200 px-1 py-0.5">
+                      <input defaultValue={row.packaging} placeholder="Box / Roll…" className="w-28 px-2 py-1.5 text-[11px] text-slate-800 bg-transparent outline-none focus:bg-[#f5f3ff] focus:ring-1 focus:ring-[#8470ff]/20 rounded placeholder:text-gray-300 transition-all" />
+                    </td>
+                    <td className="border-b border-r border-gray-200 px-3 py-1.5 text-center">
+                      <button onClick={() => { setSelectedItemId(row.id); setIsGalleryOpen(true); }} className="text-gray-300 hover:text-[#8470ff] transition-colors" title="Attach image">
+                        <Icon name="attachment" size={13} />
+                      </button>
+                    </td>
+                    <td className="border-b border-gray-200 px-3 py-1.5 text-center">
+                      <button onClick={() => deleteItem(row.id)} className="text-gray-300 hover:text-red-400 transition-colors" title="Remove">
+                        <Icon name="delete" size={13} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="px-4 py-2 bg-[#f8f9fc] border-t border-gray-100 flex items-center gap-6 rounded-b-xl">
+            <span className="text-[10px] text-gray-400">Rows: <strong className="text-gray-600">{items.length}</strong></span>
+            <span className="text-gray-200">|</span>
+            <span className="text-[10px] text-gray-400">Total Qty: <strong className="text-gray-600 tabular-nums">{totalQty}</strong></span>
+            <span className="text-gray-200">|</span>
+            <span className="text-[10px] text-gray-400">Net Amount: <strong className="text-slate-700 tabular-nums">${netAmount.toLocaleString()}</strong></span>
+            <span className="text-gray-200">|</span>
+            <span className="text-[10px] text-gray-400">Tax Est.: <strong className="text-slate-700 tabular-nums">${taxEst.toLocaleString()}</strong></span>
+          </div>
+        </div>
+
+        {/* ── Notes ── */}
+        <div className="bg-white rounded-xl border border-gray-200/60 shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
+          <div className="px-5 py-2.5 border-b border-gray-100">
+            <h2 className="text-[10px] font-semibold text-slate-600 uppercase tracking-widest">Notes</h2>
+          </div>
+          <div className="px-5 py-3">
+            <textarea
+              rows={3}
+              placeholder="Enter material grade and special handling instructions…"
+              className="w-full px-3 py-2.5 text-[12px] bg-[#f8f9fc] border border-gray-200 rounded-lg outline-none focus:border-[#8470ff]/50 focus:ring-1 focus:ring-[#8470ff]/10 text-slate-700 placeholder:text-gray-300 resize-none transition-all"
+            />
+          </div>
+        </div>
+
+        {/* ── Schedule / Tabs ── */}
+        <div className="bg-white rounded-xl border border-gray-200/60 shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
+          <div className="flex items-center border-b border-gray-100 px-1">
+            {TABS.map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-4 py-2.5 text-[11px] font-medium border-b-2 -mb-px transition-all ${
+                  activeTab === tab ? "border-[#8470ff] text-[#8470ff]" : "border-transparent text-gray-400 hover:text-gray-600"
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+            {activeTab === "Schedule" && (
+              <>
+                <div className="flex-1" />
+                <button onClick={addSchedule} className="flex items-center gap-1 text-[11px] font-medium text-[#8470ff] hover:bg-[#8470ff]/8 px-2.5 py-1 mr-1.5 rounded-lg transition-colors">
+                  <Icon name="add" size={13} />
+                  Add Row
+                </button>
+              </>
+            )}
+          </div>
+
+          {activeTab === "Schedule" ? (
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr>
+                    <th className="w-8 bg-[#e8eaed] border-b border-r border-gray-300 select-none" />
+                    {["Item Name", "Schedule", "Qty", "Req. Dispatch", "Req. Delivery", ""].map((h) => (
+                      <th key={h} className="bg-[#e8eaed] border-b border-r border-gray-300 px-3 py-2 text-left text-[9px] font-semibold text-gray-600 uppercase tracking-wider whitespace-nowrap select-none">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {scheduleRows.map((row, i) => (
+                    <tr key={row.id} className={`group ${i % 2 === 0 ? "bg-white" : "bg-[#f2f4f8]"} hover:bg-[#eef3fe] transition-colors`}>
+                      <td className="w-8 text-center text-[10px] text-gray-400 tabular-nums font-mono border-b border-r border-gray-200 bg-[#f2f4f7] group-hover:bg-[#e4e9f7] transition-colors select-none py-1.5">{i + 1}</td>
+                      <td className="border-b border-r border-gray-200 px-1 py-0.5">
+                        <input defaultValue={row.itemName} placeholder="Item name…" className="w-full min-w-[120px] px-2 py-1.5 text-[11px] text-slate-800 bg-transparent outline-none focus:bg-[#f5f3ff] focus:ring-1 focus:ring-[#8470ff]/20 rounded placeholder:text-gray-300 transition-all" />
+                      </td>
+                      <td className="border-b border-r border-gray-200 px-1 py-0.5">
+                        <input defaultValue={row.schedule} placeholder="Schedule…" className="w-28 px-2 py-1.5 text-[11px] text-slate-800 bg-transparent outline-none focus:bg-[#f5f3ff] focus:ring-1 focus:ring-[#8470ff]/20 rounded placeholder:text-gray-300 transition-all" />
+                      </td>
+                      <td className="border-b border-r border-gray-200 px-1 py-0.5">
+                        <input defaultValue={row.qty} placeholder="0" className="w-16 px-2 py-1.5 text-[11px] font-semibold text-slate-800 bg-transparent outline-none focus:bg-[#f5f3ff] focus:ring-1 focus:ring-[#8470ff]/20 rounded text-center tabular-nums placeholder:text-gray-300 transition-all" />
+                      </td>
+                      <td className="border-b border-r border-gray-200 px-1 py-0.5">
+                        <input defaultValue={row.reqDispatch} placeholder="dd/mm/yyyy" className="w-28 px-2 py-1.5 text-[11px] text-slate-800 bg-transparent outline-none focus:bg-[#f5f3ff] focus:ring-1 focus:ring-[#8470ff]/20 rounded placeholder:text-gray-300 transition-all" />
+                      </td>
+                      <td className="border-b border-r border-gray-200 px-1 py-0.5">
+                        <input defaultValue={row.reqDelivery} placeholder="dd/mm/yyyy" className="w-28 px-2 py-1.5 text-[11px] text-slate-800 bg-transparent outline-none focus:bg-[#f5f3ff] focus:ring-1 focus:ring-[#8470ff]/20 rounded placeholder:text-gray-300 transition-all" />
+                      </td>
+                      <td className="border-b border-gray-200 px-3 py-1.5 text-center">
+                        <button onClick={() => deleteSchedule(row.id)} className="text-gray-300 hover:text-red-400 transition-colors" title="Remove">
+                          <Icon name="delete" size={13} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="py-12 text-center text-[11px] text-gray-400">{activeTab} — coming soon</div>
+          )}
+        </div>
+
+      </main>
+
+      {/* ═══ STICKY FOOTER ═══ */}
+      <div className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-sm border-t border-gray-200 px-10 py-2.5 flex items-center justify-between">
+        <div className="flex items-center gap-5 text-[11px]">
+          <span className="text-gray-400">Total Qty: <strong className="text-slate-700 tabular-nums">{totalQty}</strong></span>
+          <span className="text-gray-200">|</span>
+          <span className="text-gray-400">Net Amount: <strong className="text-slate-700 tabular-nums">${netAmount.toLocaleString()}</strong></span>
+          <span className="text-gray-200">|</span>
+          <span className="text-gray-400">Tax Est.: <strong className="text-slate-700 tabular-nums">${taxEst.toLocaleString()}</strong></span>
+          <span className="text-gray-200">|</span>
+          <span className="text-gray-400">Grand Total: <strong className="text-slate-900 tabular-nums">${(netAmount + taxEst).toLocaleString()}</strong></span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Link href="/purchase-order">
+            <button className="text-[12px] font-medium text-gray-500 px-4 py-1.5 hover:bg-gray-100 rounded-full transition-colors">Cancel</button>
+          </Link>
+          <button className="text-[12px] font-medium text-gray-600 px-4 py-1.5 border border-gray-200 rounded-full hover:bg-gray-50 transition-colors">Save Changes</button>
+          <button className="flex items-center gap-1.5 px-4 py-1.5 bg-[#8470ff] text-white text-[12px] font-semibold rounded-full hover:bg-[#7360ef] transition-colors shadow-md">
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" /></svg>
+            Submit PO
+          </button>
+        </div>
+      </div>
 
       <ImageGalleryModal
         isOpen={isGalleryOpen}
         onClose={() => setIsGalleryOpen(false)}
-        onSelectImage={(image) => {
-          console.log("Selected image for item", selectedItemId, ":", image);
-        }}
+        onSelectImage={(image) => { console.log("Selected image for item", selectedItemId, ":", image); }}
       />
-    </AppShell>
-  );
-}
 
-function PlaceholderTab({ label }: { label: string }) {
-  return (
-    <div className="py-10 text-center text-sm text-gray-400">{label} — coming soon</div>
+    </div>
   );
 }

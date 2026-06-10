@@ -32,10 +32,7 @@ export function PoStatusChartCard() {
   const [hoveredMonth, setHoveredMonth] = useState<string | null>(null);
 
   return (
-    <div
-      className="col-span-12 lg:col-span-7 p-6 rounded-[40px] border border-white"
-      style={{ backgroundImage: "var(--chart-card-bg)" }}
-    >
+    <div className="p-6 rounded-2xl border border-slate-100 bg-white shadow-sm">
       {/* Card header */}
       <div className="flex justify-between items-start mb-6">
         <div className="flex items-center gap-3">
@@ -46,9 +43,9 @@ export function PoStatusChartCard() {
         </div>
         <Link
           href="/purchase-order"
-          className="text-[10px] font-semibold text-gray-500 bg-white px-2 py-1 rounded-lg border border-gray-100 shadow-sm hover:shadow-md hover:text-gray-700 transition-all"
+          className="text-[10px] font-semibold text-slate-400 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200 hover:text-slate-600 hover:bg-slate-100 transition-all"
         >
-          See Details
+          See Details →
         </Link>
       </div>
 

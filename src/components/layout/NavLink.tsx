@@ -16,14 +16,14 @@ export function NavLink({ icon, label, href, active = false, iconSize = 14, text
       href={href}
       className={`flex items-center gap-3 px-2 py-1.5 rounded-lg transition-colors ${
         active
-          ? "text-black"
-          : "text-black/60 hover:text-black/80"
+          ? "text-white bg-teal-600/20"
+          : "text-slate-400 hover:text-slate-200 hover:bg-slate-800"
       }`}
     >
       <Icon
         name={icon}
         size={iconSize}
-        className={`shrink-0 ${active ? "text-black" : "text-black/60"}`}
+        className={`shrink-0 ${active ? "text-teal-400" : "text-slate-500"}`}
       />
       <span className={`${textSize} leading-none ${active ? "font-bold" : "font-normal"}`}>
         {label}

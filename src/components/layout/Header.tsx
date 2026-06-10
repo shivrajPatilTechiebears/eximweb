@@ -68,7 +68,7 @@ export function Header({ title }: HeaderProps) {
   const markAllRead = () => setReadIds(new Set(NOTIFICATIONS.map((n) => n.id)));
 
   return (
-    <header className="flex items-center justify-between px-6 h-14 bg-transparent flex-shrink-0">
+    <header className="flex items-center justify-between px-6 h-14 bg-white border-b border-slate-100 flex-shrink-0">
       <h1 className="text-lg font-bold text-gray-900">{title}</h1>
 
       <div className="flex items-center gap-3">
