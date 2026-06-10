@@ -293,9 +293,9 @@ export default function CreatePurchaseOrderPage() {
             <span className="text-gray-200">|</span>
             <span className="text-[10px] text-gray-400">Total Qty: <strong className="text-gray-600 tabular-nums">{totalQty}</strong></span>
             <span className="text-gray-200">|</span>
-            <span className="text-[10px] text-gray-400">Net Amount: <strong className="text-slate-700 tabular-nums">₹{netAmount.toLocaleString()}</strong></span>
+            <span className="text-[10px] text-gray-400">Net Amount: <strong className="text-slate-700 tabular-nums">₹{netAmount.toLocaleString("en-US")}</strong></span>
             <span className="text-gray-200">|</span>
-            <span className="text-[10px] text-gray-400">Tax (18%): <strong className="text-slate-700 tabular-nums">₹{taxEst.toLocaleString()}</strong></span>
+            <span className="text-[10px] text-gray-400">Tax (18%): <strong className="text-slate-700 tabular-nums">₹{taxEst.toLocaleString("en-US")}</strong></span>
           </div>
         </div>
 
@@ -376,13 +376,13 @@ export default function CreatePurchaseOrderPage() {
       {/* ═══ STICKY FOOTER ═══ */}
       <div className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-sm border-t border-gray-200 px-10 py-2.5 flex items-center justify-between">
         <div className="flex items-center gap-5 text-[11px]">
-          <span className="text-gray-400">Total Qty: <strong className="text-slate-700 tabular-nums">{totalQty.toLocaleString()}</strong></span>
+          <span className="text-gray-400">Total Qty: <strong className="text-slate-700 tabular-nums">{totalQty.toLocaleString("en-US")}</strong></span>
           <span className="text-gray-200">|</span>
-          <span className="text-gray-400">Net Amount: <strong className="text-slate-700 tabular-nums">₹{netAmount.toLocaleString()}</strong></span>
+          <span className="text-gray-400">Net Amount: <strong className="text-slate-700 tabular-nums">₹{netAmount.toLocaleString("en-US")}</strong></span>
           <span className="text-gray-200">|</span>
-          <span className="text-gray-400">Tax Est.: <strong className="text-slate-700 tabular-nums">₹{taxEst.toLocaleString()}</strong></span>
+          <span className="text-gray-400">Tax Est.: <strong className="text-slate-700 tabular-nums">₹{taxEst.toLocaleString("en-US")}</strong></span>
           <span className="text-gray-200">|</span>
-          <span className="text-gray-400">Grand Total: <strong className="text-slate-900 tabular-nums">₹{(netAmount + taxEst).toLocaleString()}</strong></span>
+          <span className="text-gray-400">Grand Total: <strong className="text-slate-900 tabular-nums">₹{(netAmount + taxEst).toLocaleString("en-US")}</strong></span>
         </div>
         <div className="flex items-center gap-2">
           <Link href="/purchase-order">
