@@ -4,33 +4,34 @@ import Link from "next/link";
 import { FloatingNavbar } from "@/components/layout/FloatingNavbar";
 import { DashboardPageHeader } from "@/components/layout/PageHeader";
 import { StatusBadge } from "@/components/ui/StatusBadge";
-import { PurchaseOrderForm } from "@/components/forms/PurchaseOrderForm";
+import { CompanyForm } from "@/components/forms/CompanyForm";
 
-export default function CreatePurchaseOrderPage() {
+export default function CreateCompanyPage() {
   return (
     <div className="min-h-screen flex flex-col antialiased text-slate-800 bg-[#eaecf1]">
 
       <FloatingNavbar />
 
       <DashboardPageHeader
-        title="Create Purchase Order"
+        title="Add Company"
         breadcrumbs={[
-          { label: "Dashboard",       href: "/" },
-          { label: "Purchase Orders", href: "/purchase-order" },
-          { label: "Create" },
+          { label: "Dashboard",              href: "/" },
+          { label: "White Label Management" },
+          { label: "Company Management",     href: "/company-management" },
+          { label: "Add Company" },
         ]}
-        rightContent={<StatusBadge label="Draft PO-9284" color="warning" pulse />}
+        rightContent={<StatusBadge label="New Company" color="info" />}
       />
 
       <main className="flex-1 px-6 py-4 pb-20 bg-[#eaecf1]">
-        <PurchaseOrderForm mode="create" />
+        <CompanyForm mode="create" />
       </main>
 
       {/* ═══ STICKY FOOTER ═══ */}
       <div className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-sm border-t border-gray-200 px-10 py-2.5 flex items-center justify-between">
-        <span className="text-[11px] text-gray-400">Fill in all required fields before submitting.</span>
+        <span className="text-[11px] text-gray-400">Fill in all required fields before saving.</span>
         <div className="flex items-center gap-2">
-          <Link href="/purchase-order">
+          <Link href="/company-management">
             <button className="text-[12px] font-medium text-gray-500 px-4 py-1.5 hover:bg-gray-100 rounded-full transition-colors">
               Cancel
             </button>
@@ -42,7 +43,7 @@ export default function CreatePurchaseOrderPage() {
             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" />
             </svg>
-            Submit PO
+            Save Company
           </button>
         </div>
       </div>

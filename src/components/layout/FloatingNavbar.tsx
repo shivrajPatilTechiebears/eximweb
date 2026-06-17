@@ -5,11 +5,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Icon } from "@/components/ui/Icon";
 
-type SubItem = { label: string; href: string; icon: string; badge?: string };
+type SubItem = { label: string; href: string; icon?: string; badge?: string };
 type NavItemDef = { label: string; href: string; sub?: SubItem[] };
 
 const NAV_ITEMS: NavItemDef[] = [
   { label: "Dashboard", href: "/" },
+  {
+    label: "White Label Mgmt", href: "/white-label",
+    sub: [
+      { label: "Admin Management",   href: "/admin-management" },
+      { label: "Company Management", href: "/company-management" },
+    ],
+  },
   { label: "Image Library", href: "/image-library" },
   {
     label: "Purchase Request", href: "/purchase-request",
@@ -77,7 +84,7 @@ function NavItem({ item }: { item: NavItemDef }) {
                 href={s.href}
                 className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[11px] text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition-colors"
               >
-                <Icon name={s.icon} size={13} className="shrink-0 text-gray-400" strokeWidth={1.5} />
+                {s.icon && <Icon name={s.icon!} size={13} className="shrink-0 text-gray-400" strokeWidth={1.5} />}
                 <span className="flex-1">{s.label}</span>
                 {s.badge && (
                   <span className="text-[9px] font-bold bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full leading-none">

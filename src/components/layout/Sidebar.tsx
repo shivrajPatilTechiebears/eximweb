@@ -1,11 +1,23 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { NavLink } from "./NavLink";
 import { Icon } from "@/components/ui/Icon";
 import { SpeedDial, type SpeedDialAction } from "@/components/ui/SpeedDial";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
+
+interface HoverSubItem {
+  label: string;
+  href: string;
+}
+
+interface HoverNavItemDef {
+  icon: string;
+  label: string;
+  children: HoverSubItem[];
+}
 
 interface SubNavItem {
   icon: string;
@@ -83,6 +95,15 @@ const NAV_SECTIONS: NavSection[] = [
   },
 ];
 
+const WHITE_LABEL_ITEM: HoverNavItemDef = {
+  icon: "network",
+  label: "White Label Mgmt",
+  children: [
+    { label: "Admin Management",   href: "/admin-management" },
+    { label: "Company Management", href: "/company-management" },
+  ],
+};
+
 const FAB_ACTIONS: SpeedDialAction[] = [
   {
     icon: "description",
@@ -109,6 +130,76 @@ const FAB_ACTIONS: SpeedDialAction[] = [
     iconColor: "text-emerald-500",
   },
 ];
+
+// ── Hover nav item (hover to open, click to toggle) ───────────────────────────
+
+function HoverNavItem({
+  item,
+  activeLabel,
+}: {
+  item: HoverNavItemDef;
+  activeLabel?: string;
+}) {
+  const [clickOpen, setClickOpen] = useState(false);
+  const [hoverOpen, setHoverOpen] = useState(false);
+  const isOpen = clickOpen || hoverOpen;
+  const isChildActive = item.children.some((c) => c.label === activeLabel);
+
+  return (
+    <div
+      onMouseEnter={() => setHoverOpen(true)}
+      onMouseLeave={() => setHoverOpen(false)}
+    >
+      <button
+        type="button"
+        onClick={() => setClickOpen((v) => !v)}
+        className={`flex items-center gap-3 px-2 py-1.5 rounded-lg w-full transition-colors ${
+          isChildActive
+            ? "text-white bg-teal-600/20"
+            : "text-slate-400 hover:text-slate-200 hover:bg-slate-800"
+        }`}
+      >
+        <Icon
+          name={item.icon}
+          size={16}
+          className={`shrink-0 pointer-events-none ${isChildActive ? "text-teal-400" : "text-slate-500"}`}
+        />
+        <span className={`text-[13px] flex-1 leading-none text-left pointer-events-none ${isChildActive ? "font-bold" : "font-normal"}`}>
+          {item.label}
+        </span>
+        <Icon
+          name="expand_less"
+          size={14}
+          className={`pointer-events-none transition-transform duration-200 ${isOpen ? "rotate-0" : "rotate-180"} ${isChildActive ? "text-slate-300" : "text-slate-600"}`}
+        />
+      </button>
+
+      <div
+        className={`overflow-hidden transition-all duration-200 ease-in-out ${
+          isOpen ? "max-h-32 opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="ml-[22px] mt-1 pb-1 border-l border-slate-700 space-y-1.5">
+          {item.children.map((child) => (
+            <div key={child.label} className="relative pl-4">
+              <div className="absolute left-0 top-[50%] w-3.5 h-px bg-black/10 -translate-y-px" />
+              <Link
+                href={child.href}
+                className={`flex items-center px-2 py-1.5 rounded-lg text-[12px] leading-none transition-colors ${
+                  child.label === activeLabel
+                    ? "text-white bg-teal-600/20 font-bold"
+                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-800 font-normal"
+                }`}
+              >
+                {child.label}
+              </Link>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -262,6 +353,17 @@ export function Sidebar({ activeNavLabel }: SidebarProps) {
               </ul>
             </div>
           ))}
+
+          <div>
+            <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1.5 px-2">
+              WHITE LABEL
+            </p>
+            <ul className="space-y-1.5">
+              <li>
+                <HoverNavItem item={WHITE_LABEL_ITEM} activeLabel={activeNavLabel} />
+              </li>
+            </ul>
+          </div>
         </nav>
       </div>
 
