@@ -44,7 +44,7 @@ export function FormCombobox({
 
   return (
     <div>
-      <label className="block text-[9px] font-semibold text-gray-400 uppercase tracking-wider mb-1">
+      <label className="block text-[9px] font-semibold text-gray-600 uppercase tracking-wider mb-1">
         {label}
       </label>
 
@@ -63,7 +63,7 @@ export function FormCombobox({
               onChange={(e) => setQuery(e.target.value)}
               placeholder={placeholder}
               autoComplete="off"
-              className="flex-1 bg-transparent outline-none text-[12px] text-slate-700 placeholder:text-gray-300 min-w-0 disabled:cursor-not-allowed"
+              className="flex-1 bg-transparent outline-none text-[12px] text-slate-700 placeholder:text-gray-400 min-w-0 disabled:cursor-not-allowed"
             />
             {/* Chevron — rotates via group-data-[open] when Combobox is open */}
             <ComboboxButton className="group ml-1 text-gray-400 shrink-0">

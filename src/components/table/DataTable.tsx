@@ -127,7 +127,7 @@ export function ExcelTable<T>({
             {table.getHeaderGroups().map((hg) => (
               <tr key={hg.id}>
                 {/* row-number gutter */}
-                <th className="w-9 bg-[#e8eaed] border-b border-r border-gray-300 select-none" />
+                <th className="w-9 bg-[#e8eaed]/60 border-b border-r border-gray-200 select-none" />
 
                 {hg.headers.map((header) => {
                   const canSort = header.column.columnDef.meta?.sortable;
@@ -136,8 +136,8 @@ export function ExcelTable<T>({
                     <th
                       key={header.id}
                       onClick={() => canSort && onSort?.(header.id)}
-                      className={`bg-[#e8eaed] border-b border-r border-gray-300 px-3 py-2 text-left text-[9px] font-semibold text-gray-600 uppercase tracking-wider whitespace-nowrap select-none ${
-                        canSort ? "cursor-pointer hover:bg-[#d8dce5] transition-colors" : ""
+                      className={`bg-[#e8eaed]/60 border-b border-r border-gray-200 px-3 py-1.5 text-left text-[10px] font-semibold text-slate-500 uppercase tracking-widest whitespace-nowrap select-none ${
+                        canSort ? "cursor-pointer hover:bg-[#d8dce5]/60 transition-colors" : ""
                       }`}
                     >
                       <div className="flex items-center gap-1">
@@ -182,7 +182,7 @@ export function ExcelTable<T>({
                         onDragOver={(e) => handleDragOver(e, i)}
                         onDrop={() => handleDrop(i)}
                         onDragEnd={handleDragEnd}
-                        className={`w-9 text-center text-[10px] text-gray-400 tabular-nums font-mono border-b border-r border-gray-200 bg-[#f2f4f7] group-hover:bg-[#e4e9f7] transition-colors select-none py-2 ${onReorder ? "cursor-grab active:cursor-grabbing" : ""}`}
+                        className={`w-9 text-center text-[10px] text-gray-500 tabular-nums font-mono border-b border-r border-gray-200 bg-[#f2f4f7] group-hover:bg-[#e4e9f7] transition-colors select-none py-2 ${onReorder ? "cursor-grab active:cursor-grabbing" : ""}`}
                       >
                         <span className={`${onReorder ? "group-hover:hidden" : ""} block`}>{i + 1}</span>
                         {onReorder && (
