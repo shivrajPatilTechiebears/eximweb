@@ -121,7 +121,7 @@ export default function CreatePurchaseOrderPage() {
       key: "img", header: "Img",
       cell: (row) => (
         <div className="flex justify-center px-2 py-1">
-          <button onClick={() => { setSelectedItemId(row.id); setIsGalleryOpen(true); }} className="text-gray-400 hover:text-[#8470ff] transition-colors" title="Attach image">
+          <button onClick={() => { setSelectedItemId(row.id); setIsGalleryOpen(true); }} className="text-gray-400 hover:text-[#884D70] transition-colors" title="Attach image">
             <Icon name="attachment" size={13} />
           </button>
         </div>
@@ -182,7 +182,7 @@ export default function CreatePurchaseOrderPage() {
       {/* left — below the serial-number column */}
       <button
         onClick={addItem}
-        className="flex items-center gap-1 text-[11px] font-medium text-[#8470ff] hover:bg-[#8470ff]/8 px-2 py-1 rounded-lg transition-colors -ml-1"
+        className="flex items-center gap-1 text-[11px] font-medium text-[#884D70] hover:bg-[#884D70]/8 px-2 py-1 rounded-lg transition-colors -ml-1"
       >
         <Icon name="add" size={13} />
         Add Row
@@ -202,7 +202,7 @@ export default function CreatePurchaseOrderPage() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col antialiased text-slate-800 bg-gradient-to-br from-[#e8eaf2] via-[#eef0f5] to-[#e5e8f0]">
+    <div className="min-h-screen flex flex-col antialiased text-slate-800 bg-transparent">
 
       <FloatingNavbar />
       <SecondaryNav />
@@ -218,20 +218,20 @@ export default function CreatePurchaseOrderPage() {
         rightContent={
           <div className="flex items-center gap-3">
             <StatusBadge label="Draft PO-9284" color="warning" pulse />
-            <div className="inline-flex items-center bg-[#EDEAF6] border border-[#D4CEEF] rounded-full shadow-[0_4px_24px_rgba(100,80,180,0.13)] px-3 py-2 gap-2">
-              <span className="text-[9px] font-medium text-[#9B90C8] uppercase tracking-wide">Progress</span>
+            <div className="inline-flex items-center bg-[#FFDBCB]/10 border border-[#884D70]/20 rounded-full shadow-[0_4px_24px_rgba(136,77,112,0.13)] px-3 py-2 gap-2">
+              <span className="text-[9px] font-medium text-[#884D70]/60 uppercase tracking-wide">Progress</span>
               <div className="flex items-center gap-1">
                 {steps.map((step, i) => (
                   <div
                     key={step.label}
                     className={`h-1.5 rounded-full transition-all duration-500 ${
-                      step.complete ? 'w-8 bg-[#8470ff]' : 'w-1.5 bg-[#C8C1E8]'
+                      step.complete ? 'w-8 bg-[#884D70]' : 'w-1.5 bg-[#FFDBCB]'
                     }`}
                     title={step.label}
                   />
                 ))}
               </div>
-              <span className="text-[10px] font-semibold text-[#8470ff] tabular-nums">
+              <span className="text-[10px] font-semibold text-[#884D70] tabular-nums">
                 {completedCount}/{steps.length}
               </span>
             </div>
@@ -243,7 +243,8 @@ export default function CreatePurchaseOrderPage() {
       <main className="flex-1 px-6 py-4 pb-20 space-y-3">
 
         {/* ── Order Details ── */}
-        <Card className="bg-white/40 backdrop-blur-xl border-white/60 relative z-10">
+        <div className="relative">
+          <Card className="bg-white/50 backdrop-blur-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.06)]">
           <CardHeader title="Order Details" hint="Tab · Enter to move between fields" />
           <div className="px-5 py-4 grid grid-cols-4 gap-x-4 gap-y-3">
             <FormCombobox
@@ -304,14 +305,15 @@ export default function CreatePurchaseOrderPage() {
               ]}
             />
           </div>
-        </Card>
+          </Card>
+        </div>
 
         {/* ── Purchase Items ── */}
         <ExcelTable<PurchaseItem>
           columns={purchaseItemColumns}
           data={items}
           rowKey={(row) => String(row.id)}
-          className="bg-white/40 backdrop-blur-xl rounded-xl border border-white/60 shadow-[0_8px_32px_rgba(100,80,180,0.12)] relative z-0"
+          className="bg-white/50 backdrop-blur-xl rounded-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.06)] relative z-0"
           cellClassName="px-1 py-0.5"
           header={purchaseItemsHeader}
           statusBarClassName="px-3 py-1.5 flex items-center justify-between rounded-b-xl"
@@ -331,14 +333,14 @@ export default function CreatePurchaseOrderPage() {
           columns={scheduleColumns}
           data={scheduleRows}
           rowKey={(row) => String(row.id)}
-          className="bg-white/40 backdrop-blur-xl rounded-xl border border-white/60 shadow-[0_8px_32px_rgba(100,80,180,0.12)]"
+          className="bg-white/50 backdrop-blur-xl rounded-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.06)]"
           cellClassName="px-1 py-0.5"
           header={<h2 className="text-[10px] font-semibold text-slate-600 uppercase tracking-widest">Schedule</h2>}
           statusBarClassName="px-3 py-1.5 flex items-center justify-between rounded-b-xl"
           statusBar={
             <button
               onClick={addSchedule}
-              className="flex items-center gap-1 text-[11px] font-medium text-[#8470ff] hover:bg-[#8470ff]/8 px-2 py-1 rounded-lg transition-colors -ml-1"
+              className="flex items-center gap-1 text-[11px] font-medium text-[#884D70] hover:bg-[#884D70]/8 px-2 py-1 rounded-lg transition-colors -ml-1"
             >
               <Icon name="add" size={13} />
               Add Row

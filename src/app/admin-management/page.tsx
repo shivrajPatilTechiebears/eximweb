@@ -17,7 +17,7 @@ import { Pagination } from "@/components/ui/Pagination";
 // ── Data ───────────────────────────────────────────────────────────────────────
 
 const STAT_CARDS = [
-  { title: "Total Admins", value: "24", badge: "+8%",   badgeClassName: "text-emerald-600 bg-emerald-50", accentColor: "#8470ff", subtitle: "All time" },
+  { title: "Total Admins", value: "24", badge: "+8%",   badgeClassName: "text-emerald-600 bg-emerald-50", accentColor: "#884D70", subtitle: "All time" },
   { title: "Active",       value: "18", badge: "75%",   badgeClassName: "text-emerald-600 bg-emerald-50", accentColor: "#34d399", subtitle: "Currently active" },
   { title: "Pending",      value: "4",  badge: "17%",   badgeClassName: "text-amber-600 bg-amber-50",     accentColor: "#fbbf24", subtitle: "Awaiting approval" },
   { title: "Inactive",     value: "2",  badge: "8%",    badgeClassName: "text-rose-600 bg-rose-50",       accentColor: "#f87171", subtitle: "Deactivated" },
@@ -144,7 +144,7 @@ export default function AdminManagementPage() {
       case "name": return (
         <Link
           href={`/admin-management/${row.id}`}
-          className="text-[11px] font-semibold text-[#8470ff] hover:underline underline-offset-2"
+          className="text-[11px] font-semibold text-[#884D70] hover:underline underline-offset-2"
         >
           {row.name}
         </Link>
@@ -228,7 +228,7 @@ export default function AdminManagementPage() {
   // ── Render ────────────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen flex flex-col antialiased text-slate-800 bg-[#eaecf1]">
+    <div className="min-h-screen flex flex-col antialiased text-slate-800">
 
       <FloatingNavbar />
 
@@ -245,14 +245,14 @@ export default function AdminManagementPage() {
       />
 
       {/* ═══ STAT TILES ═══ */}
-      <div className="px-6 pt-4 pb-0 bg-[#eaecf1] grid grid-cols-4 gap-3">
+      <div className="px-6 pt-4 pb-0 grid grid-cols-4 gap-3">
         {STAT_CARDS.map((card) => (
           <StatCard key={card.title} {...card} />
         ))}
       </div>
 
       {/* ═══ TABLE SECTION ═══ */}
-      <main className="flex-1 px-6 pt-3 pb-4 bg-[#eaecf1]">
+      <main className="flex-1 px-6 pt-3 pb-4">
 
         {/* ── Tabs + Controls ── */}
         <div className="flex items-center px-1 pb-2 gap-2">
@@ -283,7 +283,7 @@ export default function AdminManagementPage() {
             onToggle={toggleCol}
           />
 
-          <button className="flex items-center gap-1.5 text-[11px] font-semibold text-white px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#8470ff] to-[#6366f1] hover:from-[#9480ff] hover:to-[#7375f5] shadow-[0_2px_10px_rgba(132,112,255,0.35)] hover:shadow-[0_4px_16px_rgba(132,112,255,0.5)] transition-all">
+          <button className="flex items-center gap-1.5 text-[11px] font-semibold text-white px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#884D70] to-[#6B3A5A] hover:from-[#9E6080] hover:to-[#9E6080] shadow-[0_2px_10px_rgba(136,77,112,0.35)] hover:shadow-[0_4px_16px_rgba(136,77,112,0.5)] transition-all">
             <Icon name="download" size={13} />
             Export
           </button>

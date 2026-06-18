@@ -5,7 +5,7 @@ import { FormField } from "@/components/ui/FormField";
 
 interface Props { mode: "create" | "edit"; }
 
-const INPUT = "w-full px-3 py-2 text-[12px] bg-[#f8f9fc] border border-gray-200 rounded-lg outline-none focus:border-[#8470ff]/50 focus:ring-1 focus:ring-[#8470ff]/10 text-slate-700 transition-all placeholder:text-gray-400";
+const INPUT = "w-full px-3 py-2 text-[12px] bg-white border border-gray-300 rounded-lg outline-none focus:border-[#884D70]/50 focus:ring-1 focus:ring-[#884D70]/10 text-slate-700 transition-all placeholder:text-gray-500";
 const SELECT = INPUT + " appearance-none cursor-pointer";
 
 const SECTION = "bg-white rounded-2xl border border-gray-100 p-5";

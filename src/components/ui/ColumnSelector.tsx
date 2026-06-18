@@ -32,7 +32,7 @@ export function ColumnSelector({ columns, visibleColumns, onToggle }: ColumnSele
             <Checkbox
               checked={visibleColumns.has(col.key)}
               onChange={() => onToggle(col.key)}
-              className="group w-3.5 h-3.5 rounded-sm border-2 transition-all flex items-center justify-center shrink-0 outline-none border-gray-300 data-checked:bg-[#8470ff] data-checked:border-[#8470ff]"
+              className="group w-3.5 h-3.5 rounded-sm border-2 transition-all flex items-center justify-center shrink-0 outline-none border-gray-300 data-checked:bg-[#884D70] data-checked:border-[#884D70]"
             >
               <svg
                 className="w-2 h-2 text-white opacity-0 group-data-checked:opacity-100"

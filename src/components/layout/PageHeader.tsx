@@ -37,7 +37,7 @@ export function DashboardPageHeader({
   const topPadding = isModulePath(pathname) ? "pt-30" : "pt-16";
 
   return (
-    <div className={`${topPadding} bg-white border-b border-gray-200/70 px-10 pt-5 pb-4 flex items-center justify-between shrink-0`}>
+    <div className={`${topPadding} bg-white/60 backdrop-blur-xl border-b border-white/50 px-10 pt-5 pb-4 flex items-center justify-between shrink-0`}>
       <div>
         <div className="flex items-center gap-1.5 text-[10px] text-gray-400 mb-0.5">
           {breadcrumbs.map((crumb, i) => (
@@ -70,7 +70,7 @@ export function DashboardPageHeader({
               <>
                 <div className="w-px h-4 bg-gray-200" />
                 <Link href={buttonHref}>
-                  <button className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#8470ff] text-white text-[12px] font-semibold rounded-full hover:bg-[#7360ef] transition-colors shadow-md">
+                  <button className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#884D70] text-white text-[12px] font-semibold rounded-full hover:bg-[#6B3A5A] transition-colors shadow-md">
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path d="M12 4v16m8-8H4" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" />
                     </svg>

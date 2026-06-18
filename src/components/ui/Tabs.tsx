@@ -23,11 +23,11 @@ export function TabBar({ tabs, activeTab, onTabChange }: TabBarProps) {
         {tabs.map((tab) => (
           <Tab
             key={tab.label}
-            className="group flex items-center gap-1 px-3 py-1.5 text-[11px] font-medium border-b-2 transition-all outline-none border-transparent text-gray-400 hover:text-gray-600 data-selected:border-[#8470ff] data-selected:text-[#8470ff]"
+            className="group flex items-center gap-1 px-3 py-1.5 text-[11px] font-medium border-b-2 transition-all outline-none border-transparent text-gray-400 hover:text-gray-600 data-selected:border-[#884D70] data-selected:text-[#884D70]"
           >
             {tab.label}
             {tab.count !== undefined && (
-              <span className="text-[9px] px-1 py-px rounded font-semibold text-gray-400 group-data-selected:text-[#8470ff]">
+              <span className="text-[9px] px-1 py-px rounded font-semibold text-gray-400 group-data-selected:text-[#884D70]">
                 {tab.count}
               </span>
             )}

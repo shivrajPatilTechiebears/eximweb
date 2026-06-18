@@ -110,8 +110,8 @@ const FAB_ACTIONS: SpeedDialAction[] = [
     label: "Create PO",
     sub: "New purchase order",
     href: "/purchase-order/create",
-    iconBg: "bg-indigo-100",
-    iconColor: "text-indigo-500",
+    iconBg: "bg-[#FFDBCB]/60",
+    iconColor: "text-[#884D70]",
   },
   {
     icon: "request_quote",

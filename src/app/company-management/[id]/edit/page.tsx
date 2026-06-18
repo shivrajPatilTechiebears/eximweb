@@ -107,18 +107,18 @@ function FileUpload({ value, onChange }: { value?: string; onChange: (dataUrl: s
       onClick={() => inputRef.current?.click()}
       onDragOver={(e) => e.preventDefault()}
       onDrop={(e) => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) handleFile(f); }}
-      className="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-[#8470ff]/30 bg-[#f5f3ff]/40 hover:border-[#8470ff]/60 hover:bg-[#f5f3ff]/70 rounded-xl px-6 py-8 cursor-pointer transition-all"
+      className="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-[#884D70]/30 bg-[#FFF0EB]/40 hover:border-[#884D70]/60 hover:bg-[#FFF0EB]/70 rounded-xl px-6 py-8 cursor-pointer transition-all"
     >
       {value ? (
         <>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={value} alt="Company logo" className="h-16 object-contain rounded-lg" />
-          <span className="text-[10px] text-[#8470ff] font-medium">Click to change</span>
+          <span className="text-[10px] text-[#884D70] font-medium">Click to change</span>
         </>
       ) : (
         <>
-          <div className="w-11 h-11 rounded-xl bg-[#8470ff]/10 flex items-center justify-center">
-            <Icon name="add_photo_alternate" size={22} className="text-[#8470ff]" />
+          <div className="w-11 h-11 rounded-xl bg-[#884D70]/10 flex items-center justify-center">
+            <Icon name="add_photo_alternate" size={22} className="text-[#884D70]" />
           </div>
           <div className="text-center">
             <p className="text-[11px] font-medium text-slate-700">Upload Company Logo</p>
@@ -152,7 +152,7 @@ function CheckboxGroup({
         return (
           <label key={opt.value} onClick={() => toggle(opt.value)} className="flex items-center gap-2 cursor-pointer select-none">
             <span className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-all ${
-              checked ? "bg-[#8470ff] border-[#8470ff]" : "bg-white border-gray-300 hover:border-[#8470ff]/50"
+              checked ? "bg-[#884D70] border-[#884D70]" : "bg-white border-gray-300 hover:border-[#884D70]/50"
             }`}>
               {checked && (
                 <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -181,7 +181,7 @@ export default function EditCompanyPage() {
     setData((prev) => ({ ...prev, [key]: value }));
 
   return (
-    <div className="min-h-screen flex flex-col antialiased text-slate-800 bg-[#eaecf1]">
+    <div className="min-h-screen flex flex-col antialiased text-slate-800">
 
       <FloatingNavbar />
 
@@ -197,7 +197,7 @@ export default function EditCompanyPage() {
         rightContent={<StatusBadge label="Editing" color="warning" pulse />}
       />
 
-      <main className="flex-1 px-6 py-4 pb-20 bg-[#eaecf1]">
+      <main className="flex-1 px-6 py-4 pb-20">
         <div className="space-y-3">
 
           {/* ── Company Details ── */}
@@ -276,7 +276,7 @@ export default function EditCompanyPage() {
               Cancel
             </button>
           </Link>
-          <button className="flex items-center gap-1.5 px-4 py-1.5 bg-[#8470ff] text-white text-[12px] font-semibold rounded-full hover:bg-[#7360ef] transition-colors shadow-md">
+          <button className="flex items-center gap-1.5 px-4 py-1.5 bg-[#884D70] text-white text-[12px] font-semibold rounded-full hover:bg-[#6B3A5A] transition-colors shadow-md">
             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" />
             </svg>

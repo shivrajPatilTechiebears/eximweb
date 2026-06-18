@@ -115,7 +115,7 @@ export function ExcelTable<T>({
   return (
     <div className={className}>
       {header && (
-        <div className="px-5 py-2.5 border-b border-gray-100 flex items-center justify-between">
+        <div className="px-5 py-2.5 border-b border-gray-200/60 flex items-center justify-between">
           {header}
         </div>
       )}
@@ -127,7 +127,7 @@ export function ExcelTable<T>({
             {table.getHeaderGroups().map((hg) => (
               <tr key={hg.id}>
                 {/* row-number gutter */}
-                <th className="w-9 bg-[#e8eaed]/60 border-b border-r border-gray-200 select-none" />
+                <th className="w-9 bg-white/20 border-b border-r border-gray-200/60 select-none" />
 
                 {hg.headers.map((header) => {
                   const canSort = header.column.columnDef.meta?.sortable;
@@ -136,8 +136,8 @@ export function ExcelTable<T>({
                     <th
                       key={header.id}
                       onClick={() => canSort && onSort?.(header.id)}
-                      className={`bg-[#e8eaed]/60 border-b border-r border-gray-200 px-3 py-1.5 text-left text-[10px] font-semibold text-slate-500 uppercase tracking-widest whitespace-nowrap select-none ${
-                        canSort ? "cursor-pointer hover:bg-[#d8dce5]/60 transition-colors" : ""
+                      className={`bg-white/20 border-b border-r border-gray-200/60 px-3 py-1.5 text-left text-[10px] font-semibold text-slate-700 uppercase tracking-widest whitespace-nowrap select-none ${
+                        canSort ? "cursor-pointer hover:bg-white/30 transition-colors" : ""
                       }`}
                     >
                       <div className="flex items-center gap-1">
@@ -166,14 +166,14 @@ export function ExcelTable<T>({
             ) : (
               rows.map((row, i) => {
                 const defaultCls =
-                  i % 2 === 0 ? "bg-white hover:bg-[#eef3fe]" : "bg-[#f2f4f8] hover:bg-[#eef3fe]";
+                  i % 2 === 0 ? "bg-white/10 hover:bg-white/30" : "bg-transparent hover:bg-white/20";
                 const isDragging   = dragFrom === i;
                 const isDropTarget = dragOver === i && dragFrom !== i;
 
                 return (
                   <Fragment key={row.id}>
                     <tr
-                      className={`group transition-colors ${rowClassName ? rowClassName(row.original, i) : defaultCls} ${isDragging ? "opacity-40" : ""} ${isDropTarget ? "shadow-[inset_0_2px_0_#8470ff]" : ""}`}
+                      className={`group transition-colors ${rowClassName ? rowClassName(row.original, i) : defaultCls} ${isDragging ? "opacity-40" : ""} ${isDropTarget ? "shadow-[inset_0_2px_0_#884D70]" : ""}`}
                     >
                       {/* row-number / drag-handle cell */}
                       <td
@@ -182,7 +182,7 @@ export function ExcelTable<T>({
                         onDragOver={(e) => handleDragOver(e, i)}
                         onDrop={() => handleDrop(i)}
                         onDragEnd={handleDragEnd}
-                        className={`w-9 text-center text-[10px] text-gray-500 tabular-nums font-mono border-b border-r border-gray-200 bg-[#f2f4f7] group-hover:bg-[#e4e9f7] transition-colors select-none py-2 ${onReorder ? "cursor-grab active:cursor-grabbing" : ""}`}
+                        className={`w-9 text-center text-[10px] text-gray-500 tabular-nums font-mono border-b border-r border-gray-200/60 bg-white/20 group-hover:bg-white/40 transition-colors select-none py-2 ${onReorder ? "cursor-grab active:cursor-grabbing" : ""}`}
                       >
                         <span className={`${onReorder ? "group-hover:hidden" : ""} block`}>{i + 1}</span>
                         {onReorder && (
@@ -193,7 +193,7 @@ export function ExcelTable<T>({
                       </td>
 
                       {row.getVisibleCells().map((cell) => (
-                        <td key={cell.id} className={`border-b border-r border-gray-200 ${cellClassName}`}>
+                        <td key={cell.id} className={`border-b border-r border-gray-200/60 ${cellClassName}`}>
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </td>
                       ))}
@@ -233,6 +233,8 @@ interface DataTableProps<T extends object> {
   showingCurrent?: number;
   showingTotal?: number;
   pagination?: React.ReactNode;
+  className?: string;
+  tableClassName?: string;
 }
 
 export function DataTable<T extends object>({
@@ -250,9 +252,11 @@ export function DataTable<T extends object>({
   showingCurrent,
   showingTotal,
   pagination,
+  className,
+  tableClassName,
 }: DataTableProps<T>) {
   return (
-    <section className="space-y-4">
+    <section className={className ?? "space-y-4"}>
       <div className="flex items-center justify-between">
         <div>
           <h2 className={titleClassName ?? "text-xl font-bold text-gray-900"}>{title}</h2>
@@ -270,6 +274,7 @@ export function DataTable<T extends object>({
           emptyMessage={emptyMessage}
           rowStyle={rowStyle}
           expandedRow={expandedRow}
+          className={tableClassName}
         />
       </div>
 

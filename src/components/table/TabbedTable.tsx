@@ -35,7 +35,7 @@ interface TabbedTableProps {
 export function TabbedTable({
   tabs,
   defaultTab,
-  className = "bg-white rounded-xl border border-gray-200/60 shadow-[0_1px_4px_rgba(0,0,0,0.06)]",
+  className = "bg-white/50 backdrop-blur-xl rounded-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.06)]",
 }: TabbedTableProps) {
   const defaultIndex = Math.max(tabs.findIndex((t) => t.label === defaultTab), 0);
   const [activeIndex, setActiveIndex] = useState(defaultIndex);
@@ -45,12 +45,12 @@ export function TabbedTable({
   return (
     <div className={className}>
       <TabGroup selectedIndex={activeIndex} onChange={setActiveIndex}>
-        <div className="flex items-center border-b border-gray-100 px-1">
+        <div className="flex items-center border-b border-white/40 px-1">
           <TabList className="flex">
             {tabs.map((tab) => (
               <Tab
                 key={tab.label}
-                className="px-4 py-2.5 text-[11px] font-medium border-b-2 -mb-px transition-all outline-none border-transparent text-gray-400 hover:text-gray-600 data-selected:border-[#8470ff] data-selected:text-[#8470ff]"
+                className="px-4 py-2.5 text-[11px] font-medium border-b-2 -mb-px transition-all outline-none border-transparent text-gray-400 hover:text-gray-600 data-selected:border-[#884D70] data-selected:text-[#884D70]"
               >
                 {tab.label}
               </Tab>

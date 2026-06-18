@@ -15,6 +15,7 @@ interface TableProps<T extends object> {
   columns: TableColumn<T>[];
   data: T[];
   emptyMessage?: string;
+  className?: string;
   /** Per-row inline style (e.g. alternating bg, highlight). */
   rowStyle?: (row: T, index: number) => React.CSSProperties;
   /**
@@ -31,14 +32,15 @@ export function Table<T extends object>({
   columns,
   data,
   emptyMessage = "No data found.",
+  className,
   rowStyle,
   expandedRow,
 }: TableProps<T>) {
   return (
-    <div className="bg-white/80 rounded-lg border border-gray-100">
+    <div className={className ?? "bg-white/80 rounded-lg border border-gray-100"}>
       <table className="min-w-full text-left">
         <thead>
-          <tr className="bg-table-header">
+          <tr className={className ? "bg-white/30 border-b border-white/40" : "bg-table-header"}>
             {columns.map((col, ci) => (
               <th
                 key={col.field}

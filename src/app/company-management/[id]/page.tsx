@@ -123,7 +123,7 @@ function CheckboxGroupView({ options, value }: { options: { label: string; value
         return (
           <div key={opt.value} className="flex items-center gap-2">
             <span className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${
-              checked ? "bg-[#8470ff] border-[#8470ff]" : "bg-white border-gray-300"
+              checked ? "bg-[#884D70] border-[#884D70]" : "bg-white border-gray-300"
             }`}>
               {checked && (
                 <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -152,7 +152,7 @@ export default function ViewCompanyPage() {
   const statusLabel = company.status === "active" ? "Active" : company.status === "pending" ? "Pending" : "Inactive";
 
   return (
-    <div className="min-h-screen flex flex-col antialiased text-slate-800 bg-[#eaecf1]">
+    <div className="min-h-screen flex flex-col antialiased text-slate-800">
 
       <FloatingNavbar />
 
@@ -169,7 +169,7 @@ export default function ViewCompanyPage() {
             <StatusBadge label={statusLabel} color={statusColor} />
             <div className="w-px h-4 bg-gray-200" />
             <Link href={`/company-management/${id}/edit`}>
-              <button className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#8470ff] text-white text-[12px] font-semibold rounded-full hover:bg-[#7360ef] transition-colors shadow-md">
+              <button className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#884D70] text-white text-[12px] font-semibold rounded-full hover:bg-[#6B3A5A] transition-colors shadow-md">
                 Edit Company
               </button>
             </Link>
@@ -177,7 +177,7 @@ export default function ViewCompanyPage() {
         }
       />
 
-      <main className="flex-1 px-6 py-4 pb-10 bg-[#eaecf1]">
+      <main className="flex-1 px-6 py-4 pb-10">
         <div className="space-y-3">
 
           {/* ── Company Details ── */}

@@ -153,7 +153,7 @@ export default function ViewAdminPage() {
     admin.status === "pending" ? "Pending" : "Inactive";
 
   return (
-    <div className="min-h-screen flex flex-col antialiased text-slate-800 bg-[#eaecf1]">
+    <div className="min-h-screen flex flex-col antialiased text-slate-800">
 
       <FloatingNavbar />
 
@@ -170,7 +170,7 @@ export default function ViewAdminPage() {
             <StatusBadge label={statusLabel} color={statusColor} />
             <div className="w-px h-4 bg-gray-200" />
             <Link href={`/admin-management/${id}/edit`}>
-              <button className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#8470ff] text-white text-[12px] font-semibold rounded-full hover:bg-[#7360ef] transition-colors shadow-md">
+              <button className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#884D70] text-white text-[12px] font-semibold rounded-full hover:bg-[#6B3A5A] transition-colors shadow-md">
                 Edit Admin
               </button>
             </Link>
@@ -178,7 +178,7 @@ export default function ViewAdminPage() {
         }
       />
 
-      <main className="flex-1 px-6 py-4 pb-10 bg-[#eaecf1]">
+      <main className="flex-1 px-6 py-4 pb-10">
         <div className="space-y-3">
           {SECTIONS.map((section) => (
             <div

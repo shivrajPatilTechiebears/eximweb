@@ -149,7 +149,7 @@ export default function EditAdminPage() {
     setData((prev) => ({ ...prev, [key]: value }));
 
   return (
-    <div className="min-h-screen flex flex-col antialiased text-slate-800 bg-[#eaecf1]">
+    <div className="min-h-screen flex flex-col antialiased text-slate-800">
 
       <FloatingNavbar />
 
@@ -165,7 +165,7 @@ export default function EditAdminPage() {
         rightContent={<StatusBadge label="Editing" color="warning" pulse />}
       />
 
-      <main className="flex-1 px-6 py-4 pb-20 bg-[#eaecf1]">
+      <main className="flex-1 px-6 py-4 pb-20">
         <div className="space-y-3">
           {SECTIONS.map((section) => (
             <div
@@ -217,7 +217,7 @@ export default function EditAdminPage() {
               Cancel
             </button>
           </Link>
-          <button className="flex items-center gap-1.5 px-4 py-1.5 bg-[#8470ff] text-white text-[12px] font-semibold rounded-full hover:bg-[#7360ef] transition-colors shadow-md">
+          <button className="flex items-center gap-1.5 px-4 py-1.5 bg-[#884D70] text-white text-[12px] font-semibold rounded-full hover:bg-[#6B3A5A] transition-colors shadow-md">
             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" />
             </svg>

@@ -4,6 +4,8 @@ body {
   font-family: var(--font-plus-jakarta-sans), sans-serif;
   color: var(--color-on-background);
   background-image: var(--app-bg);
+  background-size: cover;
+  background-position: center;
   background-attachment: fixed;
   min-height: 100vh;
 }

@@ -18,7 +18,7 @@ import { Pagination } from "@/components/ui/Pagination";
 // ── Data ───────────────────────────────────────────────────────────────────────
 
 const STAT_CARDS = [
-  { title: "Total POs",  value: "6", badge: "+12%", badgeClassName: "text-emerald-600 bg-emerald-50", accentColor: "#8470ff", subtitle: "All time" },
+  { title: "Total POs",  value: "6", badge: "+12%", badgeClassName: "text-emerald-600 bg-emerald-50", accentColor: "#884D70", subtitle: "All time" },
   { title: "Pending",    value: "1", badge: "17%",   badgeClassName: "text-amber-600 bg-amber-50",   accentColor: "#fbbf24", subtitle: "Awaiting approval" },
   { title: "Created",    value: "3", badge: "+50%",  badgeClassName: "text-emerald-600 bg-emerald-50", accentColor: "#34d399", subtitle: "Processed orders" },
   { title: "Approved",   value: "1", badge: "17%",   badgeClassName: "text-sky-600 bg-sky-50",       accentColor: "#38bdf8", subtitle: "Ready to dispatch" },
@@ -135,7 +135,7 @@ export default function PurchaseOrderListPage() {
   const renderCell = (row: PurchaseOrder, col: Column): ReactNode => {
     switch (col.key) {
       case "poNumber": return (
-        <Link href={`/purchase-order/${row.id}`} className="text-[11px] font-semibold text-[#8470ff] hover:underline underline-offset-2">
+        <Link href={`/purchase-order/${row.id}`} className="text-[11px] font-semibold text-[#884D70] hover:underline underline-offset-2">
           {row.poNumber}
         </Link>
       );
@@ -179,7 +179,7 @@ export default function PurchaseOrderListPage() {
 
   const expandedRow = (row: PurchaseOrder, colSpan: number): ReactNode =>
     deleteId !== row.id ? null : (
-      <tr className="bg-red-50">
+      <tr className="bg-red-100/50 backdrop-blur-sm">
         <td colSpan={colSpan} className="px-4 py-2.5 border-b border-red-100">
           <div className="flex items-center justify-between">
             <span className="text-[11px] text-red-700 font-medium">
@@ -194,7 +194,7 @@ export default function PurchaseOrderListPage() {
               </button>
               <button
                 onClick={() => setDeleteId(null)}
-                className="px-3 py-1 bg-white text-gray-700 text-[10px] font-semibold rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                className="px-3 py-1 bg-white/60 backdrop-blur-sm text-gray-700 text-[10px] font-semibold rounded-lg border border-white/60 hover:bg-white/80 transition-colors"
               >
                 Cancel
               </button>
@@ -224,7 +224,7 @@ export default function PurchaseOrderListPage() {
   // ── Render ────────────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen flex flex-col antialiased text-slate-800 bg-[#eaecf1]">
+    <div className="min-h-screen flex flex-col antialiased text-slate-800">
 
       <FloatingNavbar />
       <SecondaryNav />
@@ -242,14 +242,14 @@ export default function PurchaseOrderListPage() {
       />
 
       {/* ═══ STAT TILES ═══ */}
-      <div className="px-6 pt-4 pb-0 bg-[#eaecf1] grid grid-cols-4 gap-3">
+      <div className="px-6 pt-4 pb-0 grid grid-cols-4 gap-3">
         {STAT_CARDS.map((card) => (
           <StatCard key={card.title} {...card} />
         ))}
       </div>
 
       {/* ═══ TABLE SECTION ═══ */}
-      <main className="flex-1 px-6 pt-3 pb-4 bg-[#eaecf1]">
+      <main className="flex-1 px-6 pt-3 pb-4">
 
         {/* ── Tabs + Controls ── */}
         <div className="flex items-center px-1 pb-2 gap-2">
@@ -280,7 +280,7 @@ export default function PurchaseOrderListPage() {
             onToggle={toggleCol}
           />
 
-          <button className="flex items-center gap-1.5 text-[11px] font-semibold text-white px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#8470ff] to-[#6366f1] hover:from-[#9480ff] hover:to-[#7375f5] shadow-[0_2px_10px_rgba(132,112,255,0.35)] hover:shadow-[0_4px_16px_rgba(132,112,255,0.5)] transition-all">
+          <button className="flex items-center gap-1.5 text-[11px] font-semibold text-white px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#884D70] to-[#6B3A5A] hover:from-[#9E6080] hover:to-[#9E6080] shadow-[0_2px_10px_rgba(136,77,112,0.35)] hover:shadow-[0_4px_16px_rgba(136,77,112,0.5)] transition-all">
             <Icon name="download" size={13} />
             Export
           </button>
@@ -297,14 +297,16 @@ export default function PurchaseOrderListPage() {
           renderCell={renderCell}
           rowClassName={(row, i) =>
             deleteId === row.id
-              ? "bg-red-50"
+              ? "bg-red-100/60"
               : i % 2 === 0
-              ? "bg-white hover:bg-[#eef3fe]"
-              : "bg-[#f2f4f8] hover:bg-[#eef3fe]"
+              ? "bg-white/45 hover:bg-white/70"
+              : "bg-white/20 hover:bg-white/50"
           }
           expandedRow={expandedRow}
           emptyMessage="No purchase orders found."
           statusBar={statusBar}
+          className="bg-white/50 backdrop-blur-xl rounded-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.06)]"
+          statusBarClassName="px-4 py-2 bg-white/30 border-t border-white/40 flex items-center justify-between rounded-b-xl"
         />
 
       </main>
@@ -314,7 +316,7 @@ export default function PurchaseOrderListPage() {
         <div
           ref={moreMenuRef}
           style={{ position: "fixed", top: moreMenuPos.top, left: moreMenuPos.left, zIndex: 9999 }}
-          className="bg-white rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-gray-100 py-1 w-40"
+          className="bg-white/80 backdrop-blur-xl rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.10)] border border-white/60 py-1 w-40"
         >
           {[
             { label: "View Details", href: `/purchase-order/${moreMenuId}` },

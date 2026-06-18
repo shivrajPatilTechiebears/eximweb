@@ -42,21 +42,21 @@ function ChevronRight() {
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen flex flex-col antialiased text-slate-800 bg-gray-50">
+    <div className="min-h-screen flex flex-col antialiased text-slate-800 bg-transparent">
 
       <FloatingNavbar />
       <SecondaryNav />
 
       {/* ═══════ GREETING + ACTIVE POs STRIP ═══════ */}
-      <div className="pt-16 bg-white border-b border-gray-100 px-10 py-3 flex items-center justify-between shrink-0">
+      <div className="pt-16 bg-white/60 backdrop-blur-xl border-b border-white/50 px-10 py-3 flex items-center justify-between shrink-0">
         <div>
           <p className="text-sm font-bold text-slate-800">Welcome Back, Shivam Chaudhari 👋</p>
           <p className="text-[11px] text-gray-400 mt-0.5">📅 Wednesday, 24 March 2026</p>
         </div>
         <div className="flex items-center gap-2.5">
           <p className="text-[10px] text-gray-400">Active POs · March 2026</p>
-          <div className="w-28 bg-gray-100 h-1.5 rounded-full overflow-hidden">
-            <div className="h-full bg-[#8470ff] rounded-full" style={{ width: "74%" }} />
+          <div className="w-28 bg-[#FFDBCB]/50 h-1.5 rounded-full overflow-hidden">
+            <div className="h-full bg-[#884D70] rounded-full" style={{ width: "74%" }} />
           </div>
           <span className="text-[11px] font-bold text-slate-700">1,482 / 2,000</span>
           <span className="text-[9px] text-gray-400">· 518 left · 8 days</span>
@@ -64,22 +64,22 @@ export default function HomePage() {
       </div>
 
       {/* ═══════════════════════ CONTENT GRID ═══════════════════════ */}
-      <main className="flex-1 px-6 py-3 grid grid-cols-12 gap-3 bg-gray-50 content-start">
+      <main className="flex-1 px-6 py-3 grid grid-cols-12 gap-3 content-start">
 
         {/* ── Stat tiles ── */}
-        <div className="col-span-3 bg-white rounded-xl border border-gray-100 p-3.5 hover:shadow-sm hover:-translate-y-px transition-all group cursor-default">
+        <div className="col-span-3 bg-white/50 backdrop-blur-xl rounded-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.06)] p-3.5 hover:shadow-[0_8px_32px_rgba(0,0,0,0.10)] hover:-translate-y-px transition-all group cursor-default">
           <div className="flex items-center justify-between mb-1.5">
             <span className="text-[10px] text-gray-400 font-medium">Active POs</span>
             <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">+15%</span>
           </div>
           <p className="text-xl font-black text-slate-900 tracking-tight leading-none">1,482</p>
-          <div className="mt-2 h-0.75 bg-gray-100 rounded-full overflow-hidden">
-            <div className="h-full bg-[#8470ff] rounded-full" style={{ width: "74%" }} />
+          <div className="mt-2 h-0.75 bg-[#FFDBCB]/50 rounded-full overflow-hidden">
+            <div className="h-full bg-[#884D70] rounded-full" style={{ width: "74%" }} />
           </div>
           <p className="text-[9px] text-gray-400 mt-1.5 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-150">518 remaining · 8 days left</p>
         </div>
 
-        <div className="col-span-3 bg-white rounded-xl border border-gray-100 p-3.5 hover:shadow-sm hover:-translate-y-px transition-all group cursor-default">
+        <div className="col-span-3 bg-white/50 backdrop-blur-xl rounded-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.06)] p-3.5 hover:shadow-[0_8px_32px_rgba(0,0,0,0.10)] hover:-translate-y-px transition-all group cursor-default">
           <div className="flex items-center justify-between mb-1.5">
             <span className="text-[10px] text-gray-400 font-medium">Shipments</span>
             <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">+8%</span>
@@ -91,7 +91,7 @@ export default function HomePage() {
           <p className="text-[9px] text-gray-400 mt-1.5 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-150">Intransit: 1,204 · Confirmed: 1,695</p>
         </div>
 
-        <div className="col-span-3 bg-white rounded-xl border border-gray-100 p-3.5 hover:shadow-sm hover:-translate-y-px transition-all group cursor-default">
+        <div className="col-span-3 bg-white/50 backdrop-blur-xl rounded-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.06)] p-3.5 hover:shadow-[0_8px_32px_rgba(0,0,0,0.10)] hover:-translate-y-px transition-all group cursor-default">
           <div className="flex items-center justify-between mb-1.5">
             <span className="text-[10px] text-gray-400 font-medium">Active Suppliers</span>
             <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">+3%</span>
@@ -103,7 +103,7 @@ export default function HomePage() {
           <p className="text-[9px] text-gray-400 mt-1.5 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-150">7 new onboarded this month</p>
         </div>
 
-        <div className="col-span-3 bg-white rounded-xl border border-gray-100 p-3.5 hover:shadow-sm hover:-translate-y-px transition-all group cursor-default">
+        <div className="col-span-3 bg-white/50 backdrop-blur-xl rounded-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.06)] p-3.5 hover:shadow-[0_8px_32px_rgba(0,0,0,0.10)] hover:-translate-y-px transition-all group cursor-default">
           <div className="flex items-center justify-between mb-1.5">
             <span className="text-[10px] text-gray-400 font-medium">Order Value</span>
             <span className="text-[9px] font-bold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded-full">−4%</span>
@@ -116,7 +116,7 @@ export default function HomePage() {
         </div>
 
         {/* ── PO Trend chart ── */}
-        <section className="col-span-6 bg-white rounded-2xl border border-gray-100 p-4">
+        <section className="col-span-6 bg-white/50 backdrop-blur-xl rounded-2xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.06)] p-4">
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-baseline gap-2">
               <span className="text-[11px] font-bold text-slate-800">PO Trend</span>
@@ -149,7 +149,7 @@ export default function HomePage() {
         </section>
 
         {/* ── Order Summary (My Balance style) ── */}
-        <section className="col-span-3 bg-white rounded-2xl border border-gray-100 p-4 flex flex-col justify-between">
+        <section className="col-span-3 bg-white/50 backdrop-blur-xl rounded-2xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.06)] p-4 flex flex-col justify-between">
           <div className="flex justify-between items-start">
             <div>
               <h3 className="text-[12px] font-bold text-slate-800">My Orders</h3>
@@ -175,8 +175,8 @@ export default function HomePage() {
                 <span className="text-gray-400">Total Shipments</span>
                 <span className="font-bold text-slate-700">2,899</span>
               </div>
-              <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-                <div className="h-full bg-[#8470ff] rounded-full" style={{ width: "83%" }} />
+              <div className="w-full bg-[#FFDBCB]/50 h-2 rounded-full overflow-hidden">
+                <div className="h-full bg-[#884D70] rounded-full" style={{ width: "83%" }} />
               </div>
             </div>
             <div>
@@ -192,10 +192,10 @@ export default function HomePage() {
 
           <Link
             href="/purchase-order/create"
-            className="bg-gray-50 p-3 rounded-xl flex items-center justify-between border border-gray-100 hover:bg-gray-100 transition-colors group/cta"
+            className="bg-white/40 p-3 rounded-xl flex items-center justify-between border border-white/60 hover:bg-white/60 transition-colors group/cta"
           >
             <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 bg-[#8470ff] rounded-lg flex items-center justify-center text-white text-[9px] font-bold shrink-0">PO</div>
+              <div className="w-7 h-7 bg-[#884D70] rounded-lg flex items-center justify-center text-white text-[9px] font-bold shrink-0">PO</div>
               <div>
                 <p className="text-[10px] font-bold text-slate-700">Create Purchase Order</p>
                 <p className="text-[9px] text-gray-400">Add a new order to pipeline</p>
@@ -206,7 +206,7 @@ export default function HomePage() {
         </section>
 
         {/* ── Order Breakdown ── */}
-        <section className="col-span-3 bg-white rounded-2xl border border-gray-100 p-4">
+        <section className="col-span-3 bg-white/50 backdrop-blur-xl rounded-2xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.06)] p-4">
           <div className="flex items-center justify-between mb-3">
             <span className="text-[11px] font-bold text-slate-800">Order Breakdown</span>
             <Link href="/purchase-order" className="text-[9px] text-gray-400 hover:text-slate-700 transition-colors">See all →</Link>
@@ -218,7 +218,7 @@ export default function HomePage() {
               className="w-32 h-32 rounded-full flex items-center justify-center"
               style={{ background: "conic-gradient(#22c55e 0% 54%, #facc15 54% 88%, #ef4444 88% 100%)" }}
             >
-              <div className="w-20 h-20 bg-white rounded-full flex flex-col items-center justify-center text-center">
+              <div className="w-20 h-20 bg-white/90 rounded-full flex flex-col items-center justify-center text-center">
                 <p className="text-[9px] text-gray-400">Total</p>
                 <p className="text-sm font-bold text-slate-900">$35.6k</p>
               </div>
@@ -252,14 +252,14 @@ export default function HomePage() {
 
           <Link
             href="/purchase-order/create"
-            className="mt-2 flex items-center gap-2 px-3 py-2 rounded-xl bg-gray-50 hover:bg-[#8470ff]/5 border border-gray-100 hover:border-[#8470ff]/20 transition-all group/cta"
+            className="mt-2 flex items-center gap-2 px-3 py-2 rounded-xl bg-white/40 hover:bg-[#884D70]/10 border border-white/60 hover:border-[#884D70]/30 transition-all group/cta"
           >
-            <div className="w-5 h-5 bg-[#8470ff] rounded-full flex items-center justify-center shrink-0">
+            <div className="w-5 h-5 bg-[#884D70] rounded-full flex items-center justify-center shrink-0">
               <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path d="M12 4v16m8-8H4" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" />
               </svg>
             </div>
-            <span className="text-[10px] font-semibold text-slate-600 group-hover/cta:text-[#8470ff] transition-colors flex-1">New Purchase Order</span>
+            <span className="text-[10px] font-semibold text-slate-600 group-hover/cta:text-[#884D70] transition-colors flex-1">New Purchase Order</span>
             <ChevronRight />
           </Link>
         </section>
@@ -268,6 +268,7 @@ export default function HomePage() {
         <div className="col-span-12">
           <PurchaseOrdersTable />
         </div>
+
 
       </main>
       {/* ═══════════════════════ END CONTENT GRID ═══════════════════════ */}

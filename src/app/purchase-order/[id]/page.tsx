@@ -143,7 +143,7 @@ export default function ViewPurchaseOrderPage() {
   const renderScheduleCell = (row: ScheduleRow, col: Column): ReactNode => {
     switch (col.key) {
       case "phase":       return <span className="text-[11px] text-slate-800 font-medium">{row.phase}</span>;
-      case "qty":         return <span className="text-[11px] font-semibold text-[#8470ff] tabular-nums">{row.qty}</span>;
+      case "qty":         return <span className="text-[11px] font-semibold text-[#884D70] tabular-nums">{row.qty}</span>;
       case "reqDispatch": return <span className="text-[11px] text-gray-600 tabular-nums">{row.reqDispatch}</span>;
       case "reqDelivery": return <span className="text-[11px] text-gray-600 tabular-nums">{row.reqDelivery}</span>;
       case "actionLog":   return <span className="text-[11px] text-gray-600">{row.actionLog}</span>;
@@ -152,7 +152,7 @@ export default function ViewPurchaseOrderPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col antialiased text-slate-800 bg-[#eaecf1]">
+    <div className="min-h-screen flex flex-col antialiased text-slate-800">
 
       <FloatingNavbar />
 
@@ -168,7 +168,7 @@ export default function ViewPurchaseOrderPage() {
             <StatusBadge label={statusLabel} color={statusColor} />
             <div className="w-px h-4 bg-gray-200" />
             <Link href={`/purchase-order/${id}/edit`}>
-              <button className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#8470ff] text-white text-[12px] font-semibold rounded-full hover:bg-[#7360ef] transition-colors shadow-md">
+              <button className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#884D70] text-white text-[12px] font-semibold rounded-full hover:bg-[#6B3A5A] transition-colors shadow-md">
                 Edit PO
               </button>
             </Link>
@@ -176,7 +176,7 @@ export default function ViewPurchaseOrderPage() {
         }
       />
 
-      <main className="flex-1 px-6 py-4 pb-20 bg-[#eaecf1] space-y-3">
+      <main className="flex-1 px-6 py-4 pb-20 space-y-3">
 
         {/* ── Order Details ── */}
         <div className="bg-white rounded-xl border border-gray-200/60 shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
@@ -266,7 +266,7 @@ export default function ViewPurchaseOrderPage() {
             </button>
           </Link>
           <Link href="/purchase-order">
-            <button className="flex items-center gap-1.5 px-4 py-1.5 bg-[#8470ff] text-white text-[12px] font-semibold rounded-full hover:bg-[#7360ef] transition-colors shadow-md">
+            <button className="flex items-center gap-1.5 px-4 py-1.5 bg-[#884D70] text-white text-[12px] font-semibold rounded-full hover:bg-[#6B3A5A] transition-colors shadow-md">
               Back to List
             </button>
           </Link>

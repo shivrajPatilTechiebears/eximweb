@@ -16,8 +16,8 @@ export function CellInput({ align = "left", width, className, ...props }: CellIn
     <Input
       className={[
         "px-2 py-1.5 text-[11px] text-slate-800 bg-transparent outline-none",
-        "focus:bg-[#f5f3ff] focus:ring-1 focus:ring-[#8470ff]/20 rounded",
-        "placeholder:text-gray-400 tabular-nums transition-all",
+        "focus:bg-[#FFF0EB] focus:ring-1 focus:ring-[#884D70]/20 rounded",
+        "placeholder:text-gray-500 tabular-nums transition-all",
         alignClass,
         width ?? "w-full",
         className ?? "",

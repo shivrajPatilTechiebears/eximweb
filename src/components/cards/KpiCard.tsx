@@ -46,7 +46,7 @@ export function KpiCard({
           className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
             deltaVariant === "pink"
               ? "text-rose-600 bg-rose-50"
-              : "text-indigo-600 bg-indigo-50"
+              : "text-[#884D70] bg-[#FFDBCB]/40"
           }`}
         >
           {delta}
@@ -58,7 +58,7 @@ export function KpiCard({
       <p className="text-[10px] text-slate-400 mt-1.5 font-medium">{title}</p>
 
       {/* Progress bar */}
-      <div className="mt-3.5 h-0.5 w-full bg-slate-100 rounded-full overflow-hidden">
+      <div className="mt-3.5 h-0.5 w-full bg-[#FFDBCB]/50 rounded-full overflow-hidden">
         <div className={`h-full ${progressBg} rounded-full`} style={{ width: trendPct }} />
       </div>
 

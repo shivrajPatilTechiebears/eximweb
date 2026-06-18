@@ -56,11 +56,10 @@ function SegmentedTabItem({ tab }: { tab: ModuleTab }) {
   return (
     <Link
       href={tab.href}
-      className={`flex items-center px-4 py-1.5 rounded-lg text-[11px] font-semibold transition-all whitespace-nowrap ${
-        isActive
-          ? "bg-white text-[#8470ff] shadow-sm"
-          : "text-gray-500 hover:text-gray-800"
-      }`}
+      className={`flex items-center px-4 py-1.5 rounded-[10px] text-[11px] font-semibold transition-all duration-200 whitespace-nowrap ${isActive
+        ? "bg-white/95 text-[#884D70] shadow-[0_1px_4px_rgba(0,0,0,0.10),0_0_0_0.5px_rgba(0,0,0,0.04)]"
+        : "text-[#884D70]/60 hover:text-[#884D70] hover:bg-[#884D70]/8"
+        }`}
     >
       {tab.label}
     </Link>
@@ -93,9 +92,12 @@ export function SecondaryNav() {
   if (!isModulePath(pathname)) return null;
 
   return (
-    <div className={`fixed top-0 inset-x-0 z-40 bg-white transition-transform duration-500 ease-in-out ${navbarVisible ? "translate-y-15" : "translate-y-0"}`}>
-      <div className="flex justify-center py-2.5 px-6">
-        <div className="flex items-center bg-gray-100 rounded-xl p-1 gap-0.5">
+    <div
+      className={`fixed top-0 inset-x-0 z-40 backdrop-blur-2xl transition-transform duration-500 ease-in-out ${navbarVisible ? "translate-y-15" : "translate-y-0"
+        }`}
+    >
+      <div className="flex justify-center py-2 px-6">
+        <div className="flex items-center bg-[#884D70]/8 rounded-[14px] p-1 gap-0.5">
           {MODULE_TABS.map(tab => (
             <SegmentedTabItem key={tab.href} tab={tab} />
           ))}

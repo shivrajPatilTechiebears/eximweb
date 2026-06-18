@@ -18,10 +18,10 @@ export const buttonVariantStyles: Record<ButtonVariant, string> = {
     "text-black/30 hover:text-red-500 transition-colors",
   /** Ghost add-row button — "+ Add Item / Schedule" pattern */
   add:
-    "flex items-center gap-1 text-[11px] font-medium text-[#8470ff] hover:bg-[#8470ff]/8 px-2.5 py-1 rounded-lg transition-colors",
+    "flex items-center gap-1 text-[11px] font-medium text-[#884D70] hover:bg-[#884D70]/8 px-2.5 py-1 rounded-lg transition-colors",
   /** Rounded-full solid pill — page header / footer actions */
   "pill-primary":
-    "flex items-center gap-1.5 px-3.5 py-1.5 bg-[#8470ff] text-white text-[12px] font-semibold rounded-full hover:bg-[#7360ef] transition-colors shadow-md",
+    "flex items-center gap-1.5 px-3.5 py-1.5 bg-[#884D70] text-white text-[12px] font-semibold rounded-full hover:bg-[#6B3A5A] transition-colors shadow-md",
   /** Rounded-full outlined pill — secondary page actions */
   "pill-secondary":
     "text-[12px] font-medium text-gray-500 px-3.5 py-1.5 border border-gray-200 rounded-full hover:bg-gray-50 transition-colors",
