@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui/Icon";
 import { FloatingNavbar } from "@/components/layout/FloatingNavbar";
+import { SecondaryNav } from "@/components/layout/SecondaryNav";
 import { DashboardPageHeader } from "@/components/layout/PageHeader";
 import StatCard from "@/components/cards/StatCard";
 import { TabBar } from "@/components/ui/Tabs";
@@ -226,6 +227,7 @@ export default function PurchaseOrderListPage() {
     <div className="min-h-screen flex flex-col antialiased text-slate-800 bg-[#eaecf1]">
 
       <FloatingNavbar />
+      <SecondaryNav />
 
       {/* ═══ WHITE PAGE HEADER ═══ */}
       <DashboardPageHeader

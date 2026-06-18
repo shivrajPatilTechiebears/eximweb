@@ -6,9 +6,8 @@ interface CellInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 /**
- * Borderless input for use inside editable table cells.
- * Tab / Enter navigation is handled by the parent table wrapper
- * via `useTableEnterHandler`.
+ * Inline input for editable ExcelTable cells.
+ * Transparent background, focus highlight, no border — blends into the table row.
  */
 export function CellInput({ align = "left", width, className, ...props }: CellInputProps) {
   const alignClass =
@@ -17,10 +16,11 @@ export function CellInput({ align = "left", width, className, ...props }: CellIn
   return (
     <input
       className={[
-        "w-full bg-transparent border-0 focus:ring-0 text-sm text-gray-800",
-        "p-0 outline-none placeholder:text-gray-400 tabular-nums",
+        "px-2 py-1.5 text-[11px] text-slate-800 bg-transparent outline-none",
+        "focus:bg-[#f5f3ff] focus:ring-1 focus:ring-[#8470ff]/20 rounded",
+        "placeholder:text-gray-300 tabular-nums transition-all",
         alignClass,
-        width ?? "",
+        width ?? "w-full",
         className ?? "",
       ]
         .filter(Boolean)

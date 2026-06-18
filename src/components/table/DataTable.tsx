@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import type { ReactNode } from "react";
 import { Table, type TableColumn } from "@/components/ui/Table";
 
@@ -8,34 +8,42 @@ export type { TableColumn };
 
 // ─── Excel-style table with row numbers and pluggable cell rendering ──────────
 
-export interface Column {
+export interface Column<TRow = unknown> {
   key: string;
   header: string;
   sortable?: boolean;
   align?: "left" | "center" | "right";
+  /** Per-column cell renderer. When provided, takes precedence over the table-level renderCell prop. */
+  cell?: (row: TRow, index: number) => ReactNode;
 }
 
 interface ExcelTableProps<T> {
-  columns: Column[];
+  columns: Column<T>[];
   data: T[];
   rowKey: (row: T) => string;
   sortKey?: string | null;
   sortDir?: "asc" | "desc";
   onSort?: (key: string) => void;
-  renderCell: (row: T, column: Column, rowIndex: number) => ReactNode;
+  /** Table-level fallback renderer. Ignored for any column that defines its own `cell`. */
+  renderCell?: (row: T, column: Column<T>, rowIndex: number) => ReactNode;
   rowClassName?: (row: T, index: number) => string;
   expandedRow?: (row: T, colSpan: number) => ReactNode;
   statusBar?: ReactNode;
   emptyMessage?: string;
-  // Slot for a card header (title + actions) rendered above the table, inside the card border
   header?: ReactNode;
-  // Override the outer card's className (shadow, border, etc.)
   className?: string;
-  // Override individual <td> padding/layout classes (default: "px-3 py-2 whitespace-nowrap text-left")
   cellClassName?: string;
-  // Override the status bar container className
   statusBarClassName?: string;
+  onReorder?: (fromIndex: number, toIndex: number) => void;
 }
+
+const GripIcon = () => (
+  <svg width="8" height="12" viewBox="0 0 8 12" fill="currentColor" className="text-gray-400">
+    <circle cx="2" cy="2"  r="1.2" /><circle cx="6" cy="2"  r="1.2" />
+    <circle cx="2" cy="6"  r="1.2" /><circle cx="6" cy="6"  r="1.2" />
+    <circle cx="2" cy="10" r="1.2" /><circle cx="6" cy="10" r="1.2" />
+  </svg>
+);
 
 export function ExcelTable<T>({
   columns,
@@ -53,8 +61,21 @@ export function ExcelTable<T>({
   className = "bg-white rounded-xl border border-gray-300/50 shadow-[0_4px_20px_rgba(0,0,0,0.1)]",
   cellClassName = "px-3 py-2 whitespace-nowrap text-left",
   statusBarClassName = "px-4 py-1.5 bg-[#e8eaed] border-t border-gray-300/50 flex items-center justify-between rounded-b-xl",
+  onReorder,
 }: ExcelTableProps<T>) {
+  const [dragFrom, setDragFrom] = useState<number | null>(null);
+  const [dragOver, setDragOver] = useState<number | null>(null);
+
   const colSpan = columns.length + 1;
+
+  const handleDragStart = (i: number) => setDragFrom(i);
+  const handleDragOver = (e: React.DragEvent, i: number) => { e.preventDefault(); setDragOver(i); };
+  const handleDrop = (i: number) => {
+    if (dragFrom !== null && dragFrom !== i) onReorder?.(dragFrom, i);
+    setDragFrom(null);
+    setDragOver(null);
+  };
+  const handleDragEnd = () => { setDragFrom(null); setDragOver(null); };
 
   return (
     <div className={className}>
@@ -93,15 +114,31 @@ export function ExcelTable<T>({
               const defaultCls = i % 2 === 0
                 ? "bg-white hover:bg-[#eef3fe]"
                 : "bg-[#f2f4f8] hover:bg-[#eef3fe]";
+              const isDragging = dragFrom === i;
+              const isDropTarget = dragOver === i && dragFrom !== i;
               return (
                 <Fragment key={rowKey(row)}>
-                  <tr className={`group transition-colors ${rowClassName ? rowClassName(row, i) : defaultCls}`}>
-                    <td className="w-9 text-center text-[10px] text-gray-400 tabular-nums font-mono border-b border-r border-gray-200 bg-[#f2f4f7] group-hover:bg-[#e4e9f7] transition-colors select-none py-2">
-                      {i + 1}
+                  <tr
+                    className={`group transition-colors ${rowClassName ? rowClassName(row, i) : defaultCls} ${isDragging ? "opacity-40" : ""} ${isDropTarget ? "shadow-[inset_0_2px_0_#8470ff]" : ""}`}
+                  >
+                    <td
+                      draggable={!!onReorder}
+                      onDragStart={() => handleDragStart(i)}
+                      onDragOver={(e) => handleDragOver(e, i)}
+                      onDrop={() => handleDrop(i)}
+                      onDragEnd={handleDragEnd}
+                      className={`w-9 text-center text-[10px] text-gray-400 tabular-nums font-mono border-b border-r border-gray-200 bg-[#f2f4f7] group-hover:bg-[#e4e9f7] transition-colors select-none py-2 ${onReorder ? "cursor-grab active:cursor-grabbing" : ""}`}
+                    >
+                      <span className={`${onReorder ? "group-hover:hidden" : ""} block`}>{i + 1}</span>
+                      {onReorder && (
+                        <span className="hidden group-hover:flex justify-center">
+                          <GripIcon />
+                        </span>
+                      )}
                     </td>
                     {columns.map((col) => (
                       <td key={col.key} className={`border-b border-r border-gray-200 ${cellClassName}`}>
-                        {renderCell(row, col, i)}
+                        {col.cell ? col.cell(row, i) : renderCell?.(row, col, i)}
                       </td>
                     ))}
                   </tr>
@@ -111,7 +148,7 @@ export function ExcelTable<T>({
             })}
             {data.length === 0 && (
               <tr>
-                <td colSpan={colSpan} className="px-4 py-12 text-center">
+                <td colSpan={colSpan} className="px-4 py-2.5 text-center">
                   <p className="text-[11px] text-gray-400">{emptyMessage}</p>
                 </td>
               </tr>

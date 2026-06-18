@@ -4,6 +4,7 @@ import Link from "next/link";
 import { PurchaseOrdersTable } from "@/components/tables/PurchaseOrdersTable";
 import { BarChart, Bar, BarXAxis, Grid, ChartTooltip, LinearGradient } from "@/components/ui/bar-chart";
 import { FloatingNavbar } from "@/components/layout/FloatingNavbar";
+import { SecondaryNav } from "@/components/layout/SecondaryNav";
 
 const PO_TREND_DATA = [
   { month: "Jan", orders: 68 },
@@ -44,6 +45,7 @@ export default function HomePage() {
     <div className="min-h-screen flex flex-col antialiased text-slate-800 bg-gray-50">
 
       <FloatingNavbar />
+      <SecondaryNav />
 
       {/* ═══════ GREETING + ACTIVE POs STRIP ═══════ */}
       <div className="pt-16 bg-white border-b border-gray-100 px-10 py-3 flex items-center justify-between shrink-0">
@@ -71,7 +73,7 @@ export default function HomePage() {
             <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">+15%</span>
           </div>
           <p className="text-xl font-black text-slate-900 tracking-tight leading-none">1,482</p>
-          <div className="mt-2 h-[3px] bg-gray-100 rounded-full overflow-hidden">
+          <div className="mt-2 h-0.75 bg-gray-100 rounded-full overflow-hidden">
             <div className="h-full bg-[#8470ff] rounded-full" style={{ width: "74%" }} />
           </div>
           <p className="text-[9px] text-gray-400 mt-1.5 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-150">518 remaining · 8 days left</p>
@@ -83,7 +85,7 @@ export default function HomePage() {
             <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">+8%</span>
           </div>
           <p className="text-xl font-black text-slate-900 tracking-tight leading-none">2,899</p>
-          <div className="mt-2 h-[3px] bg-gray-100 rounded-full overflow-hidden">
+          <div className="mt-2 h-0.75 bg-gray-100 rounded-full overflow-hidden">
             <div className="h-full bg-sky-400 rounded-full" style={{ width: "83%" }} />
           </div>
           <p className="text-[9px] text-gray-400 mt-1.5 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-150">Intransit: 1,204 · Confirmed: 1,695</p>
@@ -95,7 +97,7 @@ export default function HomePage() {
             <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">+3%</span>
           </div>
           <p className="text-xl font-black text-slate-900 tracking-tight leading-none">234</p>
-          <div className="mt-2 h-[3px] bg-gray-100 rounded-full overflow-hidden">
+          <div className="mt-2 h-0.75 bg-gray-100 rounded-full overflow-hidden">
             <div className="h-full bg-emerald-400 rounded-full" style={{ width: "78%" }} />
           </div>
           <p className="text-[9px] text-gray-400 mt-1.5 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-150">7 new onboarded this month</p>
@@ -107,7 +109,7 @@ export default function HomePage() {
             <span className="text-[9px] font-bold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded-full">−4%</span>
           </div>
           <p className="text-xl font-black text-slate-900 tracking-tight leading-none">$35.6k</p>
-          <div className="mt-2 h-[3px] bg-gray-100 rounded-full overflow-hidden">
+          <div className="mt-2 h-0.75 bg-gray-100 rounded-full overflow-hidden">
             <div className="h-full bg-orange-400 rounded-full" style={{ width: "62%" }} />
           </div>
           <p className="text-[9px] text-gray-400 mt-1.5 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-150">Target $57.4k · Gap $21.8k</p>
@@ -131,7 +133,7 @@ export default function HomePage() {
             data={PO_TREND_DATA}
             xDataKey="month"
             aspectRatio="auto"
-            className="h-[230px]"
+            className="h-57.5"
             margin={{ top: 20, right: 12, bottom: 34, left: 12 }}
             barGap={0.3}
             animationDuration={900}

@@ -1,6 +1,18 @@
+"use client";
+
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import { Icon } from "@/components/ui/Icon";
+import { MODULE_TABS } from "./SecondaryNav";
+
+function isModulePath(pathname: string) {
+  return MODULE_TABS.some(
+    tab =>
+      pathname.startsWith(tab.href) ||
+      (tab.sub?.some(s => pathname.startsWith(s.href)) ?? false)
+  );
+}
 
 // ─── Dashboard-style page header (list pages with breadcrumbs) ────────────────
 
@@ -21,8 +33,11 @@ export function DashboardPageHeader({
   buttonHref,
   rightContent,
 }: DashboardPageHeaderProps) {
+  const pathname = usePathname();
+  const topPadding = isModulePath(pathname) ? "pt-30" : "pt-16";
+
   return (
-    <div className="pt-16 bg-white border-b border-gray-200/70 px-10 py-3 flex items-center justify-between shrink-0">
+    <div className={`${topPadding} bg-white border-b border-gray-200/70 px-10 pt-5 pb-4 flex items-center justify-between shrink-0`}>
       <div>
         <div className="flex items-center gap-1.5 text-[10px] text-gray-400 mb-0.5">
           {breadcrumbs.map((crumb, i) => (
