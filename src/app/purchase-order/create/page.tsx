@@ -42,6 +42,9 @@ export default function CreatePurchaseOrderPage() {
   const [shipmentTerms, setShipmentTerms] = useState("");
   const [paymentTerms, setPaymentTerms] = useState("");
   const [transporter, setTransporter] = useState("");
+  const [truckNo, setTruckNo] = useState("");
+  const [driverDetails, setDriverDetails] = useState("");
+  const [deliveryLocation, setDeliveryLocation] = useState("");
 
   const [items, setItems] = useState<PurchaseItem[]>([]);
 
@@ -53,42 +56,66 @@ export default function CreatePurchaseOrderPage() {
 
   const deleteItem = useCallback((id: number) => setItems((p) => p.filter((r) => r.id !== id)), []);
 
+  const updateItem = useCallback(<K extends keyof Omit<PurchaseItem, "id">>(id: number, key: K, value: PurchaseItem[K]) => {
+    setItems((p) => p.map((r) => r.id === id ? { ...r, [key]: value } : r));
+  }, []);
+
   const addSchedule = useCallback(() => {
     setScheduleRows((p) => [...p, { id: p.length + 1, phase: "", qty: 0, reqDispatch: "", reqDelivery: "", actionLog: "" }]);
   }, []);
 
   const deleteSchedule = useCallback((id: number) => setScheduleRows((p) => p.filter((r) => r.id !== id)), []);
 
+  const updateSchedule = useCallback(<K extends keyof Omit<ScheduleRow, "id">>(id: number, key: K, value: ScheduleRow[K]) => {
+    setScheduleRows((p) => p.map((r) => r.id === id ? { ...r, [key]: value } : r));
+  }, []);
+
   const totalQty = items.reduce((s, i) => s + i.qty, 0);
   const netAmount = items.reduce((s, i) => s + i.qty * i.price, 0);
   const taxEst = Math.round(netAmount * 0.18);
+
+  const orderDetailsFields = { poType, currency, shipmentTerms, paymentTerms, transporter, truckNo, driverDetails, deliveryLocation };
+
+  const steps = [
+    { label: "Order Details", complete: Object.values(orderDetailsFields).every(Boolean) },
+    {
+      label: "Purchase Items",
+      complete: items.length > 0 && items.every(({ id: _id, ...fields }) => Object.values(fields).every(Boolean)),
+    },
+    {
+      label: "Schedule",
+      complete: scheduleRows.length > 0 && scheduleRows.every(({ id: _id, ...fields }) => Object.values(fields).every(Boolean)),
+    },
+    { label: "Review & Submit", complete: false },
+  ];
+  const completedCount = steps.filter((s) => s.complete).length;
 
   // ── Purchase Items columns ────────────────────────────────────────────────
 
   const purchaseItemColumns: Column<PurchaseItem>[] = [
     {
       key: "name", header: "Item Name",
-      cell: (row) => <CellInput defaultValue={row.name} placeholder="Item name…" width="w-full min-w-[160px]" />,
+      cell: (row) => <CellInput value={row.name} onChange={(e) => updateItem(row.id, "name", e.target.value)} placeholder="Item name…" width="w-full min-w-[160px]" />,
     },
     {
       key: "qty", header: "Qty",
-      cell: (row) => <CellInput defaultValue={row.qty || ""} placeholder="0" type="number" align="center" width="w-16" />,
+      cell: (row) => <CellInput value={row.qty || ""} onChange={(e) => updateItem(row.id, "qty", Number(e.target.value))} placeholder="0" type="number" align="center" width="w-16" />,
     },
     {
       key: "price", header: "Price (₹)",
-      cell: (row) => <CellInput defaultValue={row.price || ""} placeholder="0.00" type="number" align="right" width="w-24" className="font-semibold text-slate-900" />,
+      cell: (row) => <CellInput value={row.price || ""} onChange={(e) => updateItem(row.id, "price", Number(e.target.value))} placeholder="0.00" type="number" align="right" width="w-24" className="font-semibold text-slate-900" />,
     },
     {
       key: "uom", header: "UOM",
-      cell: (row) => <CellInput defaultValue={row.uom} placeholder="Kg" align="center" width="w-14" />,
+      cell: (row) => <CellInput value={row.uom} onChange={(e) => updateItem(row.id, "uom", e.target.value)} placeholder="Kg" align="center" width="w-14" />,
     },
     {
       key: "taxCode", header: "Tax Code",
-      cell: (row) => <CellInput defaultValue={row.taxCode} placeholder="GST_18" align="center" width="w-20" />,
+      cell: (row) => <CellInput value={row.taxCode} onChange={(e) => updateItem(row.id, "taxCode", e.target.value)} placeholder="GST_18" align="center" width="w-20" />,
     },
     {
       key: "packaging", header: "Packaging",
-      cell: (row) => <CellInput defaultValue={row.packaging} placeholder="Box / Roll…" width="w-28" />,
+      cell: (row) => <CellInput value={row.packaging} onChange={(e) => updateItem(row.id, "packaging", e.target.value)} placeholder="Box / Roll…" width="w-28" />,
     },
     {
       key: "img", header: "Img",
@@ -115,23 +142,23 @@ export default function CreatePurchaseOrderPage() {
   const scheduleColumns: Column<ScheduleRow>[] = [
     {
       key: "phase", header: "Delivery Phase",
-      cell: (row) => <CellInput defaultValue={row.phase} placeholder="Phase name…" width="w-full min-w-[160px]" />,
+      cell: (row) => <CellInput value={row.phase} onChange={(e) => updateSchedule(row.id, "phase", e.target.value)} placeholder="Phase name…" width="w-full min-w-[160px]" />,
     },
     {
       key: "qty", header: "Qty",
-      cell: (row) => <CellInput defaultValue={row.qty || ""} placeholder="0" type="number" align="center" width="w-16" className="font-semibold tabular-nums" />,
+      cell: (row) => <CellInput value={row.qty || ""} onChange={(e) => updateSchedule(row.id, "qty", Number(e.target.value))} placeholder="0" type="number" align="center" width="w-16" className="font-semibold tabular-nums" />,
     },
     {
       key: "reqDispatch", header: "Req. Dispatch",
-      cell: (row) => <CellInput defaultValue={row.reqDispatch} placeholder="dd-Mon-yyyy" width="w-28" />,
+      cell: (row) => <CellInput value={row.reqDispatch} onChange={(e) => updateSchedule(row.id, "reqDispatch", e.target.value)} placeholder="dd-Mon-yyyy" width="w-28" />,
     },
     {
       key: "reqDelivery", header: "Req. Delivery",
-      cell: (row) => <CellInput defaultValue={row.reqDelivery} placeholder="dd-Mon-yyyy" width="w-28" />,
+      cell: (row) => <CellInput value={row.reqDelivery} onChange={(e) => updateSchedule(row.id, "reqDelivery", e.target.value)} placeholder="dd-Mon-yyyy" width="w-28" />,
     },
     {
       key: "actionLog", header: "Action Log",
-      cell: (row) => <CellInput defaultValue={row.actionLog} placeholder="Notes…" width="w-full min-w-[160px]" />,
+      cell: (row) => <CellInput value={row.actionLog} onChange={(e) => updateSchedule(row.id, "actionLog", e.target.value)} placeholder="Notes…" width="w-full min-w-[160px]" />,
     },
     {
       key: "actions", header: "",
@@ -193,6 +220,39 @@ export default function CreatePurchaseOrderPage() {
       {/* ═══ MAIN CONTENT ═══ */}
       <main className="flex-1 px-6 py-4 pb-20 bg-[#eaecf1] space-y-3">
 
+        {/* ── Progress Bar ── */}
+        <div className="bg-white rounded-xl border border-gray-200/60 shadow-[0_1px_4px_rgba(0,0,0,0.06)] px-5 py-3">
+          <div className="flex items-center gap-4">
+            {steps.map((step, i) => (
+              <div key={step.label} className="flex items-center gap-4 flex-1 last:flex-none">
+                <div className="flex items-center gap-2 shrink-0">
+                  <div className={`w-4.5 h-4.5 rounded-full flex items-center justify-center text-[8px] font-bold transition-all duration-300 ${
+                    step.complete ? "bg-[#8470ff] text-white" : "border border-gray-200 text-gray-300"
+                  }`}>
+                    {step.complete ? (
+                      <svg width="8" height="7" viewBox="0 0 8 7" fill="none"><path d="M1 3.5L3 5.5L7 1.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    ) : (
+                      i + 1
+                    )}
+                  </div>
+                  <span className={`text-[10px] font-medium whitespace-nowrap transition-colors duration-300 ${
+                    step.complete ? "text-[#8470ff]" : "text-gray-400"
+                  }`}>{step.label}</span>
+                </div>
+                {i < steps.length - 1 && (
+                  <div className="flex-1 h-px transition-colors duration-500" style={{ background: step.complete ? "#8470ff" : "#e5e7eb" }} />
+                )}
+              </div>
+            ))}
+            <div className="ml-auto pl-4 border-l border-gray-100 shrink-0 text-right">
+              <div className="text-[10px] text-gray-400 leading-none mb-0.5">Progress</div>
+              <div className="text-[11px] font-semibold text-[#8470ff] leading-none">
+                {Math.round((completedCount / steps.length) * 100)}%
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* ── Order Details ── */}
         <Card>
           <CardHeader title="Order Details" hint="Tab · Enter to move between fields" />
@@ -207,9 +267,9 @@ export default function CreatePurchaseOrderPage() {
                 { label: "Consignment", value: "consignment" },
               ]}
             />
-            <FormInput label="Truck No" placeholder="MH-12-AQ-9082" />
-            <FormInput label="Driver Details" placeholder="Ramesh Kumar (+91 98...)" />
-            <FormInput label="Delivery Location" placeholder="Mumbai Port Terminal 2" />
+            <FormInput label="Truck No" value={truckNo} onChange={setTruckNo} placeholder="MH-12-AQ-9082" />
+            <FormInput label="Driver Details" value={driverDetails} onChange={setDriverDetails} placeholder="Ramesh Kumar (+91 98...)" />
+            <FormInput label="Delivery Location" value={deliveryLocation} onChange={setDeliveryLocation} placeholder="Mumbai Port Terminal 2" />
             <FormCombobox
               label="Currency"
               value={currency}
