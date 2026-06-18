@@ -2,25 +2,24 @@
 
 import { useState, useCallback } from "react";
 import { useParams } from "next/navigation";
-import Link from "next/link";
 import { Icon } from "@/components/ui/Icon";
 import { ImageGalleryModal } from "@/components/ui/ImageGalleryModal";
 import { FloatingNavbar } from "@/components/layout/FloatingNavbar";
+import { SecondaryNav } from "@/components/layout/SecondaryNav";
 import { DashboardPageHeader } from "@/components/layout/PageHeader";
+import { StickyFooter } from "@/components/layout/StickyFooter";
+import { Button } from "@/components/ui/Button";
+import { ButtonLink } from "@/components/ui/ButtonLink";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { FormInput } from "@/components/ui/FormInput";
-import { FormSelect } from "@/components/ui/FormSelect";
-import type { SelectOption } from "@/components/ui/FormSelect";
+import { FormCombobox } from "@/components/ui/FormCombobox";
+import { CardHeader } from "@/components/ui/CardHeader";
+import { Card } from "@/components/ui/Card";
 import { ExcelTable, type Column } from "@/components/table/DataTable";
-import { TabBar, type TabBarItem } from "@/components/ui/Tabs";
-import type { ReactNode } from "react";
+import { TabbedTable } from "@/components/table/TabbedTable";
+import { CellInput } from "@/components/ui/CellInput";
 
-// ── Types ─────────────────────────────────────────────────────────────────────
-
-interface OrderDetails {
-  poType: string; truckNo: string; driver: string; delivery: string;
-  currency: string; shipTerm: string; payTerm: string; transporter: string; notes: string;
-}
+// ── Types & mock data ──────────────────────────────────────────────────────────
 
 interface PurchaseItem {
   id: number; name: string; qty: number; price: number;
@@ -32,52 +31,10 @@ interface ScheduleRow {
   reqDispatch: string; reqDelivery: string; actionLog: string;
 }
 
-// ── Options ───────────────────────────────────────────────────────────────────
-
-const PO_TYPE_OPTIONS: SelectOption[]    = [{ label: "Paddler", value: "Paddler" }, { label: "Direct", value: "Direct" }, { label: "Consignment", value: "Consignment" }];
-const CURRENCY_OPTIONS: SelectOption[]   = [{ label: "INR (₹)", value: "INR" }, { label: "USD ($)", value: "USD" }, { label: "EUR (€)", value: "EUR" }];
-const SHIP_TERM_OPTIONS: SelectOption[]  = [{ label: "EXW - Ex Works", value: "EXW" }, { label: "FOB - Free on Board", value: "FOB" }];
-const PAY_TERM_OPTIONS: SelectOption[]   = [{ label: "Net 30 Days", value: "Net30" }, { label: "15% Advance", value: "Advance15" }];
-const TRANSPORTER_OPTIONS: SelectOption[]= [{ label: "SafeLogistics Pvt Ltd", value: "SafeLogistics" }, { label: "Global Freight", value: "GlobalFreight" }];
-
-type InputFieldDef  = { type: "input";  key: keyof OrderDetails; label: string; placeholder?: string };
-type SelectFieldDef = { type: "select"; key: keyof OrderDetails; label: string; options: SelectOption[] };
-type FieldDef = InputFieldDef | SelectFieldDef;
-
-const ORDER_FIELDS: FieldDef[] = [
-  { type: "select", key: "poType",      label: "PO Type",           options: PO_TYPE_OPTIONS },
-  { type: "input",  key: "truckNo",     label: "Truck No",          placeholder: "MH-12-AQ-9082" },
-  { type: "input",  key: "driver",      label: "Driver Details",    placeholder: "Driver name & contact" },
-  { type: "input",  key: "delivery",    label: "Delivery Location", placeholder: "Mumbai Port Terminal 2" },
-  { type: "select", key: "currency",    label: "Currency",          options: CURRENCY_OPTIONS },
-  { type: "select", key: "shipTerm",    label: "Shipment Terms",    options: SHIP_TERM_OPTIONS },
-  { type: "select", key: "payTerm",     label: "Payment Terms",     options: PAY_TERM_OPTIONS },
-  { type: "select", key: "transporter", label: "Transporter",       options: TRANSPORTER_OPTIONS },
-];
-
-const TABS: TabBarItem[] = [
-  { label: "Schedule" }, { label: "Shipment Logs" },
-  { label: "Test Samples" }, { label: "Remarks" },
-];
-
-const ITEM_COLS: Column[] = [
-  { key: "name", header: "Item Name" }, { key: "qty", header: "Qty" },
-  { key: "price", header: "Price (₹)" }, { key: "uom", header: "UOM" },
-  { key: "taxCode", header: "Tax Code" }, { key: "packaging", header: "Packaging" },
-  { key: "img", header: "Img" }, { key: "delete", header: "" },
-];
-
-const SCHEDULE_COLS: Column[] = [
-  { key: "phase", header: "Delivery Phase" }, { key: "qty", header: "Qty" },
-  { key: "reqDispatch", header: "Req. Dispatch" }, { key: "reqDelivery", header: "Req. Delivery" },
-  { key: "actionLog", header: "Action Log" }, { key: "delete", header: "" },
-];
-
-// ── Mock data ─────────────────────────────────────────────────────────────────
-
 interface PORecord {
   poNumber: string;
-  orderDetails: Partial<OrderDetails>;
+  poType: string; truckNo: string; driverDetails: string; deliveryLocation: string;
+  currency: string; shipmentTerms: string; paymentTerms: string; transporter: string;
   items: PurchaseItem[];
   scheduleRows: ScheduleRow[];
 }
@@ -85,7 +42,9 @@ interface PORecord {
 const MOCK_POS: Record<string, PORecord> = {
   "PO-001": {
     poNumber: "PO-2024-00139",
-    orderDetails: { poType: "Paddler", truckNo: "MH-05-1234", driver: "Shivraj Patil", delivery: "Mumbai Port Terminal 2", currency: "USD", shipTerm: "EXW", payTerm: "Net30", transporter: "SafeLogistics", notes: "Handle with care. Ensure packaging is sealed before dispatch." },
+    poType: "paddler", truckNo: "MH-05-1234", driverDetails: "Shivraj Patil (+91 98765 43210)",
+    deliveryLocation: "Mumbai Port Terminal 2", currency: "USD", shipmentTerms: "EXW",
+    paymentTerms: "net30", transporter: "safelogistics",
     items: [
       { id: 1, name: "Steel Wire Mesh G12", qty: 150, price: 12500, uom: "Roll",  taxCode: "GST_18", packaging: "Boxed" },
       { id: 2, name: "Hydraulic Seal Kit",  qty: 45,  price: 3400,  uom: "Sets",  taxCode: "GST_12", packaging: "Plastic" },
@@ -97,7 +56,9 @@ const MOCK_POS: Record<string, PORecord> = {
   },
   "PO-002": {
     poNumber: "PO-2024-00140",
-    orderDetails: { poType: "Direct", truckNo: "KA01-9988", driver: "Amit S.", delivery: "Delhi Warehouse A", currency: "USD", shipTerm: "FOB", payTerm: "Advance15", transporter: "GlobalFreight", notes: "" },
+    poType: "direct", truckNo: "KA01-9988", driverDetails: "Amit Singh (+91 91234 56789)",
+    deliveryLocation: "Delhi Warehouse A", currency: "USD", shipmentTerms: "FOB",
+    paymentTerms: "advance15", transporter: "globalfreight",
     items: [
       { id: 1, name: "Hydraulic Seal Kit", qty: 45, price: 3400, uom: "Sets", taxCode: "GST_12", packaging: "Plastic" },
     ],
@@ -107,89 +68,184 @@ const MOCK_POS: Record<string, PORecord> = {
   },
 };
 
-const EMPTY_ORDER: OrderDetails = { poType: "", truckNo: "", driver: "", delivery: "", currency: "", shipTerm: "", payTerm: "", transporter: "", notes: "" };
-const FALLBACK: PORecord = { poNumber: "Unknown PO", orderDetails: {}, items: [], scheduleRows: [] };
+const FALLBACK: PORecord = {
+  poNumber: "Unknown PO",
+  poType: "", truckNo: "", driverDetails: "", deliveryLocation: "",
+  currency: "", shipmentTerms: "", paymentTerms: "", transporter: "",
+  items: [], scheduleRows: [],
+};
 
-// ── Page ──────────────────────────────────────────────────────────────────────
+// ── Page ───────────────────────────────────────────────────────────────────────
 
 export default function EditPurchaseOrderPage() {
   const params = useParams();
   const id = params.id as string;
   const po = MOCK_POS[id] ?? FALLBACK;
 
-  const [order, setOrder]       = useState<OrderDetails>({ ...EMPTY_ORDER, ...po.orderDetails });
-  const [items, setItems]       = useState<PurchaseItem[]>(po.items);
-  const [schedule, setSchedule] = useState<ScheduleRow[]>(po.scheduleRows);
-  const [activeTab, setActiveTab]       = useState(0);
-  const [isGalleryOpen, setIsGalleryOpen]   = useState(false);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
+  const [poType, setPoType] = useState(po.poType);
+  const [currency, setCurrency] = useState(po.currency);
+  const [shipmentTerms, setShipmentTerms] = useState(po.shipmentTerms);
+  const [paymentTerms, setPaymentTerms] = useState(po.paymentTerms);
+  const [transporter, setTransporter] = useState(po.transporter);
+  const [truckNo, setTruckNo] = useState(po.truckNo);
+  const [driverDetails, setDriverDetails] = useState(po.driverDetails);
+  const [deliveryLocation, setDeliveryLocation] = useState(po.deliveryLocation);
 
-  const setField = (key: keyof OrderDetails, value: string) =>
-    setOrder((prev) => ({ ...prev, [key]: value }));
+  const [items, setItems] = useState<PurchaseItem[]>(po.items);
+  const [scheduleRows, setScheduleRows] = useState<ScheduleRow[]>(po.scheduleRows);
 
   const addItem = useCallback(() => {
     setItems((p) => [...p, { id: p.length + 1, name: "", qty: 0, price: 0, uom: "", taxCode: "", packaging: "" }]);
   }, []);
+
   const deleteItem = useCallback((id: number) => setItems((p) => p.filter((r) => r.id !== id)), []);
 
-  const addSchedule = useCallback(() => {
-    setSchedule((p) => [...p, { id: p.length + 1, phase: "", qty: 0, reqDispatch: "", reqDelivery: "", actionLog: "" }]);
+  const updateItem = useCallback(<K extends keyof Omit<PurchaseItem, "id">>(id: number, key: K, value: PurchaseItem[K]) => {
+    setItems((p) => p.map((r) => r.id === id ? { ...r, [key]: value } : r));
   }, []);
-  const deleteSchedule = useCallback((id: number) => setSchedule((p) => p.filter((r) => r.id !== id)), []);
 
-  const totalQty  = items.reduce((s, i) => s + i.qty, 0);
+  const addSchedule = useCallback(() => {
+    setScheduleRows((p) => [...p, { id: p.length + 1, phase: "", qty: 0, reqDispatch: "", reqDelivery: "", actionLog: "" }]);
+  }, []);
+
+  const deleteSchedule = useCallback((id: number) => setScheduleRows((p) => p.filter((r) => r.id !== id)), []);
+
+  const updateSchedule = useCallback(<K extends keyof Omit<ScheduleRow, "id">>(id: number, key: K, value: ScheduleRow[K]) => {
+    setScheduleRows((p) => p.map((r) => r.id === id ? { ...r, [key]: value } : r));
+  }, []);
+
+  const totalQty = items.reduce((s, i) => s + i.qty, 0);
   const netAmount = items.reduce((s, i) => s + i.qty * i.price, 0);
-  const taxEst    = Math.round(netAmount * 0.18);
+  const taxEst = Math.round(netAmount * 0.18);
 
-  const inputCls = "px-2 py-1.5 text-[11px] text-slate-800 bg-transparent outline-none focus:bg-[#f5f3ff] focus:ring-1 focus:ring-[#8470ff]/20 rounded placeholder:text-gray-300 transition-all";
+  const orderDetailsFields = { poType, currency, shipmentTerms, paymentTerms, transporter, truckNo, driverDetails, deliveryLocation };
 
-  // ── Item cell renderer ────────────────────────────────────────────────────────
+  const steps = [
+    { label: "Order Details", complete: Object.values(orderDetailsFields).every(Boolean) },
+    {
+      label: "Purchase Items",
+      complete: items.length > 0 && items.every(({ id: _id, ...fields }) => Object.values(fields).every(Boolean)),
+    },
+    {
+      label: "Schedule",
+      complete: scheduleRows.length > 0 && scheduleRows.every(({ id: _id, ...fields }) => Object.values(fields).every(Boolean)),
+    },
+    { label: "Review & Submit", complete: false },
+  ];
+  const completedCount = steps.filter((s) => s.complete).length;
 
-  const renderItemCell = (row: PurchaseItem, col: Column): ReactNode => {
-    switch (col.key) {
-      case "name":      return <input defaultValue={row.name}      placeholder="Item name…"  className={`w-full min-w-[160px] ${inputCls}`} />;
-      case "qty":       return <input defaultValue={row.qty || ""}  placeholder="0" type="number" className={`w-16 text-center tabular-nums ${inputCls}`} />;
-      case "price":     return <input defaultValue={row.price || ""} placeholder="0.00" type="number" className={`w-24 font-semibold text-right tabular-nums ${inputCls}`} />;
-      case "uom":       return <input defaultValue={row.uom}       placeholder="Kg"          className={`w-14 text-center ${inputCls}`} />;
-      case "taxCode":   return <input defaultValue={row.taxCode}   placeholder="GST_18"      className={`w-20 text-center ${inputCls}`} />;
-      case "packaging": return <input defaultValue={row.packaging} placeholder="Box / Roll…" className={`w-28 ${inputCls}`} />;
-      case "img": return (
-        <button onClick={() => { setSelectedItemId(row.id); setIsGalleryOpen(true); }} className="text-gray-300 hover:text-[#8470ff] transition-colors" title="Attach image">
-          <Icon name="attachment" size={13} />
-        </button>
-      );
-      case "delete": return (
-        <button onClick={() => deleteItem(row.id)} className="text-gray-300 hover:text-red-400 transition-colors" title="Remove">
-          <Icon name="delete" size={13} />
-        </button>
-      );
-      default: return null;
-    }
-  };
+  // ── Purchase Items columns ────────────────────────────────────────────────
 
-  // ── Schedule cell renderer ────────────────────────────────────────────────────
+  const purchaseItemColumns: Column<PurchaseItem>[] = [
+    {
+      key: "name", header: "Item Name",
+      cell: (row) => <CellInput value={row.name} onChange={(e) => updateItem(row.id, "name", e.target.value)} placeholder="Item name…" width="w-full min-w-[160px]" />,
+    },
+    {
+      key: "qty", header: "Qty",
+      cell: (row) => <CellInput value={row.qty || ""} onChange={(e) => updateItem(row.id, "qty", Number(e.target.value))} placeholder="0" type="number" align="center" width="w-16" />,
+    },
+    {
+      key: "price", header: "Price (₹)",
+      cell: (row) => <CellInput value={row.price || ""} onChange={(e) => updateItem(row.id, "price", Number(e.target.value))} placeholder="0.00" type="number" align="right" width="w-24" className="font-semibold text-slate-900" />,
+    },
+    {
+      key: "uom", header: "UOM",
+      cell: (row) => <CellInput value={row.uom} onChange={(e) => updateItem(row.id, "uom", e.target.value)} placeholder="Kg" align="center" width="w-14" />,
+    },
+    {
+      key: "taxCode", header: "Tax Code",
+      cell: (row) => <CellInput value={row.taxCode} onChange={(e) => updateItem(row.id, "taxCode", e.target.value)} placeholder="GST_18" align="center" width="w-20" />,
+    },
+    {
+      key: "packaging", header: "Packaging",
+      cell: (row) => <CellInput value={row.packaging} onChange={(e) => updateItem(row.id, "packaging", e.target.value)} placeholder="Box / Roll…" width="w-28" />,
+    },
+    {
+      key: "img", header: "Img",
+      cell: (row) => (
+        <div className="flex justify-center px-2 py-1">
+          <button onClick={() => { setSelectedItemId(row.id); setIsGalleryOpen(true); }} className="text-gray-400 hover:text-[#8470ff] transition-colors" title="Attach image">
+            <Icon name="attachment" size={13} />
+          </button>
+        </div>
+      ),
+    },
+    {
+      key: "actions", header: "",
+      cell: (row) => (
+        <div className="flex justify-center px-2 py-1">
+          <button onClick={() => deleteItem(row.id)} className="text-gray-400 hover:text-red-400 transition-colors" title="Remove">
+            <Icon name="delete" size={13} />
+          </button>
+        </div>
+      ),
+    },
+  ];
 
-  const renderScheduleCell = (row: ScheduleRow, col: Column): ReactNode => {
-    switch (col.key) {
-      case "phase":       return <input defaultValue={row.phase}       placeholder="Phase name…"  className={`w-full min-w-[160px] ${inputCls}`} />;
-      case "qty":         return <input defaultValue={row.qty || ""}   placeholder="0" type="number" className={`w-16 text-center tabular-nums font-semibold ${inputCls}`} />;
-      case "reqDispatch": return <input defaultValue={row.reqDispatch} placeholder="dd-Mon-yyyy"  className={`w-28 ${inputCls}`} />;
-      case "reqDelivery": return <input defaultValue={row.reqDelivery} placeholder="dd-Mon-yyyy"  className={`w-28 ${inputCls}`} />;
-      case "actionLog":   return <input defaultValue={row.actionLog}   placeholder="Notes…"       className={`w-full min-w-[160px] ${inputCls}`} />;
-      case "delete": return (
-        <button onClick={() => deleteSchedule(row.id)} className="text-gray-300 hover:text-red-400 transition-colors" title="Remove">
-          <Icon name="delete" size={13} />
-        </button>
-      );
-      default: return null;
-    }
-  };
+  const scheduleColumns: Column<ScheduleRow>[] = [
+    {
+      key: "phase", header: "Delivery Phase",
+      cell: (row) => <CellInput value={row.phase} onChange={(e) => updateSchedule(row.id, "phase", e.target.value)} placeholder="Phase name…" width="w-full min-w-[160px]" />,
+    },
+    {
+      key: "qty", header: "Qty",
+      cell: (row) => <CellInput value={row.qty || ""} onChange={(e) => updateSchedule(row.id, "qty", Number(e.target.value))} placeholder="0" type="number" align="center" width="w-16" className="font-semibold tabular-nums" />,
+    },
+    {
+      key: "reqDispatch", header: "Req. Dispatch",
+      cell: (row) => <CellInput value={row.reqDispatch} onChange={(e) => updateSchedule(row.id, "reqDispatch", e.target.value)} placeholder="dd-Mon-yyyy" width="w-28" />,
+    },
+    {
+      key: "reqDelivery", header: "Req. Delivery",
+      cell: (row) => <CellInput value={row.reqDelivery} onChange={(e) => updateSchedule(row.id, "reqDelivery", e.target.value)} placeholder="dd-Mon-yyyy" width="w-28" />,
+    },
+    {
+      key: "actionLog", header: "Action Log",
+      cell: (row) => <CellInput value={row.actionLog} onChange={(e) => updateSchedule(row.id, "actionLog", e.target.value)} placeholder="Notes…" width="w-full min-w-[160px]" />,
+    },
+    {
+      key: "actions", header: "",
+      cell: (row) => (
+        <div className="flex justify-center px-2 py-1">
+          <button onClick={() => deleteSchedule(row.id)} className="text-gray-400 hover:text-red-400 transition-colors" title="Remove">
+            <Icon name="delete" size={13} />
+          </button>
+        </div>
+      ),
+    },
+  ];
+
+  const purchaseItemsFooter = (
+    <>
+      <button
+        onClick={addItem}
+        className="flex items-center gap-1 text-[11px] font-medium text-[#8470ff] hover:bg-[#8470ff]/8 px-2 py-1 rounded-lg transition-colors -ml-1"
+      >
+        <Icon name="add" size={13} />
+        Add Row
+      </button>
+      <div className="flex items-center gap-4">
+        <span className="text-[10px] text-gray-400">Rows: <strong className="text-gray-600">{items.length}</strong></span>
+        <span className="text-gray-300">|</span>
+        <span className="text-[10px] text-gray-400">Total Qty: <strong className="text-gray-600 tabular-nums">{totalQty}</strong></span>
+        <span className="text-gray-300">|</span>
+        <span className="text-[10px] text-gray-400">Net Amount: <strong className="text-slate-700 tabular-nums">₹{netAmount.toLocaleString("en-US")}</strong></span>
+        <span className="text-gray-300">|</span>
+        <span className="text-[10px] text-gray-400">Tax (18%): <strong className="text-slate-700 tabular-nums">₹{taxEst.toLocaleString("en-US")}</strong></span>
+      </div>
+    </>
+  );
 
   return (
-    <div className="min-h-screen flex flex-col antialiased text-slate-800 bg-[#eaecf1]">
+    <div className="min-h-screen flex flex-col antialiased text-slate-800 bg-linear-to-br from-[#e8eaf2] via-[#eef0f5] to-[#e5e8f0]">
 
       <FloatingNavbar />
+      <SecondaryNav />
 
+      {/* ═══ PAGE HEADER ═══ */}
       <DashboardPageHeader
         title={`Edit · ${po.poNumber}`}
         breadcrumbs={[
@@ -198,127 +254,172 @@ export default function EditPurchaseOrderPage() {
           { label: po.poNumber,       href: `/purchase-order/${id}` },
           { label: "Edit" },
         ]}
-        rightContent={<StatusBadge label="Editing" color="warning" pulse />}
+        rightContent={
+          <div className="flex items-center gap-3">
+            <StatusBadge label="Editing" color="warning" pulse />
+            <div className="inline-flex items-center bg-[#EDEAF6] border border-[#D4CEEF] rounded-full shadow-[0_4px_24px_rgba(100,80,180,0.13)] px-3 py-2 gap-2">
+              <span className="text-[9px] font-medium text-[#9B90C8] uppercase tracking-wide">Progress</span>
+              <div className="flex items-center gap-1">
+                {steps.map((step) => (
+                  <div
+                    key={step.label}
+                    className={`h-1.5 rounded-full transition-all duration-500 ${
+                      step.complete ? 'w-8 bg-[#8470ff]' : 'w-1.5 bg-[#C8C1E8]'
+                    }`}
+                    title={step.label}
+                  />
+                ))}
+              </div>
+              <span className="text-[10px] font-semibold text-[#8470ff] tabular-nums">
+                {completedCount}/{steps.length}
+              </span>
+            </div>
+          </div>
+        }
       />
 
-      <main className="flex-1 px-6 py-4 pb-20 bg-[#eaecf1] space-y-3">
+      {/* ═══ MAIN CONTENT ═══ */}
+      <main className="flex-1 px-6 py-4 pb-20 space-y-3">
 
         {/* ── Order Details ── */}
-        <div className="bg-white rounded-xl border border-gray-200/60 shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
-          <div className="px-5 py-2.5 border-b border-gray-100 flex items-center justify-between">
-            <h2 className="text-[10px] font-semibold text-slate-600 uppercase tracking-widest">Order Details</h2>
-            <span className="text-[10px] text-gray-400">Tab · Enter to move between fields</span>
-          </div>
+        <Card className="bg-white/40 backdrop-blur-xl border-white/60 relative z-10">
+          <CardHeader title="Order Details" hint="Tab · Enter to move between fields" />
           <div className="px-5 py-4 grid grid-cols-4 gap-x-4 gap-y-3">
-            {ORDER_FIELDS.map((f) =>
-              f.type === "select" ? (
-                <FormSelect key={f.key} label={f.label} value={order[f.key]} options={f.options} placeholder="Select…" onChange={(v) => setField(f.key, v)} />
-              ) : (
-                <FormInput  key={f.key} label={f.label} value={order[f.key]} placeholder={f.placeholder} onChange={(v) => setField(f.key, v)} />
-              )
-            )}
-          </div>
-        </div>
-
-        {/* ── Notes ── */}
-        <div className="bg-white rounded-xl border border-gray-200/60 shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
-          <div className="px-5 py-2.5 border-b border-gray-100">
-            <h2 className="text-[10px] font-semibold text-slate-600 uppercase tracking-widest">Notes</h2>
-          </div>
-          <div className="px-5 py-3">
-            <textarea
-              rows={3}
-              value={order.notes}
-              onChange={(e) => setField("notes", e.target.value)}
-              placeholder="Enter material grade and special handling instructions…"
-              className="w-full px-3 py-2.5 text-[12px] bg-[#f8f9fc] border border-gray-200 rounded-lg outline-none focus:border-[#8470ff]/50 focus:ring-1 focus:ring-[#8470ff]/10 text-slate-700 placeholder:text-gray-300 resize-none transition-all"
+            <FormCombobox
+              label="PO Type"
+              value={poType}
+              onChange={setPoType}
+              options={[
+                { label: "Paddler",      value: "paddler" },
+                { label: "Direct",       value: "direct" },
+                { label: "Consignment",  value: "consignment" },
+              ]}
+            />
+            <FormInput label="Truck No" value={truckNo} onChange={setTruckNo} placeholder="MH-12-AQ-9082" />
+            <FormInput label="Driver Details" value={driverDetails} onChange={setDriverDetails} placeholder="Ramesh Kumar (+91 98...)" />
+            <FormInput label="Delivery Location" value={deliveryLocation} onChange={setDeliveryLocation} placeholder="Mumbai Port Terminal 2" />
+            <FormCombobox
+              label="Currency"
+              value={currency}
+              onChange={setCurrency}
+              options={[
+                { label: "INR (₹)", value: "INR" },
+                { label: "USD ($)", value: "USD" },
+                { label: "EUR (€)", value: "EUR" },
+              ]}
+            />
+            <FormCombobox
+              label="Shipment Terms"
+              value={shipmentTerms}
+              onChange={setShipmentTerms}
+              options={[
+                { label: "EXW - Ex Works",               value: "EXW" },
+                { label: "FOB - Free on Board",          value: "FOB" },
+                { label: "CIF - Cost Insurance Freight", value: "CIF" },
+                { label: "DDP - Delivered Duty Paid",    value: "DDP" },
+              ]}
+            />
+            <FormCombobox
+              label="Payment Terms"
+              value={paymentTerms}
+              onChange={setPaymentTerms}
+              options={[
+                { label: "Net 30 Days",   value: "net30" },
+                { label: "Net 60 Days",   value: "net60" },
+                { label: "15% Advance",   value: "advance15" },
+                { label: "50% Advance",   value: "advance50" },
+                { label: "100% Advance",  value: "advance100" },
+              ]}
+            />
+            <FormCombobox
+              label="Transporter"
+              value={transporter}
+              onChange={setTransporter}
+              options={[
+                { label: "SafeLogistics Pvt Ltd", value: "safelogistics" },
+                { label: "Global Freight",        value: "globalfreight" },
+                { label: "BlueDart Express",      value: "bluedart" },
+                { label: "DTDC Courier",          value: "dtdc" },
+              ]}
             />
           </div>
-        </div>
+        </Card>
 
         {/* ── Purchase Items ── */}
-        <ExcelTable
-          columns={ITEM_COLS}
+        <ExcelTable<PurchaseItem>
+          columns={purchaseItemColumns}
           data={items}
           rowKey={(row) => String(row.id)}
-          renderCell={renderItemCell}
-          header={
-            <>
-              <h2 className="text-[10px] font-semibold text-slate-600 uppercase tracking-widest">Purchase Items</h2>
-              <button onClick={addItem} className="flex items-center gap-1 text-[11px] font-medium text-[#8470ff] hover:bg-[#8470ff]/8 px-2.5 py-1 rounded-lg transition-colors">
-                <Icon name="add" size={13} /> Add Row
-              </button>
-            </>
+          className="bg-white/40 backdrop-blur-xl rounded-xl border border-white/60 shadow-[0_8px_32px_rgba(100,80,180,0.12)] relative z-0"
+          cellClassName="px-1 py-0.5"
+          header={<h2 className="text-[10px] font-semibold text-slate-600 uppercase tracking-widest">Purchase Items</h2>}
+          statusBarClassName="px-3 py-1.5 flex items-center justify-between rounded-b-xl"
+          statusBar={purchaseItemsFooter}
+          onReorder={(from, to) =>
+            setItems((prev) => {
+              const next = [...prev];
+              const [moved] = next.splice(from, 1);
+              next.splice(to, 0, moved);
+              return next;
+            })
           }
-          statusBar={
-            <>
-              <span className="text-[10px] text-gray-400">Rows: <strong className="text-gray-600">{items.length}</strong></span>
-              <span className="text-gray-200">|</span>
-              <span className="text-[10px] text-gray-400">Total Qty: <strong className="text-gray-600 tabular-nums">{totalQty}</strong></span>
-              <span className="text-gray-200">|</span>
-              <span className="text-[10px] text-gray-400">Net Amount: <strong className="text-slate-700 tabular-nums">₹{netAmount.toLocaleString("en-US")}</strong></span>
-              <span className="text-gray-200">|</span>
-              <span className="text-[10px] text-gray-400">Tax (18%): <strong className="text-slate-700 tabular-nums">₹{taxEst.toLocaleString("en-US")}</strong></span>
-            </>
-          }
-          className="bg-white rounded-xl border border-gray-200/60 shadow-[0_1px_4px_rgba(0,0,0,0.06)]"
-          cellClassName="px-1 py-0.5 whitespace-nowrap text-left"
-          statusBarClassName="px-4 py-2 bg-[#f8f9fc] border-t border-gray-100 flex items-center gap-6 rounded-b-xl"
-          emptyMessage="No items added yet."
         />
 
-        {/* ── Schedule / Tabs ── */}
-        <div className="bg-white rounded-xl border border-gray-200/60 shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
-          <div className="flex items-center border-b border-gray-100 px-1">
-            <TabBar tabs={TABS} activeTab={activeTab} onTabChange={setActiveTab} />
-            {activeTab === 0 && (
-              <>
-                <div className="flex-1" />
-                <button onClick={addSchedule} className="flex items-center gap-1 text-[11px] font-medium text-[#8470ff] hover:bg-[#8470ff]/8 px-2.5 py-1 mr-1.5 rounded-lg transition-colors">
-                  <Icon name="add" size={13} /> Add Row
-                </button>
-              </>
-            )}
-          </div>
-          {activeTab === 0 ? (
-            <ExcelTable
-              columns={SCHEDULE_COLS}
-              data={schedule}
-              rowKey={(row) => String(row.id)}
-              renderCell={renderScheduleCell}
-              className=""
-              cellClassName="px-1 py-0.5 whitespace-nowrap text-left"
-              emptyMessage="No schedule rows added yet."
-            />
-          ) : (
-            <div className="py-12 text-center text-[11px] text-gray-400">{TABS[activeTab].label} — coming soon</div>
-          )}
-        </div>
+        {/* ── Schedule ── */}
+        <ExcelTable<ScheduleRow>
+          columns={scheduleColumns}
+          data={scheduleRows}
+          rowKey={(row) => String(row.id)}
+          className="bg-white/40 backdrop-blur-xl rounded-xl border border-white/60 shadow-[0_8px_32px_rgba(100,80,180,0.12)]"
+          cellClassName="px-1 py-0.5"
+          header={<h2 className="text-[10px] font-semibold text-slate-600 uppercase tracking-widest">Schedule</h2>}
+          statusBarClassName="px-3 py-1.5 flex items-center justify-between rounded-b-xl"
+          statusBar={
+            <button
+              onClick={addSchedule}
+              className="flex items-center gap-1 text-[11px] font-medium text-[#8470ff] hover:bg-[#8470ff]/8 px-2 py-1 rounded-lg transition-colors -ml-1"
+            >
+              <Icon name="add" size={13} />
+              Add Row
+            </button>
+          }
+          onReorder={(from, to) =>
+            setScheduleRows((prev) => {
+              const next = [...prev];
+              const [moved] = next.splice(from, 1);
+              next.splice(to, 0, moved);
+              return next;
+            })
+          }
+        />
+
+        {/* ── Shipment Logs / Test Samples / Remarks ── */}
+        <TabbedTable
+          tabs={[
+            { label: "Shipment Logs", content: <div className="py-3 text-center text-[11px] text-gray-400">Shipment Logs</div> },
+            { label: "Test Samples",  content: <div className="py-3 text-center text-[11px] text-gray-400">Test Samples</div> },
+            { label: "Remarks",       content: <div className="py-3 text-center text-[11px] text-gray-400">Remarks</div> },
+          ]}
+        />
 
       </main>
 
       {/* ═══ STICKY FOOTER ═══ */}
-      <div className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-sm border-t border-gray-200 px-10 py-2.5 flex items-center justify-between">
-        <span className="text-[11px] text-gray-400">
-          Editing <strong className="text-slate-600">{po.poNumber}</strong>
-        </span>
-        <div className="flex items-center gap-2">
-          <Link href={`/purchase-order/${id}`}>
-            <button className="text-[12px] font-medium text-gray-500 px-4 py-1.5 hover:bg-gray-100 rounded-full transition-colors">
-              Cancel
-            </button>
-          </Link>
-          <button className="text-[12px] font-medium text-gray-600 px-4 py-1.5 border border-gray-200 rounded-full hover:bg-gray-50 transition-colors">
-            Save Changes
-          </button>
-          <button className="flex items-center gap-1.5 px-4 py-1.5 bg-[#8470ff] text-white text-[12px] font-semibold rounded-full hover:bg-[#7360ef] transition-colors shadow-md">
-            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" />
-            </svg>
-            Submit PO
-          </button>
-        </div>
-      </div>
+      <StickyFooter
+        stats={[
+          { label: "Total Qty",   value: totalQty.toLocaleString("en-US") },
+          { label: "Net Amount",  value: `₹${netAmount.toLocaleString("en-US")}` },
+          { label: "Tax Est.",    value: `₹${taxEst.toLocaleString("en-US")}` },
+          { label: "Grand Total", value: `₹${(netAmount + taxEst).toLocaleString("en-US")}`, highlight: true },
+        ]}
+        actions={
+          <>
+            <ButtonLink href={`/purchase-order/${id}`} variant="pill-ghost">Cancel</ButtonLink>
+            <Button variant="pill-secondary">Save Changes</Button>
+            <Button variant="pill-primary" icon="check">Submit PO</Button>
+          </>
+        }
+      />
 
       <ImageGalleryModal
         isOpen={isGalleryOpen}

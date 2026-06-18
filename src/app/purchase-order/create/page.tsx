@@ -162,6 +162,7 @@ export default function CreatePurchaseOrderPage() {
     },
     {
       key: "actions", header: "",
+
       cell: (row) => (
         <div className="flex justify-center px-2 py-1">
           <button onClick={() => deleteSchedule(row.id)} className="text-gray-400 hover:text-red-400 transition-colors" title="Remove">
@@ -201,7 +202,7 @@ export default function CreatePurchaseOrderPage() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col antialiased text-slate-800 bg-[#eaecf1]">
+    <div className="min-h-screen flex flex-col antialiased text-slate-800 bg-gradient-to-br from-[#e8eaf2] via-[#eef0f5] to-[#e5e8f0]">
 
       <FloatingNavbar />
       <SecondaryNav />
@@ -214,47 +215,35 @@ export default function CreatePurchaseOrderPage() {
           { label: "Purchase Orders", href: "/purchase-order" },
           { label: "Create" },
         ]}
-        rightContent={<StatusBadge label="Draft PO-9284" color="warning" pulse />}
+        rightContent={
+          <div className="flex items-center gap-3">
+            <StatusBadge label="Draft PO-9284" color="warning" pulse />
+            <div className="inline-flex items-center bg-[#EDEAF6] border border-[#D4CEEF] rounded-full shadow-[0_4px_24px_rgba(100,80,180,0.13)] px-3 py-2 gap-2">
+              <span className="text-[9px] font-medium text-[#9B90C8] uppercase tracking-wide">Progress</span>
+              <div className="flex items-center gap-1">
+                {steps.map((step, i) => (
+                  <div
+                    key={step.label}
+                    className={`h-1.5 rounded-full transition-all duration-500 ${
+                      step.complete ? 'w-8 bg-[#8470ff]' : 'w-1.5 bg-[#C8C1E8]'
+                    }`}
+                    title={step.label}
+                  />
+                ))}
+              </div>
+              <span className="text-[10px] font-semibold text-[#8470ff] tabular-nums">
+                {completedCount}/{steps.length}
+              </span>
+            </div>
+          </div>
+        }
       />
 
       {/* ═══ MAIN CONTENT ═══ */}
-      <main className="flex-1 px-6 py-4 pb-20 bg-[#eaecf1] space-y-3">
-
-        {/* ── Progress Bar ── */}
-        <div className="bg-white rounded-xl border border-gray-200/60 shadow-[0_1px_4px_rgba(0,0,0,0.06)] px-5 py-3">
-          <div className="flex items-center gap-4">
-            {steps.map((step, i) => (
-              <div key={step.label} className="flex items-center gap-4 flex-1 last:flex-none">
-                <div className="flex items-center gap-2 shrink-0">
-                  <div className={`w-4.5 h-4.5 rounded-full flex items-center justify-center text-[8px] font-bold transition-all duration-300 ${
-                    step.complete ? "bg-[#8470ff] text-white" : "border border-gray-200 text-gray-300"
-                  }`}>
-                    {step.complete ? (
-                      <svg width="8" height="7" viewBox="0 0 8 7" fill="none"><path d="M1 3.5L3 5.5L7 1.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                    ) : (
-                      i + 1
-                    )}
-                  </div>
-                  <span className={`text-[10px] font-medium whitespace-nowrap transition-colors duration-300 ${
-                    step.complete ? "text-[#8470ff]" : "text-gray-400"
-                  }`}>{step.label}</span>
-                </div>
-                {i < steps.length - 1 && (
-                  <div className="flex-1 h-px transition-colors duration-500" style={{ background: step.complete ? "#8470ff" : "#e5e7eb" }} />
-                )}
-              </div>
-            ))}
-            <div className="ml-auto pl-4 border-l border-gray-100 shrink-0 text-right">
-              <div className="text-[10px] text-gray-400 leading-none mb-0.5">Progress</div>
-              <div className="text-[11px] font-semibold text-[#8470ff] leading-none">
-                {Math.round((completedCount / steps.length) * 100)}%
-              </div>
-            </div>
-          </div>
-        </div>
+      <main className="flex-1 px-6 py-4 pb-20 space-y-3">
 
         {/* ── Order Details ── */}
-        <Card>
+        <Card className="bg-white/40 backdrop-blur-xl border-white/60 relative z-10">
           <CardHeader title="Order Details" hint="Tab · Enter to move between fields" />
           <div className="px-5 py-4 grid grid-cols-4 gap-x-4 gap-y-3">
             <FormCombobox
@@ -322,7 +311,7 @@ export default function CreatePurchaseOrderPage() {
           columns={purchaseItemColumns}
           data={items}
           rowKey={(row) => String(row.id)}
-          className="bg-white rounded-xl border border-gray-200/60 shadow-[0_1px_4px_rgba(0,0,0,0.06)]"
+          className="bg-white/40 backdrop-blur-xl rounded-xl border border-white/60 shadow-[0_8px_32px_rgba(100,80,180,0.12)] relative z-0"
           cellClassName="px-1 py-0.5"
           header={purchaseItemsHeader}
           statusBarClassName="px-3 py-1.5 flex items-center justify-between rounded-b-xl"
@@ -342,7 +331,7 @@ export default function CreatePurchaseOrderPage() {
           columns={scheduleColumns}
           data={scheduleRows}
           rowKey={(row) => String(row.id)}
-          className="bg-white rounded-xl border border-gray-200/60 shadow-[0_1px_4px_rgba(0,0,0,0.06)]"
+          className="bg-white/40 backdrop-blur-xl rounded-xl border border-white/60 shadow-[0_8px_32px_rgba(100,80,180,0.12)]"
           cellClassName="px-1 py-0.5"
           header={<h2 className="text-[10px] font-semibold text-slate-600 uppercase tracking-widest">Schedule</h2>}
           statusBarClassName="px-3 py-1.5 flex items-center justify-between rounded-b-xl"
