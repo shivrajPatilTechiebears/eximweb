@@ -187,14 +187,7 @@ export default function CreatePurchaseOrderPage() {
           { label: "Purchase Orders", href: "/purchase-order" },
           { label: "Create" },
         ]}
-        rightContent={
-          <div className="flex items-center gap-2.5">
-            <StatusBadge label="Draft PO-9284" color="warning" pulse />
-            <div className="w-px h-4 bg-gray-200" />
-            <Button variant="pill-secondary">Save Draft</Button>
-            <Button variant="pill-primary" icon="check">Submit PO</Button>
-          </div>
-        }
+        rightContent={<StatusBadge label="Draft PO-9284" color="warning" pulse />}
       />
 
       {/* ═══ MAIN CONTENT ═══ */}
@@ -315,9 +308,9 @@ export default function CreatePurchaseOrderPage() {
         {/* ── Shipment Logs / Test Samples / Remarks ── */}
         <TabbedTable
           tabs={[
-            { label: "Shipment Logs", content: <div className="py-2.5 text-center text-[11px] text-gray-400">Shipment Logs — coming soon</div> },
-            { label: "Test Samples", content: <div className="py-2.5 text-center text-[11px] text-gray-400">Test Samples — coming soon</div> },
-            { label: "Remarks", content: <div className="py-2.5 text-center text-[11px] text-gray-400">Remarks — coming soon</div> },
+            { label: "Shipment Logs", content: <div className="py-3 text-center text-[11px] text-gray-400">Shipment Logs</div> },
+            { label: "Test Samples", content: <div className="py-3 text-center text-[11px] text-gray-400">Test Samples</div> },
+            { label: "Remarks", content: <div className="py-3 text-center text-[11px] text-gray-400">Remarks</div> },
           ]}
         />
 

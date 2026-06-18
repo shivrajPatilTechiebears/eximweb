@@ -1,3 +1,6 @@
+"use client";
+import { Input } from "@headlessui/react";
+
 interface SearchInputProps {
   value: string;
   onChange: (value: string) => void;
@@ -26,7 +29,7 @@ export function SearchInput({
           strokeWidth="2"
         />
       </svg>
-      <input
+      <Input
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}

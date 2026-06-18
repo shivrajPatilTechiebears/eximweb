@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Icon } from "@/components/ui/Icon";
@@ -108,11 +109,23 @@ function isModulePath(pathname: string) {
 
 export function SecondaryNav() {
   const pathname = usePathname();
+  const [navbarVisible, setNavbarVisible] = useState(true);
+  const lastY = useRef(0);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY;
+      setNavbarVisible(y < 20 || y < lastY.current);
+      lastY.current = y;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   if (!isModulePath(pathname)) return null;
 
   return (
-    <div className="fixed top-15 inset-x-0 z-40 bg-white">
+    <div className={`fixed top-0 inset-x-0 z-40 bg-white transition-transform duration-500 ease-in-out ${navbarVisible ? "translate-y-15" : "translate-y-0"}`}>
       <div className="flex justify-center py-2.5 px-6">
         <div className="flex items-center bg-gray-100 rounded-xl p-1 gap-0.5">
           {MODULE_TABS.map(tab => (
