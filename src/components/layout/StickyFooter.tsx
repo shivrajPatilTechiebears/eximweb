@@ -32,11 +32,11 @@ export interface FooterStatItem {
 }
 
 interface StickyFooterProps {
-  stats: FooterStatItem[];
+  stats?: FooterStatItem[];
   actions: ReactNode;
 }
 
-export function StickyFooter({ stats, actions }: StickyFooterProps) {
+export function StickyFooter({ stats = [], actions }: StickyFooterProps) {
   return (
     <div className="fixed bottom-0 inset-x-0 z-40 bg-white/70 backdrop-blur-2xl border-t border-white/50 px-10 py-2.5 flex items-center justify-between">
       <div className="flex items-center gap-5">

@@ -5,9 +5,8 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui/Icon";
 import { FloatingNavbar } from "@/components/layout/FloatingNavbar";
+import { SecondaryNav } from "@/components/layout/SecondaryNav";
 import { DashboardPageHeader } from "@/components/layout/PageHeader";
-import StatCard from "@/components/cards/StatCard";
-import { TabBar } from "@/components/ui/Tabs";
 import { SearchInput } from "@/components/ui/SearchInput";
 import { ExcelTable, type Column } from "@/components/table/DataTable";
 import { TableActions } from "@/components/table/TableActions";
@@ -16,18 +15,11 @@ import { Pagination } from "@/components/ui/Pagination";
 
 // ── Data ───────────────────────────────────────────────────────────────────────
 
-const STAT_CARDS = [
-  { title: "Total Companies", value: "12", badge: "+15%", badgeClassName: "text-emerald-600 bg-emerald-50", accentColor: "#884D70", subtitle: "All time" },
-  { title: "Active",          value: "8",  badge: "67%",  badgeClassName: "text-emerald-600 bg-emerald-50", accentColor: "#34d399", subtitle: "Currently active" },
-  { title: "Pending",         value: "3",  badge: "25%",  badgeClassName: "text-amber-600 bg-amber-50",     accentColor: "#fbbf24", subtitle: "Awaiting approval" },
-  { title: "Inactive",        value: "1",  badge: "8%",   badgeClassName: "text-rose-600 bg-rose-50",       accentColor: "#f87171", subtitle: "Deactivated" },
-];
-
 type CompanyStatus = "active" | "pending" | "inactive";
 
 interface Company {
   id: string; name: string; domain: string; email: string;
-  phone: string; state: string; country: string; status: CompanyStatus;
+  phone: string; country: string; status: CompanyStatus;
 }
 
 const STATUS_STYLE: Record<CompanyStatus, string> = {
@@ -37,30 +29,22 @@ const STATUS_STYLE: Record<CompanyStatus, string> = {
 };
 
 const COMPANIES: Company[] = [
-  { id: "COMP-001", name: "TechCorp Solutions",  domain: "techcorp.com",    email: "admin@techcorp.com",    phone: "+91 98765 43210", state: "Maharashtra", country: "India",         status: "active"   },
-  { id: "COMP-002", name: "InnoSoft Pvt Ltd",    domain: "innosoft.in",     email: "contact@innosoft.in",   phone: "+91 91234 56789", state: "Gujarat",     country: "India",         status: "active"   },
-  { id: "COMP-003", name: "GlobalEdge Inc",      domain: "globaledge.io",   email: "info@globaledge.io",    phone: "+1 555 234 5678", state: "Karnataka",   country: "United States", status: "pending"  },
-  { id: "COMP-004", name: "Apex Systems",        domain: "apexsys.com",     email: "hello@apexsys.com",     phone: "+91 88776 65544", state: "Delhi",       country: "India",         status: "inactive" },
-  { id: "COMP-005", name: "BlueStar Logistics",  domain: "bluestar.net",    email: "ops@bluestar.net",      phone: "+91 77665 54433", state: "Tamil Nadu",  country: "India",         status: "active"   },
-  { id: "COMP-006", name: "Nexus Digital",       domain: "nexusdigital.co", email: "nexus@nexusdigital.co", phone: "+91 99001 12233", state: "Maharashtra", country: "India",         status: "pending"  },
+  { id: "COMP-001", name: "TechCorp Solutions", domain: "techcorp.com",    email: "admin@techcorp.com",    phone: "+91 98765 43210", country: "India",         status: "active"   },
+  { id: "COMP-002", name: "InnoSoft Pvt Ltd",   domain: "innosoft.in",     email: "contact@innosoft.in",   phone: "+91 91234 56789", country: "India",         status: "active"   },
+  { id: "COMP-003", name: "GlobalEdge Inc",     domain: "globaledge.io",   email: "info@globaledge.io",    phone: "+1 555 234 5678", country: "United States", status: "pending"  },
+  { id: "COMP-004", name: "Apex Systems",       domain: "apexsys.com",     email: "hello@apexsys.com",     phone: "+91 88776 65544", country: "India",         status: "inactive" },
+  { id: "COMP-005", name: "BlueStar Logistics", domain: "bluestar.net",    email: "ops@bluestar.net",      phone: "+91 77665 54433", country: "India",         status: "active"   },
+  { id: "COMP-006", name: "Nexus Digital",      domain: "nexusdigital.co", email: "nexus@nexusdigital.co", phone: "+91 99001 12233", country: "India",         status: "pending"  },
 ];
 
-const TABS: { label: string; statuses: CompanyStatus[] | null }[] = [
-  { label: "All",      statuses: null },
-  { label: "Active",   statuses: ["active"] },
-  { label: "Pending",  statuses: ["pending"] },
-  { label: "Inactive", statuses: ["inactive"] },
-];
-
-const ALL_COLS: Column[] = [
-  { key: "name",    header: "Company Name", sortable: true,  align: "left" },
-  { key: "domain",  header: "Domain",       sortable: true,  align: "left" },
-  { key: "email",   header: "Email",        sortable: true,  align: "left" },
-  { key: "phone",   header: "Phone",        sortable: false, align: "left" },
-  { key: "state",   header: "State",        sortable: true,  align: "left" },
-  { key: "country", header: "Country",      sortable: true,  align: "left" },
+const ALL_COLS: Column<Company>[] = [
+  { key: "name",    header: "Company Name", sortable: true,  align: "left"   },
+  { key: "domain",  header: "Domain",       sortable: true,  align: "left"   },
+  { key: "email",   header: "Email",        sortable: true,  align: "left"   },
+  { key: "phone",   header: "Phone",        sortable: false, align: "left"   },
+  { key: "country", header: "Country",      sortable: true,  align: "left"   },
   { key: "status",  header: "Status",       sortable: true,  align: "center" },
-  { key: "actions", header: "Actions",      sortable: false, align: "right" },
+  { key: "actions", header: "Actions",      sortable: false, align: "right"  },
 ];
 
 const DEFAULT_VISIBLE = new Set(["name", "domain", "email", "phone", "country", "status", "actions"]);
@@ -75,7 +59,6 @@ export default function CompanyManagementPage() {
   const [moreMenuId, setMoreMenuId]   = useState<string | null>(null);
   const [moreMenuPos, setMoreMenuPos] = useState<{ top: number; left: number } | null>(null);
   const [search, setSearch]           = useState("");
-  const [activeTab, setActiveTab]     = useState(0);
   const [sortKey, setSortKey]         = useState<string | null>(null);
   const [sortDir, setSortDir]         = useState<"asc" | "desc">("asc");
   const [visibleCols, setVisibleCols] = useState<Set<string>>(DEFAULT_VISIBLE);
@@ -98,36 +81,7 @@ export default function CompanyManagementPage() {
     else { setSortKey(key); setSortDir("asc"); }
   };
 
-  const handleTabChange = (tab: number) => { setActiveTab(tab); setCurrentPage(1); };
   const handleSearchChange = (value: string) => { setSearch(value); setCurrentPage(1); };
-
-  const tabStatuses = TABS[activeTab].statuses;
-
-  const filtered = [...companies]
-    .filter((c) => {
-      if (tabStatuses && !tabStatuses.includes(c.status)) return false;
-      if (!search) return true;
-      const q = search.toLowerCase();
-      return (
-        c.name.toLowerCase().includes(q) ||
-        c.domain.toLowerCase().includes(q) ||
-        c.email.toLowerCase().includes(q) ||
-        c.country.toLowerCase().includes(q)
-      );
-    })
-    .sort((a, b) => {
-      if (!sortKey) return 0;
-      const av = String((a as unknown as Record<string, unknown>)[sortKey] ?? "");
-      const bv = String((b as unknown as Record<string, unknown>)[sortKey] ?? "");
-      return sortDir === "asc"
-        ? av.localeCompare(bv, undefined, { numeric: true })
-        : bv.localeCompare(av, undefined, { numeric: true });
-    });
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const pagedCompanies = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
-
-  const shownCols = ALL_COLS.filter((c) => visibleCols.has(c.key));
 
   const toggleCol = (key: string) =>
     setVisibleCols((prev) => {
@@ -137,22 +91,41 @@ export default function CompanyManagementPage() {
       return n;
     });
 
+  const filtered = companies.filter((c) => {
+    if (!search) return true;
+    const q = search.toLowerCase();
+    return (
+      c.name.toLowerCase().includes(q) ||
+      c.domain.toLowerCase().includes(q) ||
+      c.email.toLowerCase().includes(q)
+    );
+  });
+
+  const sorted = [...filtered].sort((a, b) => {
+    if (!sortKey) return 0;
+    const av = String((a as unknown as Record<string, unknown>)[sortKey] ?? "");
+    const bv = String((b as unknown as Record<string, unknown>)[sortKey] ?? "");
+    return sortDir === "asc"
+      ? av.localeCompare(bv, undefined, { numeric: true })
+      : bv.localeCompare(av, undefined, { numeric: true });
+  });
+
+  const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+  const pagedCompanies = sorted.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const shownCols = ALL_COLS.filter((c) => visibleCols.has(c.key));
+
   // ── Cell renderer ─────────────────────────────────────────────────────────────
 
-  const renderCell = (row: Company, col: Column): ReactNode => {
+  const renderCell = (row: Company, col: Column<Company>): ReactNode => {
     switch (col.key) {
       case "name": return (
-        <Link
-          href={`/company-management/${row.id}`}
-          className="text-[11px] font-semibold text-[#884D70] hover:underline underline-offset-2"
-        >
+        <Link href={`/company-management/${row.id}`} className="text-[11px] font-semibold text-[#884D70] hover:underline underline-offset-2">
           {row.name}
         </Link>
       );
       case "domain":  return <span className="text-[11px] text-gray-700 font-mono">{row.domain}</span>;
       case "email":   return <span className="text-[11px] text-gray-700">{row.email}</span>;
       case "phone":   return <span className="text-[11px] text-gray-700 tabular-nums font-mono">{row.phone}</span>;
-      case "state":   return <span className="text-[11px] text-gray-700">{row.state}</span>;
       case "country": return <span className="text-[11px] text-slate-800 font-medium">{row.country}</span>;
       case "status":  return (
         <span className={`text-[9px] font-semibold px-2 py-0.5 rounded-full capitalize ${STATUS_STYLE[row.status]}`}>
@@ -183,7 +156,7 @@ export default function CompanyManagementPage() {
 
   const expandedRow = (row: Company, colSpan: number): ReactNode =>
     deleteId !== row.id ? null : (
-      <tr className="bg-red-50">
+      <tr className="bg-red-100/50 backdrop-blur-sm">
         <td colSpan={colSpan} className="px-4 py-2.5 border-b border-red-100">
           <div className="flex items-center justify-between">
             <span className="text-[11px] text-red-700 font-medium">
@@ -198,7 +171,7 @@ export default function CompanyManagementPage() {
               </button>
               <button
                 onClick={() => setDeleteId(null)}
-                className="px-3 py-1 bg-white text-gray-700 text-[10px] font-semibold rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                className="px-3 py-1 bg-white/60 backdrop-blur-sm text-gray-700 text-[10px] font-semibold rounded-lg border border-white/60 hover:bg-white/80 transition-colors"
               >
                 Cancel
               </button>
@@ -214,12 +187,6 @@ export default function CompanyManagementPage() {
     <>
       <div className="flex items-center gap-4 text-[10px] text-gray-500">
         <span>Count: <strong className="text-gray-700 font-semibold">{filtered.length}</strong></span>
-        <span className="text-gray-300">|</span>
-        <span>Active: <strong className="text-emerald-600 font-semibold">{companies.filter((c) => c.status === "active").length}</strong></span>
-        <span className="text-gray-300">·</span>
-        <span>Pending: <strong className="text-amber-600 font-semibold">{companies.filter((c) => c.status === "pending").length}</strong></span>
-        <span className="text-gray-300">·</span>
-        <span>Inactive: <strong className="text-rose-600 font-semibold">{companies.filter((c) => c.status === "inactive").length}</strong></span>
       </div>
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
     </>
@@ -231,57 +198,28 @@ export default function CompanyManagementPage() {
     <div className="min-h-screen flex flex-col antialiased text-slate-800">
 
       <FloatingNavbar />
+      <SecondaryNav />
 
       <DashboardPageHeader
         title="Company Management"
         breadcrumbs={[
-          { label: "Dashboard",              href: "/" },
-          { label: "White Label Management" },
+          { label: "Dashboard",          href: "/" },
           { label: "Company Management" },
         ]}
-        summary={`${companies.length} total · ${companies.filter((c) => c.status === "pending").length} pending`}
-        buttonText="Add Company"
-        buttonHref="/company-management/create"
       />
 
-      {/* ═══ STAT TILES ═══ */}
-      <div className="px-6 pt-4 pb-0 grid grid-cols-4 gap-3">
-        {STAT_CARDS.map((card) => (
-          <StatCard key={card.title} {...card} />
-        ))}
-      </div>
+      <main className="flex-1 px-6 pt-4 pb-4">
 
-      {/* ═══ TABLE SECTION ═══ */}
-      <main className="flex-1 px-6 pt-3 pb-4">
-
+        {/* ── Controls ── */}
         <div className="flex items-center px-1 pb-2 gap-2">
-          <TabBar
-            tabs={TABS.map((tab) => ({
-              label: tab.label,
-              count: tab.statuses
-                ? companies.filter((c) => tab.statuses!.includes(c.status)).length
-                : companies.length,
-            }))}
-            activeTab={activeTab}
-            onTabChange={handleTabChange}
-          />
-
           <div className="flex-1" />
-
-          <SearchInput
-            value={search}
-            onChange={handleSearchChange}
-            placeholder="Search companies…"
-          />
-
+          <SearchInput value={search} onChange={handleSearchChange} placeholder="Search companies…" />
           <div className="w-px h-4 bg-gray-300/60 shrink-0" />
-
           <ColumnSelector
             columns={ALL_COLS.filter((c) => c.key !== "actions")}
             visibleColumns={visibleCols}
             onToggle={toggleCol}
           />
-
           <button className="flex items-center gap-1.5 text-[11px] font-semibold text-white px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#884D70] to-[#6B3A5A] hover:from-[#9E6080] hover:to-[#9E6080] shadow-[0_2px_10px_rgba(136,77,112,0.35)] hover:shadow-[0_4px_16px_rgba(136,77,112,0.5)] transition-all">
             <Icon name="download" size={13} />
             Export
@@ -298,16 +236,17 @@ export default function CompanyManagementPage() {
           renderCell={renderCell}
           rowClassName={(row, i) =>
             deleteId === row.id
-              ? "bg-red-50"
+              ? "bg-red-100/60"
               : i % 2 === 0
-              ? "bg-white hover:bg-[#eef3fe]"
-              : "bg-[#f2f4f8] hover:bg-[#eef3fe]"
+              ? "bg-white/45 hover:bg-white/70"
+              : "bg-white/20 hover:bg-white/50"
           }
           expandedRow={expandedRow}
           emptyMessage="No companies found."
           statusBar={statusBar}
+          className="bg-white/50 backdrop-blur-xl rounded-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.06)]"
+          statusBarClassName="px-4 py-2 bg-white/30 border-t border-white/40 flex items-center justify-between rounded-b-xl"
         />
-
       </main>
 
       {/* ═══ MORE MENU ═══ */}
@@ -315,7 +254,7 @@ export default function CompanyManagementPage() {
         <div
           ref={moreMenuRef}
           style={{ position: "fixed", top: moreMenuPos.top, left: moreMenuPos.left, zIndex: 9999 }}
-          className="bg-white rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-gray-100 py-1 w-40"
+          className="bg-white/80 backdrop-blur-xl rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.10)] border border-white/60 py-1 w-40"
         >
           {[
             { label: "View Details", href: `/company-management/${moreMenuId}` },

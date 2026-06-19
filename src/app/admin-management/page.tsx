@@ -5,23 +5,16 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui/Icon";
 import { FloatingNavbar } from "@/components/layout/FloatingNavbar";
+import { SecondaryNav } from "@/components/layout/SecondaryNav";
 import { DashboardPageHeader } from "@/components/layout/PageHeader";
-import StatCard from "@/components/cards/StatCard";
-import { TabBar } from "@/components/ui/Tabs";
 import { SearchInput } from "@/components/ui/SearchInput";
-import { ExcelTable, type Column } from "@/components/table/DataTable";
+import { TabbedTable, type TabbedTableTab } from "@/components/table/TabbedTable";
+import { type Column } from "@/components/table/DataTable";
 import { TableActions } from "@/components/table/TableActions";
 import { ColumnSelector } from "@/components/ui/ColumnSelector";
 import { Pagination } from "@/components/ui/Pagination";
 
 // ── Data ───────────────────────────────────────────────────────────────────────
-
-const STAT_CARDS = [
-  { title: "Total Admins", value: "24", badge: "+8%",   badgeClassName: "text-emerald-600 bg-emerald-50", accentColor: "#884D70", subtitle: "All time" },
-  { title: "Active",       value: "18", badge: "75%",   badgeClassName: "text-emerald-600 bg-emerald-50", accentColor: "#34d399", subtitle: "Currently active" },
-  { title: "Pending",      value: "4",  badge: "17%",   badgeClassName: "text-amber-600 bg-amber-50",     accentColor: "#fbbf24", subtitle: "Awaiting approval" },
-  { title: "Inactive",     value: "2",  badge: "8%",    badgeClassName: "text-rose-600 bg-rose-50",       accentColor: "#f87171", subtitle: "Deactivated" },
-];
 
 type AdminStatus = "active" | "pending" | "inactive";
 
@@ -37,35 +30,28 @@ const STATUS_STYLE: Record<AdminStatus, string> = {
 };
 
 const ADMINS: Admin[] = [
-  { id: "ADM-001", name: "Ramesh Kumar",   email: "ramesh.kumar@techiebears.com",  phone: "+91 98765 43210", role: "Super Admin",  city: "Mumbai",    state: "Maharashtra", status: "active"   },
-  { id: "ADM-002", name: "Priya Sharma",   email: "priya.sharma@techiebears.com",  phone: "+91 91234 56789", role: "Admin",        city: "Pune",       state: "Maharashtra", status: "active"   },
-  { id: "ADM-003", name: "Ankit Mehta",    email: "ankit.mehta@techiebears.com",   phone: "+91 87654 32109", role: "Manager",      city: "Ahmedabad",  state: "Gujarat",     status: "pending"  },
-  { id: "ADM-004", name: "Sunita Patel",   email: "sunita.patel@techiebears.com",  phone: "+91 99887 76655", role: "Staff",        city: "Surat",      state: "Gujarat",     status: "inactive" },
-  { id: "ADM-005", name: "Vikram Singh",   email: "vikram.singh@techiebears.com",  phone: "+91 77665 54433", role: "Admin",        city: "Delhi",      state: "Delhi",       status: "active"   },
-  { id: "ADM-006", name: "Meena Iyer",     email: "meena.iyer@techiebears.com",    phone: "+91 88776 65544", role: "Manager",      city: "Bangalore",  state: "Karnataka",   status: "pending"  },
+  { id: "ADM-001", name: "Ramesh Kumar",  email: "ramesh.kumar@techiebears.com",  phone: "+91 98765 43210", role: "Super Admin", city: "Mumbai",    state: "Maharashtra", status: "active"   },
+  { id: "ADM-002", name: "Priya Sharma",  email: "priya.sharma@techiebears.com",  phone: "+91 91234 56789", role: "Admin",       city: "Pune",       state: "Maharashtra", status: "active"   },
+  { id: "ADM-003", name: "Ankit Mehta",   email: "ankit.mehta@techiebears.com",   phone: "+91 87654 32109", role: "Manager",     city: "Ahmedabad",  state: "Gujarat",     status: "pending"  },
+  { id: "ADM-004", name: "Sunita Patel",  email: "sunita.patel@techiebears.com",  phone: "+91 99887 76655", role: "Staff",       city: "Surat",      state: "Gujarat",     status: "inactive" },
+  { id: "ADM-005", name: "Vikram Singh",  email: "vikram.singh@techiebears.com",  phone: "+91 77665 54433", role: "Admin",       city: "Delhi",      state: "Delhi",       status: "active"   },
+  { id: "ADM-006", name: "Meena Iyer",    email: "meena.iyer@techiebears.com",    phone: "+91 88776 65544", role: "Manager",     city: "Bangalore",  state: "Karnataka",   status: "pending"  },
 ];
 
-const TABS: { label: string; statuses: AdminStatus[] | null }[] = [
-  { label: "All",      statuses: null },
-  { label: "Active",   statuses: ["active"] },
-  { label: "Pending",  statuses: ["pending"] },
-  { label: "Inactive", statuses: ["inactive"] },
-];
+const PAGE_SIZE = 10;
 
-const ALL_COLS: Column[] = [
-  { key: "name",   header: "Name",   sortable: true,  align: "left" },
-  { key: "email",  header: "Email",  sortable: true,  align: "left" },
-  { key: "phone",  header: "Phone",  sortable: false, align: "left" },
-  { key: "role",   header: "Role",   sortable: true,  align: "left" },
-  { key: "city",   header: "City",   sortable: true,  align: "left" },
-  { key: "state",  header: "State",  sortable: true,  align: "left" },
-  { key: "status", header: "Status", sortable: true,  align: "center" },
-  { key: "actions",header: "Actions",sortable: false, align: "right" },
+const ALL_COLS: Column<Admin>[] = [
+  { key: "name",    header: "Name",   sortable: true,  align: "left"   },
+  { key: "email",   header: "Email",  sortable: true,  align: "left"   },
+  { key: "phone",   header: "Phone",  sortable: false, align: "left"   },
+  { key: "role",    header: "Role",   sortable: true,  align: "left"   },
+  { key: "city",    header: "City",   sortable: true,  align: "left"   },
+  { key: "state",   header: "State",  sortable: true,  align: "left"   },
+  { key: "status",  header: "Status", sortable: true,  align: "center" },
+  { key: "actions", header: "Actions",sortable: false, align: "right"  },
 ];
 
 const DEFAULT_VISIBLE = new Set(["name", "email", "phone", "role", "city", "status", "actions"]);
-
-const PAGE_SIZE = 10;
 
 // ── Page ───────────────────────────────────────────────────────────────────────
 
@@ -85,8 +71,7 @@ export default function AdminManagementPage() {
   useEffect(() => {
     const handle = (e: MouseEvent) => {
       if (moreMenuRef.current && !moreMenuRef.current.contains(e.target as Node)) {
-        setMoreMenuId(null);
-        setMoreMenuPos(null);
+        setMoreMenuId(null); setMoreMenuPos(null);
       }
     };
     document.addEventListener("mousedown", handle);
@@ -98,36 +83,7 @@ export default function AdminManagementPage() {
     else { setSortKey(key); setSortDir("asc"); }
   };
 
-  const handleTabChange = (tab: number) => { setActiveTab(tab); setCurrentPage(1); };
-  const handleSearchChange = (value: string) => { setSearch(value); setCurrentPage(1); };
-
-  const tabStatuses = TABS[activeTab].statuses;
-
-  const filteredAdmins = [...admins]
-    .filter((a) => {
-      if (tabStatuses && !tabStatuses.includes(a.status)) return false;
-      if (!search) return true;
-      const q = search.toLowerCase();
-      return (
-        a.name.toLowerCase().includes(q) ||
-        a.email.toLowerCase().includes(q) ||
-        a.role.toLowerCase().includes(q) ||
-        a.city.toLowerCase().includes(q)
-      );
-    })
-    .sort((a, b) => {
-      if (!sortKey) return 0;
-      const av = String((a as unknown as Record<string, unknown>)[sortKey] ?? "");
-      const bv = String((b as unknown as Record<string, unknown>)[sortKey] ?? "");
-      return sortDir === "asc"
-        ? av.localeCompare(bv, undefined, { numeric: true })
-        : bv.localeCompare(av, undefined, { numeric: true });
-    });
-
-  const totalPages = Math.max(1, Math.ceil(filteredAdmins.length / PAGE_SIZE));
-  const pagedAdmins = filteredAdmins.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
-
-  const shownCols = ALL_COLS.filter((c) => visibleCols.has(c.key));
+  const handleSearchChange = (v: string) => { setSearch(v); setCurrentPage(1); };
 
   const toggleCol = (key: string) =>
     setVisibleCols((prev) => {
@@ -137,53 +93,84 @@ export default function AdminManagementPage() {
       return n;
     });
 
-  // ── Cell renderer ─────────────────────────────────────────────────────────────
+  // ── Filtered + sorted data ────────────────────────────────────────────────────
 
-  const renderCell = (row: Admin, col: Column): ReactNode => {
-    switch (col.key) {
-      case "name": return (
-        <Link
-          href={`/admin-management/${row.id}`}
-          className="text-[11px] font-semibold text-[#884D70] hover:underline underline-offset-2"
-        >
-          {row.name}
-        </Link>
-      );
-      case "email":  return <span className="text-[11px] text-gray-700">{row.email}</span>;
-      case "phone":  return <span className="text-[11px] text-gray-700 tabular-nums font-mono">{row.phone}</span>;
-      case "role":   return <span className="text-[11px] text-slate-800 font-medium">{row.role}</span>;
-      case "city":   return <span className="text-[11px] text-gray-700">{row.city}</span>;
-      case "state":  return <span className="text-[11px] text-gray-700">{row.state}</span>;
-      case "status": return (
-        <span className={`text-[9px] font-semibold px-2 py-0.5 rounded-full capitalize ${STATUS_STYLE[row.status]}`}>
-          {row.status}
-        </span>
-      );
-      case "actions": return (
-        <TableActions
-          viewHref={`/admin-management/${row.id}`}
-          editHref={`/admin-management/${row.id}/edit`}
-          onDelete={() => setDeleteId(deleteId === row.id ? null : row.id)}
-          onMore={(e) => {
-            e.stopPropagation();
-            if (moreMenuId === row.id) { setMoreMenuId(null); setMoreMenuPos(null); }
-            else {
-              const rect = (e.currentTarget as HTMLButtonElement).getBoundingClientRect();
-              setMoreMenuPos({ top: rect.bottom + 4, left: rect.right - 160 });
-              setMoreMenuId(row.id);
-            }
-          }}
-        />
-      );
-      default: return null;
-    }
-  };
+  const bySearch = admins.filter((a) => {
+    if (!search) return true;
+    const q = search.toLowerCase();
+    return a.name.toLowerCase().includes(q) || a.email.toLowerCase().includes(q) || a.role.toLowerCase().includes(q) || a.city.toLowerCase().includes(q);
+  });
+
+  const sorted = [...bySearch].sort((a, b) => {
+    if (!sortKey) return 0;
+    const av = String((a as unknown as Record<string, unknown>)[sortKey] ?? "");
+    const bv = String((b as unknown as Record<string, unknown>)[sortKey] ?? "");
+    return sortDir === "asc"
+      ? av.localeCompare(bv, undefined, { numeric: true })
+      : bv.localeCompare(av, undefined, { numeric: true });
+  });
+
+  const TAB_FILTERS: (AdminStatus[] | null)[] = [null, ["active"], ["inactive"]];
+
+  const tabData = TAB_FILTERS.map((f) =>
+    f ? sorted.filter((a) => f.includes(a.status)) : sorted
+  );
+
+  // ── Column definitions with inline cell renderers ─────────────────────────────
+
+  const cols: Column<Admin>[] = ALL_COLS
+    .filter((c) => visibleCols.has(c.key))
+    .map((col) => {
+      switch (col.key) {
+        case "name": return {
+          ...col,
+          cell: (row: Admin): ReactNode => (
+            <Link href={`/admin-management/${row.id}`} className="text-[11px] font-semibold text-[#884D70] hover:underline underline-offset-2">
+              {row.name}
+            </Link>
+          ),
+        };
+        case "email":  return { ...col, cell: (row: Admin): ReactNode => <span className="text-[11px] text-gray-700">{row.email}</span> };
+        case "phone":  return { ...col, cell: (row: Admin): ReactNode => <span className="text-[11px] text-gray-700 tabular-nums font-mono">{row.phone}</span> };
+        case "role":   return { ...col, cell: (row: Admin): ReactNode => <span className="text-[11px] text-slate-800 font-medium">{row.role}</span> };
+        case "city":   return { ...col, cell: (row: Admin): ReactNode => <span className="text-[11px] text-gray-700">{row.city}</span> };
+        case "state":  return { ...col, cell: (row: Admin): ReactNode => <span className="text-[11px] text-gray-700">{row.state}</span> };
+        case "status": return {
+          ...col,
+          cell: (row: Admin): ReactNode => (
+            <span className={`text-[9px] font-semibold px-2 py-0.5 rounded-full capitalize ${STATUS_STYLE[row.status]}`}>
+              {row.status}
+            </span>
+          ),
+        };
+        case "actions": return {
+          ...col,
+          cell: (row: Admin): ReactNode => (
+            <TableActions
+              viewHref={`/admin-management/${row.id}`}
+              editHref={`/admin-management/${row.id}/edit`}
+              onDelete={() => setDeleteId(deleteId === row.id ? null : row.id)}
+              onMore={(e) => {
+                e.stopPropagation();
+                if (moreMenuId === row.id) { setMoreMenuId(null); setMoreMenuPos(null); }
+                else {
+                  const rect = (e.currentTarget as HTMLButtonElement).getBoundingClientRect();
+                  setMoreMenuPos({ top: rect.bottom + 4, left: rect.right - 160 });
+                  setMoreMenuId(row.id);
+                }
+              }}
+            />
+          ),
+        };
+        default: return col;
+      }
+    });
 
   // ── Delete confirmation row ───────────────────────────────────────────────────
 
   const expandedRow = (row: Admin, colSpan: number): ReactNode =>
     deleteId !== row.id ? null : (
-      <tr className="bg-red-50">
+      <tr className="bg-red-100/50 backdrop-blur-sm">
         <td colSpan={colSpan} className="px-4 py-2.5 border-b border-red-100">
           <div className="flex items-center justify-between">
             <span className="text-[11px] text-red-700 font-medium">
@@ -198,7 +185,7 @@ export default function AdminManagementPage() {
               </button>
               <button
                 onClick={() => setDeleteId(null)}
-                className="px-3 py-1 bg-white text-gray-700 text-[10px] font-semibold rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                className="px-3 py-1 bg-white/60 backdrop-blur-sm text-gray-700 text-[10px] font-semibold rounded-lg border border-white/60 hover:bg-white/80 transition-colors"
               >
                 Cancel
               </button>
@@ -208,22 +195,49 @@ export default function AdminManagementPage() {
       </tr>
     );
 
-  // ── Status bar ────────────────────────────────────────────────────────────────
+  // ── Build tabs ────────────────────────────────────────────────────────────────
 
-  const statusBar = (
-    <>
-      <div className="flex items-center gap-4 text-[10px] text-gray-500">
-        <span>Count: <strong className="text-gray-700 font-semibold">{filteredAdmins.length}</strong></span>
-        <span className="text-gray-300">|</span>
-        <span>Active: <strong className="text-emerald-600 font-semibold">{admins.filter((a) => a.status === "active").length}</strong></span>
-        <span className="text-gray-300">·</span>
-        <span>Pending: <strong className="text-amber-600 font-semibold">{admins.filter((a) => a.status === "pending").length}</strong></span>
-        <span className="text-gray-300">·</span>
-        <span>Inactive: <strong className="text-rose-600 font-semibold">{admins.filter((a) => a.status === "inactive").length}</strong></span>
-      </div>
-      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
-    </>
-  );
+  const TAB_LABELS = ["All", "Active", "Inactive"];
+
+  const tabs: TabbedTableTab[] = TAB_LABELS.map((label, i) => {
+    const data = tabData[i];
+    const totalPages = Math.max(1, Math.ceil(data.length / PAGE_SIZE));
+    const pagedData  = data.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+    return {
+      label: `${label} (${data.length})`,
+      table: {
+        columns:   cols as Column<unknown>[],
+        data:      pagedData as unknown[],
+        rowKey:    (row) => (row as Admin).id,
+        sortKey,
+        sortDir,
+        onSort:    handleSort,
+        rowClassName: (row, idx) => {
+          const a = row as Admin;
+          return deleteId === a.id ? "bg-red-100/60" : idx % 2 === 0 ? "bg-white/45 hover:bg-white/70" : "bg-white/20 hover:bg-white/50";
+        },
+        expandedRow: (row, colSpan) => expandedRow(row as Admin, colSpan),
+        emptyMessage: `No ${label.toLowerCase()} admins found.`,
+        statusBar: (
+          <>
+            <div className="flex items-center gap-4 text-[10px] text-gray-500">
+              <span>Count: <strong className="text-gray-700 font-semibold">{data.length}</strong></span>
+              {i === 0 && (
+                <>
+                  <span className="text-gray-300">|</span>
+                  <span>Active: <strong className="text-emerald-600 font-semibold">{admins.filter((a) => a.status === "active").length}</strong></span>
+                  <span className="text-gray-300">·</span>
+                  <span>Inactive: <strong className="text-rose-600 font-semibold">{admins.filter((a) => a.status === "inactive").length}</strong></span>
+                </>
+              )}
+            </div>
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+          </>
+        ),
+      },
+    };
+  });
 
   // ── Render ────────────────────────────────────────────────────────────────────
 
@@ -231,83 +245,40 @@ export default function AdminManagementPage() {
     <div className="min-h-screen flex flex-col antialiased text-slate-800">
 
       <FloatingNavbar />
+      <SecondaryNav />
 
       <DashboardPageHeader
         title="Admin Management"
         breadcrumbs={[
-          { label: "Dashboard",              href: "/" },
-          { label: "White Label Management" },
+          { label: "Dashboard",        href: "/" },
           { label: "Admin Management" },
         ]}
-        summary={`${admins.length} total · ${admins.filter((a) => a.status === "pending").length} pending`}
-        buttonText="Add Admin"
+        summary={`${admins.length} total`}
+        buttonText="Create Admin"
         buttonHref="/admin-management/create"
       />
 
-      {/* ═══ STAT TILES ═══ */}
-      <div className="px-6 pt-4 pb-0 grid grid-cols-4 gap-3">
-        {STAT_CARDS.map((card) => (
-          <StatCard key={card.title} {...card} />
-        ))}
-      </div>
+      <main className="flex-1 px-6 pt-4 pb-4">
 
-      {/* ═══ TABLE SECTION ═══ */}
-      <main className="flex-1 px-6 pt-3 pb-4">
-
-        {/* ── Tabs + Controls ── */}
+        {/* Controls row */}
         <div className="flex items-center px-1 pb-2 gap-2">
-          <TabBar
-            tabs={TABS.map((tab) => ({
-              label: tab.label,
-              count: tab.statuses
-                ? admins.filter((a) => tab.statuses!.includes(a.status)).length
-                : admins.length,
-            }))}
-            activeTab={activeTab}
-            onTabChange={handleTabChange}
-          />
-
           <div className="flex-1" />
-
-          <SearchInput
-            value={search}
-            onChange={handleSearchChange}
-            placeholder="Search admins…"
-          />
-
+          <SearchInput value={search} onChange={handleSearchChange} placeholder="Search admins…" />
           <div className="w-px h-4 bg-gray-300/60 shrink-0" />
-
           <ColumnSelector
             columns={ALL_COLS.filter((c) => c.key !== "actions")}
             visibleColumns={visibleCols}
             onToggle={toggleCol}
           />
-
           <button className="flex items-center gap-1.5 text-[11px] font-semibold text-white px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#884D70] to-[#6B3A5A] hover:from-[#9E6080] hover:to-[#9E6080] shadow-[0_2px_10px_rgba(136,77,112,0.35)] hover:shadow-[0_4px_16px_rgba(136,77,112,0.5)] transition-all">
             <Icon name="download" size={13} />
             Export
           </button>
         </div>
 
-        {/* ── Table ── */}
-        <ExcelTable
-          columns={shownCols}
-          data={pagedAdmins}
-          rowKey={(row) => row.id}
-          sortKey={sortKey}
-          sortDir={sortDir}
-          onSort={handleSort}
-          renderCell={renderCell}
-          rowClassName={(row, i) =>
-            deleteId === row.id
-              ? "bg-red-50"
-              : i % 2 === 0
-              ? "bg-white hover:bg-[#eef3fe]"
-              : "bg-[#f2f4f8] hover:bg-[#eef3fe]"
-          }
-          expandedRow={expandedRow}
-          emptyMessage="No admins found."
-          statusBar={statusBar}
+        <TabbedTable
+          tabs={tabs}
+          onChange={(i) => { setActiveTab(i); setCurrentPage(1); }}
         />
 
       </main>
@@ -317,7 +288,7 @@ export default function AdminManagementPage() {
         <div
           ref={moreMenuRef}
           style={{ position: "fixed", top: moreMenuPos.top, left: moreMenuPos.left, zIndex: 9999 }}
-          className="bg-white rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-gray-100 py-1 w-40"
+          className="bg-white/80 backdrop-blur-xl rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.10)] border border-white/60 py-1 w-40"
         >
           {[
             { label: "View Details", href: `/admin-management/${moreMenuId}` },

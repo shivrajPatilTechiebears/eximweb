@@ -9,6 +9,11 @@ export interface TabTableConfig<T = unknown> {
   columns: Column<T>[];
   data: T[];
   rowKey: (row: T) => string;
+  sortKey?: string | null;
+  sortDir?: "asc" | "desc";
+  onSort?: (key: string) => void;
+  rowClassName?: (row: T, index: number) => string;
+  expandedRow?: (row: T, colSpan: number) => ReactNode;
   onReorder?: (from: number, to: number) => void;
   statusBar?: ReactNode;
   statusBarClassName?: string;
@@ -30,21 +35,29 @@ interface TabbedTableProps {
   tabs: TabbedTableTab[];
   defaultTab?: string;
   className?: string;
+  /** Fired when the active tab changes. */
+  onChange?: (index: number) => void;
 }
 
 export function TabbedTable({
   tabs,
   defaultTab,
   className = "bg-white/50 backdrop-blur-xl rounded-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.06)]",
+  onChange,
 }: TabbedTableProps) {
   const defaultIndex = Math.max(tabs.findIndex((t) => t.label === defaultTab), 0);
   const [activeIndex, setActiveIndex] = useState(defaultIndex);
+
+  const handleChange = (i: number) => {
+    setActiveIndex(i);
+    onChange?.(i);
+  };
 
   const activeAction = tabs[activeIndex]?.action;
 
   return (
     <div className={className}>
-      <TabGroup selectedIndex={activeIndex} onChange={setActiveIndex}>
+      <TabGroup selectedIndex={activeIndex} onChange={handleChange}>
         <div className="flex items-center border-b border-white/40 px-1">
           <TabList className="flex">
             {tabs.map((tab) => (
@@ -73,9 +86,17 @@ export function TabbedTable({
                   columns={tab.table.columns}
                   data={tab.table.data}
                   rowKey={tab.table.rowKey}
+                  sortKey={tab.table.sortKey}
+                  sortDir={tab.table.sortDir}
+                  onSort={tab.table.onSort}
+                  rowClassName={tab.table.rowClassName}
+                  expandedRow={tab.table.expandedRow}
                   onReorder={tab.table.onReorder}
                   statusBar={tab.table.statusBar}
-                  statusBarClassName={tab.table.statusBarClassName}
+                  statusBarClassName={
+                    tab.table.statusBarClassName ??
+                    "px-4 py-2 bg-white/30 border-t border-white/40 flex items-center justify-between rounded-b-xl"
+                  }
                   emptyMessage={tab.table.emptyMessage}
                   cellClassName={tab.table.cellClassName ?? "px-1 py-0.5"}
                   className=""
