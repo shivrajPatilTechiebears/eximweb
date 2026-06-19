@@ -1,27 +1,27 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import type { ReactNode } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui/Icon";
 import { FloatingNavbar } from "@/components/layout/FloatingNavbar";
 import { SecondaryNav } from "@/components/layout/SecondaryNav";
 import { DashboardPageHeader } from "@/components/layout/PageHeader";
 import StatCard from "@/components/cards/StatCard";
-import { TabBar } from "@/components/ui/Tabs";
 import { SearchInput } from "@/components/ui/SearchInput";
 import { ExcelTable, type Column } from "@/components/table/DataTable";
 import { TableActions } from "@/components/table/TableActions";
 import { ColumnSelector } from "@/components/ui/ColumnSelector";
 import { Pagination } from "@/components/ui/Pagination";
+import { Button } from "@/components/ui/Button";
+import { TabbedTable } from "@/components/table/TabbedTable";
 
 // ── Data ───────────────────────────────────────────────────────────────────────
 
 const STAT_CARDS = [
-  { title: "Total POs",  value: "6", badge: "+12%", badgeClassName: "text-emerald-600 bg-emerald-50", accentColor: "#884D70", subtitle: "All time" },
-  { title: "Pending",    value: "1", badge: "17%",   badgeClassName: "text-amber-600 bg-amber-50",   accentColor: "#fbbf24", subtitle: "Awaiting approval" },
-  { title: "Created",    value: "3", badge: "+50%",  badgeClassName: "text-emerald-600 bg-emerald-50", accentColor: "#34d399", subtitle: "Processed orders" },
-  { title: "Approved",   value: "1", badge: "17%",   badgeClassName: "text-sky-600 bg-sky-50",       accentColor: "#38bdf8", subtitle: "Ready to dispatch" },
+  { title: "Total POs", value: "6", badge: "+12%", badgeClassName: "text-emerald-600 bg-emerald-50", accentColor: "#884D70", subtitle: "All time" },
+  { title: "Pending", value: "1", badge: "17%", badgeClassName: "text-amber-600 bg-amber-50", accentColor: "#fbbf24", subtitle: "Awaiting approval" },
+  { title: "Created", value: "3", badge: "+50%", badgeClassName: "text-emerald-600 bg-emerald-50", accentColor: "#34d399", subtitle: "Processed orders" },
+  { title: "Approved", value: "1", badge: "17%", badgeClassName: "text-sky-600 bg-sky-50", accentColor: "#38bdf8", subtitle: "Ready to dispatch" },
 ];
 
 type POStatus = "created" | "pending";
@@ -44,29 +44,18 @@ const PURCHASE_ORDERS: PurchaseOrder[] = [
 ];
 
 const TABS: { label: string; statuses: POStatus[] | null }[] = [
-  { label: "All",     statuses: null },
-  { label: "Open",    statuses: ["pending"] },
+  { label: "All", statuses: null },
+  { label: "Open", statuses: ["pending"] },
   { label: "Created", statuses: ["created"] },
 ];
 
-const ALL_COLS: Column[] = [
-  { key: "poNumber",        header: "PO Number",   sortable: true,  align: "left" },
-  { key: "poType",          header: "Type",         sortable: true,  align: "left" },
-  { key: "itemName",        header: "Item",         sortable: true,  align: "left" },
-  { key: "itemQty",         header: "Qty",          sortable: true,  align: "right" },
-  { key: "price",           header: "Price",        sortable: true,  align: "right" },
-  { key: "currency",        header: "Currency",     sortable: false, align: "center" },
-  { key: "deliveryLocation",header: "Delivery",     sortable: true,  align: "left" },
-  { key: "shipTerm",        header: "Ship Terms",   sortable: false, align: "left" },
-  { key: "payTerm",         header: "Pay Terms",    sortable: false, align: "left" },
-  { key: "transporter",     header: "Transporter",  sortable: true,  align: "left" },
-  { key: "truckNo",         header: "Truck No",     sortable: false, align: "left" },
-  { key: "driver",          header: "Driver",       sortable: true,  align: "left" },
-  { key: "status",          header: "Status",       sortable: true,  align: "center" },
-  { key: "actions",         header: "Actions",      sortable: false, align: "right" },
-];
+const COLUMN_KEYS = [
+  "poNumber", "poType", "itemName", "itemQty", "price", "currency",
+  "deliveryLocation", "shipTerm", "payTerm", "transporter", "truckNo", "driver",
+  "status", "actions",
+] as const;
 
-const DEFAULT_VISIBLE = new Set(["poNumber", "itemName", "itemQty", "price", "deliveryLocation", "status", "actions"]);
+const DEFAULT_VISIBLE = new Set<string>(["poNumber", "itemName", "itemQty", "price", "deliveryLocation", "status", "actions"]);
 
 const PAGE_SIZE = 10;
 
@@ -75,27 +64,12 @@ const PAGE_SIZE = 10;
 export default function PurchaseOrderListPage() {
   const [orders, setOrders] = useState([...PURCHASE_ORDERS]);
   const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [moreMenuId, setMoreMenuId] = useState<string | null>(null);
-  const [moreMenuPos, setMoreMenuPos] = useState<{ top: number; left: number } | null>(null);
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState(0);
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [visibleCols, setVisibleCols] = useState<Set<string>>(DEFAULT_VISIBLE);
   const [currentPage, setCurrentPage] = useState(1);
-  const moreMenuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handle = (e: MouseEvent) => {
-      if (moreMenuRef.current && !moreMenuRef.current.contains(e.target as Node)) {
-        setMoreMenuId(null);
-        setMoreMenuPos(null);
-      }
-    };
-    document.addEventListener("mousedown", handle);
-    return () => document.removeEventListener("mousedown", handle);
-  }, []);
-
   const handleSort = (key: string) => {
     if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
     else { setSortKey(key); setSortDir("asc"); }
@@ -103,6 +77,8 @@ export default function PurchaseOrderListPage() {
 
   const handleTabChange = (tab: number) => { setActiveTab(tab); setCurrentPage(1); };
   const handleSearchChange = (value: string) => { setSearch(value); setCurrentPage(1); };
+  const toggleCol = (key: string) =>
+    setVisibleCols((prev) => { const n = new Set(prev); n.has(key) ? n.delete(key) : n.add(key); n.add("actions"); return n; });
 
   const tabStatuses = TABS[activeTab].statuses;
 
@@ -121,63 +97,89 @@ export default function PurchaseOrderListPage() {
     });
 
   const totalValue = orders.reduce((s, o) => s + parseFloat(o.price.replace(/[$,]/g, "")), 0);
-
   const totalPages = Math.max(1, Math.ceil(filteredOrders.length / PAGE_SIZE));
   const pagedOrders = filteredOrders.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
-  const shownCols = ALL_COLS.filter((c) => visibleCols.has(c.key));
+  // ── Column definitions ────────────────────────────────────────────────────────
 
-  const toggleCol = (key: string) =>
-    setVisibleCols((prev) => { const n = new Set(prev); n.has(key) ? n.delete(key) : n.add(key); n.add("actions"); return n; });
-
-  // ── Cell renderer — all PO-specific display logic lives here ─────────────────
-
-  const renderCell = (row: PurchaseOrder, col: Column): ReactNode => {
-    switch (col.key) {
-      case "poNumber": return (
+  const allColumns: Column<PurchaseOrder>[] = [
+    {
+      key: "poNumber", header: "PO Number", sortable: true, align: "left",
+      cell: (row) => (
         <Link href={`/purchase-order/${row.id}`} className="text-[11px] font-semibold text-[#884D70] hover:underline underline-offset-2">
           {row.poNumber}
         </Link>
-      );
-      case "poType":           return <span className="text-[11px] text-gray-700">{row.poType}</span>;
-      case "itemName":         return <span className="text-[11px] text-slate-800 font-medium">{row.itemName}</span>;
-      case "itemQty":          return <span className="text-[11px] font-semibold text-slate-800 tabular-nums">{row.itemQty}</span>;
-      case "price":            return <span className="text-[11px] font-bold text-slate-900 tabular-nums">{row.price}</span>;
-      case "currency":         return <span className="text-[11px] text-gray-600 font-medium tracking-wide">{row.currency}</span>;
-      case "deliveryLocation": return <span className="text-[11px] text-gray-700 max-w-[160px] truncate block">{row.deliveryLocation}</span>;
-      case "shipTerm":         return <span className="text-[11px] text-gray-700">{row.shipTerm}</span>;
-      case "payTerm":          return <span className="text-[11px] text-gray-700">{row.payTerm}</span>;
-      case "transporter":      return <span className="text-[11px] text-gray-700">{row.transporter}</span>;
-      case "truckNo":          return <span className="text-[11px] text-gray-700 tabular-nums font-mono">{row.truckNo}</span>;
-      case "driver":           return <span className="text-[11px] text-gray-700">{row.driver}</span>;
-      case "status": return (
+      ),
+    },
+    {
+      key: "poType", header: "Type", sortable: true, align: "left",
+      cell: (row) => <span className="text-[11px] text-gray-700">{row.poType}</span>,
+    },
+    {
+      key: "itemName", header: "Item", sortable: true, align: "left",
+      cell: (row) => <span className="text-[11px] text-slate-800 font-medium">{row.itemName}</span>,
+    },
+    {
+      key: "itemQty", header: "Qty", sortable: true, align: "right",
+      cell: (row) => <span className="text-[11px] font-semibold text-slate-800 tabular-nums">{row.itemQty}</span>,
+    },
+    {
+      key: "price", header: "Price", sortable: true, align: "right",
+      cell: (row) => <span className="text-[11px] font-bold text-slate-900 tabular-nums">{row.price}</span>,
+    },
+    {
+      key: "currency", header: "Currency", sortable: false, align: "center",
+      cell: (row) => <span className="text-[11px] text-gray-600 font-medium tracking-wide">{row.currency}</span>,
+    },
+    {
+      key: "deliveryLocation", header: "Delivery", sortable: true, align: "left",
+      cell: (row) => <span className="text-[11px] text-gray-700 max-w-40 truncate block">{row.deliveryLocation}</span>,
+    },
+    {
+      key: "shipTerm", header: "Ship Terms", sortable: false, align: "left",
+      cell: (row) => <span className="text-[11px] text-gray-700">{row.shipTerm}</span>,
+    },
+    {
+      key: "payTerm", header: "Pay Terms", sortable: false, align: "left",
+      cell: (row) => <span className="text-[11px] text-gray-700">{row.payTerm}</span>,
+    },
+    {
+      key: "transporter", header: "Transporter", sortable: true, align: "left",
+      cell: (row) => <span className="text-[11px] text-gray-700">{row.transporter}</span>,
+    },
+    {
+      key: "truckNo", header: "Truck No", sortable: false, align: "left",
+      cell: (row) => <span className="text-[11px] text-gray-700 tabular-nums font-mono">{row.truckNo}</span>,
+    },
+    {
+      key: "driver", header: "Driver", sortable: true, align: "left",
+      cell: (row) => <span className="text-[11px] text-gray-700">{row.driver}</span>,
+    },
+    {
+      key: "status", header: "Status", sortable: true, align: "center",
+      cell: (row) => (
         <span className={`text-[9px] font-semibold px-2 py-0.5 rounded-full capitalize ${STATUS_STYLE[row.status]}`}>
           {row.status}
         </span>
-      );
-      case "actions": return (
+      ),
+    },
+    {
+      key: "actions", header: "Actions", sortable: false, align: "right",
+      cell: (row) => (
         <TableActions
           viewHref={`/purchase-order/${row.id}`}
           editHref={`/purchase-order/${row.id}/edit`}
           onDelete={() => setDeleteId(deleteId === row.id ? null : row.id)}
-          onMore={(e) => {
-            e.stopPropagation();
-            if (moreMenuId === row.id) { setMoreMenuId(null); setMoreMenuPos(null); }
-            else {
-              const rect = (e.currentTarget as HTMLButtonElement).getBoundingClientRect();
-              setMoreMenuPos({ top: rect.bottom + 4, left: rect.right - 160 });
-              setMoreMenuId(row.id);
-            }
-          }}
         />
-      );
-      default: return null;
-    }
-  };
+      ),
+    },
+  ];
+
+  const shownCols = allColumns.filter((c) => visibleCols.has(c.key));
 
   // ── Delete confirmation row ───────────────────────────────────────────────────
 
-  const expandedRow = (row: PurchaseOrder, colSpan: number): ReactNode =>
+  const expandedRow = (row: PurchaseOrder, colSpan: number) =>
     deleteId !== row.id ? null : (
       <tr className="bg-red-100/50 backdrop-blur-sm">
         <td colSpan={colSpan} className="px-4 py-2.5 border-b border-red-100">
@@ -186,18 +188,15 @@ export default function PurchaseOrderListPage() {
               Delete <strong>{row.poNumber}</strong>? This cannot be undone.
             </span>
             <div className="flex gap-2">
-              <button
+              <Button
+                variant="danger"
                 onClick={() => { setOrders((p) => p.filter((o) => o.id !== row.id)); setDeleteId(null); }}
-                className="px-3 py-1 bg-red-500 text-white text-[10px] font-semibold rounded-lg hover:bg-red-600 transition-colors"
               >
                 Confirm
-              </button>
-              <button
-                onClick={() => setDeleteId(null)}
-                className="px-3 py-1 bg-white/60 backdrop-blur-sm text-gray-700 text-[10px] font-semibold rounded-lg border border-white/60 hover:bg-white/80 transition-colors"
-              >
+              </Button>
+              <Button variant="ghost-glass" onClick={() => setDeleteId(null)}>
                 Cancel
-              </button>
+              </Button>
             </div>
           </div>
         </td>
@@ -229,7 +228,6 @@ export default function PurchaseOrderListPage() {
       <FloatingNavbar />
       <SecondaryNav />
 
-      {/* ═══ WHITE PAGE HEADER ═══ */}
       <DashboardPageHeader
         title="Purchase Orders"
         breadcrumbs={[
@@ -241,99 +239,62 @@ export default function PurchaseOrderListPage() {
         buttonHref="/purchase-order/create"
       />
 
-      {/* ═══ STAT TILES ═══ */}
       <div className="px-6 pt-4 pb-0 grid grid-cols-4 gap-3">
         {STAT_CARDS.map((card) => (
           <StatCard key={card.title} {...card} />
         ))}
       </div>
 
-      {/* ═══ TABLE SECTION ═══ */}
-      <main className="flex-1 px-6 pt-3 pb-4">
+      <main className="flex-1 px-6 pt-3 pb-4 flex flex-col gap-2">
 
-        {/* ── Tabs + Controls ── */}
-        <div className="flex items-center px-1 pb-2 gap-2">
-          <TabBar
-            tabs={TABS.map((tab) => ({
-              label: tab.label,
-              count: tab.statuses
-                ? orders.filter((o) => tab.statuses!.includes(o.status)).length
-                : orders.length,
-            }))}
-            activeTab={activeTab}
-            onTabChange={handleTabChange}
-          />
-
-          <div className="flex-1" />
-
-          <SearchInput
-            value={search}
-            onChange={handleSearchChange}
-            placeholder="Search orders…"
-          />
-
+        <div className="flex items-center justify-end gap-2 px-1">
+          <SearchInput value={search} onChange={handleSearchChange} placeholder="Search orders…" />
           <div className="w-px h-4 bg-gray-300/60 shrink-0" />
-
           <ColumnSelector
-            columns={ALL_COLS.filter((c) => c.key !== "actions")}
+            columns={allColumns.filter((c) => c.key !== "actions")}
             visibleColumns={visibleCols}
             onToggle={toggleCol}
           />
-
-          <button className="flex items-center gap-1.5 text-[11px] font-semibold text-white px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#884D70] to-[#6B3A5A] hover:from-[#9E6080] hover:to-[#9E6080] shadow-[0_2px_10px_rgba(136,77,112,0.35)] hover:shadow-[0_4px_16px_rgba(136,77,112,0.5)] transition-all">
+          <Button variant="brand">
             <Icon name="download" size={13} />
             Export
-          </button>
+          </Button>
         </div>
 
-        {/* ── Table ── */}
-        <ExcelTable
-          columns={shownCols}
-          data={pagedOrders}
-          rowKey={(row) => row.id}
-          sortKey={sortKey}
-          sortDir={sortDir}
-          onSort={handleSort}
-          renderCell={renderCell}
-          rowClassName={(row, i) =>
-            deleteId === row.id
-              ? "bg-red-100/60"
-              : i % 2 === 0
-              ? "bg-white/45 hover:bg-white/70"
-              : "bg-white/20 hover:bg-white/50"
-          }
-          expandedRow={expandedRow}
-          emptyMessage="No purchase orders found."
-          statusBar={statusBar}
-          className="bg-white/50 backdrop-blur-xl rounded-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.06)]"
-          statusBarClassName="px-4 py-2 bg-white/30 border-t border-white/40 flex items-center justify-between rounded-b-xl"
+        <TabbedTable
+          selectedIndex={activeTab}
+          onChange={handleTabChange}
+          tabs={TABS.map((tab) => ({
+            label: tab.label,
+            count: tab.statuses
+              ? orders.filter((o) => tab.statuses!.includes(o.status)).length
+              : orders.length,
+            content: (
+              <ExcelTable<PurchaseOrder>
+                columns={shownCols}
+                data={pagedOrders}
+                rowKey={(row) => row.id}
+                sortKey={sortKey}
+                sortDir={sortDir}
+                onSort={handleSort}
+                rowClassName={(row, i) =>
+                  deleteId === row.id
+                    ? "bg-red-100/60"
+                    : i % 2 === 0
+                      ? "bg-white/45 hover:bg-white/70"
+                      : "bg-white/20 hover:bg-white/50"
+                }
+                expandedRow={expandedRow}
+                emptyMessage="No purchase orders found."
+                statusBar={statusBar}
+                className=""
+                statusBarClassName="px-4 py-2 bg-white/30 border-t border-white/40 flex items-center justify-between rounded-b-xl"
+              />
+            ),
+          }))}
         />
 
       </main>
-
-      {/* ═══ MORE MENU (fixed portal — escapes overflow clipping) ═══ */}
-      {moreMenuId && moreMenuPos && (
-        <div
-          ref={moreMenuRef}
-          style={{ position: "fixed", top: moreMenuPos.top, left: moreMenuPos.left, zIndex: 9999 }}
-          className="bg-white/80 backdrop-blur-xl rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.10)] border border-white/60 py-1 w-40"
-        >
-          {[
-            { label: "View Details", href: `/purchase-order/${moreMenuId}` },
-            { label: "Duplicate",    href: "#" },
-            { label: "Export PDF",   href: "#" },
-          ].map((item) => (
-            <Link key={item.label} href={item.href}>
-              <button
-                onClick={() => { setMoreMenuId(null); setMoreMenuPos(null); }}
-                className="w-full text-left px-4 py-2 text-[11px] text-gray-700 hover:bg-gray-50 transition-colors"
-              >
-                {item.label}
-              </button>
-            </Link>
-          ))}
-        </div>
-      )}
 
     </div>
   );

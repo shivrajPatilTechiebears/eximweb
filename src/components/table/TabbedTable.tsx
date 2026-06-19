@@ -23,6 +23,7 @@ export interface TabTableConfig<T = unknown> {
 
 export interface TabbedTableTab<T = unknown> {
   label: string;
+  count?: number;
   /** Free-form content. Used when `table` is not provided. */
   content?: ReactNode;
   /** When provided, renders an ExcelTable with no outer border (card is provided by TabbedTable). */
@@ -34,6 +35,9 @@ export interface TabbedTableTab<T = unknown> {
 interface TabbedTableProps {
   tabs: TabbedTableTab[];
   defaultTab?: string;
+  /** Controlled active index. When provided, pair with `onChange`. */
+  selectedIndex?: number;
+  onChange?: (index: number) => void;
   className?: string;
   /** Fired when the active tab changes. */
   onChange?: (index: number) => void;
@@ -42,11 +46,19 @@ interface TabbedTableProps {
 export function TabbedTable({
   tabs,
   defaultTab,
+  selectedIndex,
+  onChange,
   className = "bg-white/50 backdrop-blur-xl rounded-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.06)]",
   onChange,
 }: TabbedTableProps) {
   const defaultIndex = Math.max(tabs.findIndex((t) => t.label === defaultTab), 0);
-  const [activeIndex, setActiveIndex] = useState(defaultIndex);
+  const [internalIndex, setInternalIndex] = useState(defaultIndex);
+
+  const activeIndex = selectedIndex ?? internalIndex;
+  const handleChange = (i: number) => {
+    if (onChange) onChange(i);
+    else setInternalIndex(i);
+  };
 
   const handleChange = (i: number) => {
     setActiveIndex(i);
@@ -63,9 +75,14 @@ export function TabbedTable({
             {tabs.map((tab) => (
               <Tab
                 key={tab.label}
-                className="px-4 py-2.5 text-[11px] font-medium border-b-2 -mb-px transition-all outline-none border-transparent text-gray-400 hover:text-gray-600 data-selected:border-[#884D70] data-selected:text-[#884D70]"
+                className="group flex items-center gap-1 px-4 py-2.5 text-[11px] font-medium border-b-2 -mb-px transition-all outline-none border-transparent text-gray-400 hover:text-gray-600 data-selected:border-[#884D70] data-selected:text-[#884D70]"
               >
                 {tab.label}
+                {tab.count !== undefined && (
+                  <span className="text-[9px] px-1 py-px rounded font-semibold text-gray-400 group-data-selected:text-[#884D70]">
+                    {tab.count}
+                  </span>
+                )}
               </Tab>
             ))}
           </TabList>
