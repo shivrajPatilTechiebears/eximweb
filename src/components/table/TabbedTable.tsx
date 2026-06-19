@@ -24,23 +24,17 @@ export interface TabTableConfig<T = unknown> {
 export interface TabbedTableTab<T = unknown> {
   label: string;
   count?: number;
-  /** Free-form content. Used when `table` is not provided. */
   content?: ReactNode;
-  /** When provided, renders an ExcelTable with no outer border (card is provided by TabbedTable). */
   table?: TabTableConfig<T>;
-  /** Right-aligned slot in the tab bar — shown only when this tab is active. */
   action?: ReactNode;
 }
 
 interface TabbedTableProps {
   tabs: TabbedTableTab[];
   defaultTab?: string;
-  /** Controlled active index. When provided, pair with `onChange`. */
   selectedIndex?: number;
   onChange?: (index: number) => void;
   className?: string;
-  /** Fired when the active tab changes. */
-  onChange?: (index: number) => void;
 }
 
 export function TabbedTable({
@@ -49,19 +43,14 @@ export function TabbedTable({
   selectedIndex,
   onChange,
   className = "bg-white/50 backdrop-blur-xl rounded-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.06)]",
-  onChange,
 }: TabbedTableProps) {
   const defaultIndex = Math.max(tabs.findIndex((t) => t.label === defaultTab), 0);
   const [internalIndex, setInternalIndex] = useState(defaultIndex);
 
   const activeIndex = selectedIndex ?? internalIndex;
-  const handleChange = (i: number) => {
-    if (onChange) onChange(i);
-    else setInternalIndex(i);
-  };
 
   const handleChange = (i: number) => {
-    setActiveIndex(i);
+    setInternalIndex(i);
     onChange?.(i);
   };
 
