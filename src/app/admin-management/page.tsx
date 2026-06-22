@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui/Icon";
@@ -58,25 +58,12 @@ const DEFAULT_VISIBLE = new Set(["name", "email", "phone", "role", "city", "stat
 export default function AdminManagementPage() {
   const [admins, setAdmins]           = useState([...ADMINS]);
   const [deleteId, setDeleteId]       = useState<string | null>(null);
-  const [moreMenuId, setMoreMenuId]   = useState<string | null>(null);
-  const [moreMenuPos, setMoreMenuPos] = useState<{ top: number; left: number } | null>(null);
   const [search, setSearch]           = useState("");
   const [activeTab, setActiveTab]     = useState(0);
   const [sortKey, setSortKey]         = useState<string | null>(null);
   const [sortDir, setSortDir]         = useState<"asc" | "desc">("asc");
   const [visibleCols, setVisibleCols] = useState<Set<string>>(DEFAULT_VISIBLE);
   const [currentPage, setCurrentPage] = useState(1);
-  const moreMenuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handle = (e: MouseEvent) => {
-      if (moreMenuRef.current && !moreMenuRef.current.contains(e.target as Node)) {
-        setMoreMenuId(null); setMoreMenuPos(null);
-      }
-    };
-    document.addEventListener("mousedown", handle);
-    return () => document.removeEventListener("mousedown", handle);
-  }, []);
 
   const handleSort = (key: string) => {
     if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
@@ -150,15 +137,6 @@ export default function AdminManagementPage() {
               viewHref={`/admin-management/${row.id}`}
               editHref={`/admin-management/${row.id}/edit`}
               onDelete={() => setDeleteId(deleteId === row.id ? null : row.id)}
-              onMore={(e) => {
-                e.stopPropagation();
-                if (moreMenuId === row.id) { setMoreMenuId(null); setMoreMenuPos(null); }
-                else {
-                  const rect = (e.currentTarget as HTMLButtonElement).getBoundingClientRect();
-                  setMoreMenuPos({ top: rect.bottom + 4, left: rect.right - 160 });
-                  setMoreMenuId(row.id);
-                }
-              }}
             />
           ),
         };
@@ -282,30 +260,6 @@ export default function AdminManagementPage() {
         />
 
       </main>
-
-      {/* ═══ MORE MENU ═══ */}
-      {moreMenuId && moreMenuPos && (
-        <div
-          ref={moreMenuRef}
-          style={{ position: "fixed", top: moreMenuPos.top, left: moreMenuPos.left, zIndex: 9999 }}
-          className="bg-white/80 backdrop-blur-xl rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.10)] border border-white/60 py-1 w-40"
-        >
-          {[
-            { label: "View Details", href: `/admin-management/${moreMenuId}` },
-            { label: "Edit Admin",   href: `/admin-management/${moreMenuId}/edit` },
-            { label: "Export PDF",   href: "#" },
-          ].map((item) => (
-            <Link key={item.label} href={item.href}>
-              <button
-                onClick={() => { setMoreMenuId(null); setMoreMenuPos(null); }}
-                className="w-full text-left px-4 py-2 text-[11px] text-gray-700 hover:bg-gray-50 transition-colors"
-              >
-                {item.label}
-              </button>
-            </Link>
-          ))}
-        </div>
-      )}
 
     </div>
   );
