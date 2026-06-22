@@ -3,71 +3,13 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { MODULE_TABS } from "./SecondaryNav";
-
-type SubItem = { label: string; href: string };
-
-const WHITE_LABEL_SUB: SubItem[] = [
-  { label: "Admin Management", href: "/admin-management" },
-  { label: "Company Management", href: "/company-management" },
-];
-
-function isCreateUpdatePath(pathname: string) {
-  return MODULE_TABS.some(
-    tab =>
-      pathname.startsWith(tab.href) ||
-      (tab.sub?.some(s => pathname.startsWith(s.href)) ?? false)
-  );
-}
-
-function WhiteLabelNavItem() {
-  const pathname = usePathname();
-  const isActive = WHITE_LABEL_SUB.some(s => pathname.startsWith(s.href));
-
-  return (
-    <div className="relative group">
-      <Link
-        href="/white-label"
-        className={`flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-medium transition-all whitespace-nowrap ${
-          isActive
-            ? "bg-[#884D70] text-white shadow-sm"
-            : "text-[#884D70]/70 hover:text-[#884D70] hover:bg-[#884D70]/10"
-        }`}
-      >
-        White Label
-        <svg
-          className="w-2 h-2 opacity-40 transition-transform duration-150 group-hover:rotate-180"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path d="M19 9l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" />
-        </svg>
-      </Link>
-
-      <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2.5 z-60 opacity-0 -translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-150">
-        <div className="bg-white border border-gray-100 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.12)] p-1.5 min-w-42">
-          {WHITE_LABEL_SUB.map(s => (
-            <Link
-              key={s.href}
-              href={s.href}
-              className="flex items-center px-3 py-2 rounded-xl text-[11px] text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition-colors"
-            >
-              {s.label}
-            </Link>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
+import { useNavCtx } from "./NavProvider";
 
 export function FloatingNavbar() {
   const pathname = usePathname();
+  const { activeSection, setActiveSection } = useNavCtx();
   const [visible, setVisible] = useState(true);
   const lastY = useRef(0);
-
-  const isCreateUpdateActive = isCreateUpdatePath(pathname);
 
   useEffect(() => {
     const onScroll = () => {
@@ -79,6 +21,14 @@ export function FloatingNavbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Pill class builder — active = filled purple, inactive = ghost
+  const pill = (active: boolean) =>
+    `flex items-center px-3 py-1 rounded-full text-[11px] font-medium transition-all whitespace-nowrap ${
+      active
+        ? "bg-[#884D70] text-white shadow-sm"
+        : "text-[#884D70]/70 hover:text-[#884D70] hover:bg-[#884D70]/10"
+    }`;
+
   return (
     <div
       className={`fixed top-3 inset-x-0 z-50 flex justify-center transition-all duration-300 ease-out ${
@@ -87,7 +37,7 @@ export function FloatingNavbar() {
     >
       <div className="flex items-center bg-[#FFDBCB]/10 border border-[#884D70]/25 rounded-full shadow-[0_4px_24px_rgba(136,77,112,0.13)] px-1.5 py-1.5 gap-0.5">
 
-        {/* Logo → dashboard */}
+        {/* Logo */}
         <Link href="/" className="flex items-center gap-1.5 px-2.5 pr-3 shrink-0 group">
           <div className="w-4 h-4 bg-[#884D70] rounded flex items-center justify-center">
             <div className="w-2 h-2 bg-white rounded-sm" />
@@ -101,29 +51,29 @@ export function FloatingNavbar() {
 
         <div className="flex items-center gap-0.5 px-1.5">
 
-          {/* Create / Update → defaults to /purchase-order */}
+          {/* Create / Update — sets section + navigates */}
           <Link
             href="/purchase-order"
-            className={`flex items-center px-3 py-1 rounded-full text-[11px] font-medium transition-all whitespace-nowrap ${
-              isCreateUpdateActive
-                ? "bg-[#884D70] text-white shadow-sm"
-                : "text-[#884D70]/70 hover:text-[#884D70] hover:bg-[#884D70]/10"
-            }`}
+            onClick={() => setActiveSection("createUpdate")}
+            className={pill(activeSection === "createUpdate")}
           >
             Create / Update
           </Link>
 
-          {/* White Label */}
-          <WhiteLabelNavItem />
+          {/* White Label — sets section + navigates (NO dropdown) */}
+          <Link
+            href="/admin-management"
+            onClick={() => setActiveSection("whiteLabel")}
+            className={pill(activeSection === "whiteLabel")}
+          >
+            White Label
+          </Link>
 
           {/* Reports */}
           <Link
             href="/reports"
-            className={`flex items-center px-3 py-1 rounded-full text-[11px] font-medium transition-all whitespace-nowrap ${
-              pathname.startsWith("/reports")
-                ? "bg-[#884D70] text-white shadow-sm"
-                : "text-[#884D70]/70 hover:text-[#884D70] hover:bg-[#884D70]/10"
-            }`}
+            onClick={() => setActiveSection(null)}
+            className={pill(pathname.startsWith("/reports"))}
           >
             Reports
           </Link>
@@ -131,11 +81,8 @@ export function FloatingNavbar() {
           {/* Document Library */}
           <Link
             href="/document-library"
-            className={`flex items-center px-3 py-1 rounded-full text-[11px] font-medium transition-all whitespace-nowrap ${
-              pathname.startsWith("/document-library")
-                ? "bg-[#884D70] text-white shadow-sm"
-                : "text-[#884D70]/70 hover:text-[#884D70] hover:bg-[#884D70]/10"
-            }`}
+            onClick={() => setActiveSection(null)}
+            className={pill(pathname.startsWith("/document-library"))}
           >
             Document Library
           </Link>
@@ -143,11 +90,8 @@ export function FloatingNavbar() {
           {/* Masters */}
           <Link
             href="/masters"
-            className={`flex items-center px-3 py-1 rounded-full text-[11px] font-medium transition-all whitespace-nowrap ${
-              pathname.startsWith("/masters")
-                ? "bg-[#884D70] text-white shadow-sm"
-                : "text-[#884D70]/70 hover:text-[#884D70] hover:bg-[#884D70]/10"
-            }`}
+            onClick={() => setActiveSection(null)}
+            className={pill(pathname.startsWith("/masters"))}
           >
             Masters
           </Link>

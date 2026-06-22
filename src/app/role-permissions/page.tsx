@@ -15,46 +15,46 @@ import { Pagination } from "@/components/ui/Pagination";
 
 // ── Data ───────────────────────────────────────────────────────────────────────
 
-type CompanyStatus = "active" | "pending" | "inactive";
+type RoleStatus = "active" | "inactive";
 
-interface Company {
-  id: string; name: string; domain: string; email: string;
-  phone: string; country: string; status: CompanyStatus;
+interface Role {
+  id: string;
+  name: string;
+  description: string;
+  permissions: string[];
+  status: RoleStatus;
 }
 
-const STATUS_STYLE: Record<CompanyStatus, string> = {
+const STATUS_STYLE: Record<RoleStatus, string> = {
   active:   "text-emerald-600 bg-emerald-50",
-  pending:  "text-amber-600 bg-amber-50",
   inactive: "text-rose-600 bg-rose-50",
 };
 
-const COMPANIES: Company[] = [
-  { id: "COMP-001", name: "TechCorp Solutions", domain: "techcorp.com",    email: "admin@techcorp.com",    phone: "+91 98765 43210", country: "India",         status: "active"   },
-  { id: "COMP-002", name: "InnoSoft Pvt Ltd",   domain: "innosoft.in",     email: "contact@innosoft.in",   phone: "+91 91234 56789", country: "India",         status: "active"   },
-  { id: "COMP-003", name: "GlobalEdge Inc",     domain: "globaledge.io",   email: "info@globaledge.io",    phone: "+1 555 234 5678", country: "United States", status: "pending"  },
-  { id: "COMP-004", name: "Apex Systems",       domain: "apexsys.com",     email: "hello@apexsys.com",     phone: "+91 88776 65544", country: "India",         status: "inactive" },
-  { id: "COMP-005", name: "BlueStar Logistics", domain: "bluestar.net",    email: "ops@bluestar.net",      phone: "+91 77665 54433", country: "India",         status: "active"   },
-  { id: "COMP-006", name: "Nexus Digital",      domain: "nexusdigital.co", email: "nexus@nexusdigital.co", phone: "+91 99001 12233", country: "India",         status: "pending"  },
+const ROLES: Role[] = [
+  { id: "ROLE-001", name: "Super Admin",    description: "Full system access with all permissions",        permissions: ["Partner Mgmt", "API Mgmt", "Employee Mgmt", "Reports"], status: "active"   },
+  { id: "ROLE-002", name: "Admin",          description: "Manage admins, companies and employees",           permissions: ["Employee Mgmt", "Reports"],                               status: "active"   },
+  { id: "ROLE-003", name: "Manager",        description: "Oversee operations and access reports",            permissions: ["Reports", "API Mgmt"],                                    status: "active"   },
+  { id: "ROLE-004", name: "Staff",          description: "Basic access for day-to-day tasks",                permissions: ["Reports"],                                                status: "active"   },
+  { id: "ROLE-005", name: "Read Only",      description: "View-only access across all modules",              permissions: ["Reports"],                                                status: "inactive" },
+  { id: "ROLE-006", name: "Partner Access", description: "Limited access for partner integrations",          permissions: ["Partner Mgmt", "API Mgmt"],                               status: "inactive" },
 ];
-
-const ALL_COLS: Column<Company>[] = [
-  { key: "name",    header: "Company Name", sortable: true,  align: "left"   },
-  { key: "domain",  header: "Domain",       sortable: true,  align: "left"   },
-  { key: "email",   header: "Email",        sortable: true,  align: "left"   },
-  { key: "phone",   header: "Phone",        sortable: false, align: "left"   },
-  { key: "country", header: "Country",      sortable: true,  align: "left"   },
-  { key: "status",  header: "Status",       sortable: true,  align: "center" },
-  { key: "actions", header: "Actions",      sortable: false, align: "right"  },
-];
-
-const DEFAULT_VISIBLE = new Set(["name", "domain", "email", "phone", "country", "status", "actions"]);
 
 const PAGE_SIZE = 10;
 
+const ALL_COLS: Column<Role>[] = [
+  { key: "name",           header: "Role Name",       sortable: true,  align: "left"   },
+  { key: "description",    header: "Description",     sortable: false, align: "left"   },
+  { key: "permissions",    header: "Permissions",     sortable: false, align: "left"   },
+  { key: "status",         header: "Status",          sortable: true,  align: "center" },
+  { key: "actions",        header: "Actions",         sortable: false, align: "right"  },
+];
+
+const DEFAULT_VISIBLE = new Set(["name", "description", "permissions", "status", "actions"]);
+
 // ── Page ───────────────────────────────────────────────────────────────────────
 
-export default function CompanyManagementPage() {
-  const [companies, setCompanies]     = useState([...COMPANIES]);
+export default function RolePermissionsPage() {
+  const [roles, setRoles]             = useState([...ROLES]);
   const [deleteId, setDeleteId]       = useState<string | null>(null);
   const [search, setSearch]           = useState("");
   const [sortKey, setSortKey]         = useState<string | null>(null);
@@ -77,14 +77,10 @@ export default function CompanyManagementPage() {
       return n;
     });
 
-  const filtered = companies.filter((c) => {
+  const filtered = roles.filter((r) => {
     if (!search) return true;
     const q = search.toLowerCase();
-    return (
-      c.name.toLowerCase().includes(q) ||
-      c.domain.toLowerCase().includes(q) ||
-      c.email.toLowerCase().includes(q)
-    );
+    return r.name.toLowerCase().includes(q) || r.description.toLowerCase().includes(q);
   });
 
   const sorted = [...filtered].sort((a, b) => {
@@ -97,31 +93,39 @@ export default function CompanyManagementPage() {
   });
 
   const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
-  const pagedCompanies = sorted.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
-  const shownCols = ALL_COLS.filter((c) => visibleCols.has(c.key));
+  const pagedRoles = sorted.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const shownCols  = ALL_COLS.filter((c) => visibleCols.has(c.key));
 
   // ── Cell renderer ─────────────────────────────────────────────────────────────
 
-  const renderCell = (row: Company, col: Column<Company>): ReactNode => {
+  const renderCell = (row: Role, col: Column<Role>): ReactNode => {
     switch (col.key) {
       case "name": return (
-        <Link href={`/company-management/${row.id}`} className="text-[11px] font-semibold text-[#884D70] hover:underline underline-offset-2">
+        <Link href={`/role-permissions/${row.id}`} className="text-[11px] font-semibold text-[#884D70] hover:underline underline-offset-2">
           {row.name}
         </Link>
       );
-      case "domain":  return <span className="text-[11px] text-gray-700 font-mono">{row.domain}</span>;
-      case "email":   return <span className="text-[11px] text-gray-700">{row.email}</span>;
-      case "phone":   return <span className="text-[11px] text-gray-700 tabular-nums font-mono">{row.phone}</span>;
-      case "country": return <span className="text-[11px] text-slate-800 font-medium">{row.country}</span>;
-      case "status":  return (
+      case "description": return (
+        <span className="text-[11px] text-gray-500">{row.description}</span>
+      );
+      case "permissions": return (
+        <div className="flex flex-wrap gap-1">
+          {row.permissions.map((p) => (
+            <span key={p} className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-[#884D70]/10 text-[#884D70]">
+              {p}
+            </span>
+          ))}
+        </div>
+      );
+      case "status": return (
         <span className={`text-[9px] font-semibold px-2 py-0.5 rounded-full capitalize ${STATUS_STYLE[row.status]}`}>
           {row.status}
         </span>
       );
       case "actions": return (
         <TableActions
-          viewHref={`/company-management/${row.id}`}
-          editHref={`/company-management/${row.id}/edit`}
+          viewHref={`/role-permissions/${row.id}`}
+          editHref={`/role-permissions/${row.id}/edit`}
           onDelete={() => setDeleteId(deleteId === row.id ? null : row.id)}
         />
       );
@@ -131,7 +135,7 @@ export default function CompanyManagementPage() {
 
   // ── Delete confirmation row ───────────────────────────────────────────────────
 
-  const expandedRow = (row: Company, colSpan: number): ReactNode =>
+  const expandedRow = (row: Role, colSpan: number): ReactNode =>
     deleteId !== row.id ? null : (
       <tr className="bg-red-100/50 backdrop-blur-sm">
         <td colSpan={colSpan} className="px-4 py-2.5 border-b border-red-100">
@@ -141,7 +145,7 @@ export default function CompanyManagementPage() {
             </span>
             <div className="flex gap-2">
               <button
-                onClick={() => { setCompanies((p) => p.filter((c) => c.id !== row.id)); setDeleteId(null); }}
+                onClick={() => { setRoles((p) => p.filter((r) => r.id !== row.id)); setDeleteId(null); }}
                 className="px-3 py-1 bg-red-500 text-white text-[10px] font-semibold rounded-lg hover:bg-red-600 transition-colors"
               >
                 Confirm
@@ -164,6 +168,10 @@ export default function CompanyManagementPage() {
     <>
       <div className="flex items-center gap-4 text-[10px] text-gray-500">
         <span>Count: <strong className="text-gray-700 font-semibold">{filtered.length}</strong></span>
+        <span className="text-gray-300">|</span>
+        <span>Active: <strong className="text-emerald-600 font-semibold">{roles.filter((r) => r.status === "active").length}</strong></span>
+        <span className="text-gray-300">·</span>
+        <span>Inactive: <strong className="text-rose-600 font-semibold">{roles.filter((r) => r.status === "inactive").length}</strong></span>
       </div>
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
     </>
@@ -178,19 +186,22 @@ export default function CompanyManagementPage() {
       <SecondaryNav />
 
       <DashboardPageHeader
-        title="Company Management"
+        title="Role & Permissions"
         breadcrumbs={[
-          { label: "Dashboard",          href: "/" },
-          { label: "Company Management" },
+          { label: "Dashboard",         href: "/" },
+          { label: "Role & Permissions" },
         ]}
+        summary={`${roles.length} total`}
+        buttonText="Create Role"
+        buttonHref="/role-permissions/create"
       />
 
       <main className="flex-1 px-6 pt-4 pb-4">
 
-        {/* ── Controls ── */}
+        {/* Controls row */}
         <div className="flex items-center px-1 pb-2 gap-2">
           <div className="flex-1" />
-          <SearchInput value={search} onChange={handleSearchChange} placeholder="Search companies…" />
+          <SearchInput value={search} onChange={handleSearchChange} placeholder="Search roles…" />
           <div className="w-px h-4 bg-gray-300/60 shrink-0" />
           <ColumnSelector
             columns={ALL_COLS.filter((c) => c.key !== "actions")}
@@ -205,7 +216,7 @@ export default function CompanyManagementPage() {
 
         <ExcelTable
           columns={shownCols}
-          data={pagedCompanies}
+          data={pagedRoles}
           rowKey={(row) => row.id}
           sortKey={sortKey}
           sortDir={sortDir}
@@ -219,7 +230,7 @@ export default function CompanyManagementPage() {
               : "bg-white/20 hover:bg-white/50"
           }
           expandedRow={expandedRow}
-          emptyMessage="No companies found."
+          emptyMessage="No roles found."
           statusBar={statusBar}
           className="bg-white/50 backdrop-blur-xl rounded-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.06)]"
           statusBarClassName="px-4 py-2 bg-white/30 border-t border-white/40 flex items-center justify-between rounded-b-xl"
