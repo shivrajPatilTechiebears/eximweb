@@ -58,13 +58,13 @@ const TABS: TabBarItem[] = [
   { label: "Test Samples" }, { label: "Remarks" },
 ];
 
-const ITEM_COLS: Column[] = [
+const ITEM_COLS: Column<PurchaseItem>[] = [
   { key: "name", header: "Item Name" }, { key: "qty", header: "Qty" },
   { key: "price", header: "Price (₹)" }, { key: "uom", header: "UOM" },
   { key: "taxCode", header: "Tax Code" }, { key: "packaging", header: "Packaging" },
 ];
 
-const SCHEDULE_COLS: Column[] = [
+const SCHEDULE_COLS: Column<ScheduleRow>[] = [
   { key: "phase", header: "Delivery Phase" }, { key: "qty", header: "Qty" },
   { key: "reqDispatch", header: "Req. Dispatch" }, { key: "reqDelivery", header: "Req. Delivery" },
   { key: "actionLog", header: "Action Log" },
@@ -128,7 +128,7 @@ export default function ViewPurchaseOrderPage() {
 
   // ── Cell renderers (read-only spans) ─────────────────────────────────────────
 
-  const renderItemCell = (row: PurchaseItem, col: Column): ReactNode => {
+  const renderItemCell = (row: PurchaseItem, col: Column<PurchaseItem>): ReactNode => {
     switch (col.key) {
       case "name":      return <span className="text-[11px] font-semibold text-slate-800">{row.name}</span>;
       case "qty":       return <span className="text-[11px] font-semibold tabular-nums">{row.qty}</span>;
@@ -140,7 +140,7 @@ export default function ViewPurchaseOrderPage() {
     }
   };
 
-  const renderScheduleCell = (row: ScheduleRow, col: Column): ReactNode => {
+  const renderScheduleCell = (row: ScheduleRow, col: Column<ScheduleRow>): ReactNode => {
     switch (col.key) {
       case "phase":       return <span className="text-[11px] text-slate-800 font-medium">{row.phase}</span>;
       case "qty":         return <span className="text-[11px] font-semibold text-[#884D70] tabular-nums">{row.qty}</span>;
