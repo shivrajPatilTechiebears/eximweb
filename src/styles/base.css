@@ -1,9 +1,18 @@
+/* ── SecondaryNav tab-group enter animation ──────────────────────────────── */
+
+@keyframes secNavFadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 /* ── Global base ─────────────────────────────────────────────────────────── */
 
 body {
   font-family: var(--font-plus-jakarta-sans), sans-serif;
   color: var(--color-on-background);
   background-image: var(--app-bg);
+  background-size: cover;
+  background-position: center;
   background-attachment: fixed;
   min-height: 100vh;
 }

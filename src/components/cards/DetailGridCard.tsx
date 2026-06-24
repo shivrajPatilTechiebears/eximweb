@@ -16,7 +16,7 @@ interface DetailGridCardProps {
 export function DetailGridCard({ items, className }: DetailGridCardProps) {
   return (
     <section
-      className={`bg-white/80 border border-white rounded-2xl p-4 shadow-sm${className ? ` ${className}` : ""}`}
+      className={`bg-white/80 border border-white rounded-xl p-4 shadow-sm${className ? ` ${className}` : ""}`}
     >
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-x-6 gap-y-2">
         {items.map((item) => (

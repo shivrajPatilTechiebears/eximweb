@@ -1,3 +1,5 @@
+"use client";
+
 import { AppShell } from "@/components/layout/AppShell";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { SummaryFooter, type SummaryFooterItem } from "@/components/layout/SummaryFooter";
@@ -438,7 +440,7 @@ function LineItemsSection() {
       bodyClassName="max-h-64 overflow-y-auto p-0"
       action={<span className="text-label-caps font-label-caps text-white/70">Selected: 1 item</span>}
     >
-      <div className="[&>section]:space-y-0 [&_.bg-white\/80]:bg-transparent [&_.border]:border-0 [&_.rounded-2xl]:rounded-none">
+      <div className="[&>section]:space-y-0 [&_.bg-white\/80]:bg-transparent [&_.border]:border-0 [&_.rounded-lg]:rounded-none">
         <DataTable
           title=""
           columns={LINE_ITEM_COLUMNS}
@@ -460,7 +462,7 @@ function DeliverySchedulesSection() {
       icon="event_note"
       action={<Button variant="text">+ New Schedule</Button>}
     >
-      <div className="[&>section]:space-y-0 [&_.bg-white\/80]:bg-transparent [&_.border]:border-0 [&_.rounded-2xl]:rounded-none">
+      <div className="[&>section]:space-y-0 [&_.bg-white\/80]:bg-transparent [&_.border]:border-0 [&_.rounded-lg]:rounded-none">
         <DataTable
           title=""
           columns={SCHEDULE_COLUMNS}
@@ -477,7 +479,7 @@ function RelatedActivityTabs() {
       id: "shipment",
       label: "Shipment",
       content: (
-        <div className="[&>section]:space-y-0 [&_.bg-white\/80]:bg-transparent [&_.border]:border-0 [&_.rounded-2xl]:rounded-none">
+        <div className="[&>section]:space-y-0 [&_.bg-white\/80]:bg-transparent [&_.border]:border-0 [&_.rounded-lg]:rounded-none">
           <DataTable title="" columns={SHIPMENT_COLUMNS} data={SHIPMENTS} />
         </div>
       ),
@@ -486,7 +488,7 @@ function RelatedActivityTabs() {
       id: "test-sample",
       label: "Test Sample",
       content: (
-        <div className="[&>section]:space-y-0 [&_.bg-white\/80]:bg-transparent [&_.border]:border-0 [&_.rounded-2xl]:rounded-none">
+        <div className="[&>section]:space-y-0 [&_.bg-white\/80]:bg-transparent [&_.border]:border-0 [&_.rounded-lg]:rounded-none">
           <DataTable title="" columns={TEST_SAMPLE_COLUMNS} data={TEST_SAMPLES} />
         </div>
       ),
@@ -495,7 +497,7 @@ function RelatedActivityTabs() {
       id: "goods-receipts",
       label: "Goods Receipts",
       content: (
-        <div className="[&>section]:space-y-0 [&_.bg-white\/80]:bg-transparent [&_.border]:border-0 [&_.rounded-2xl]:rounded-none">
+        <div className="[&>section]:space-y-0 [&_.bg-white\/80]:bg-transparent [&_.border]:border-0 [&_.rounded-lg]:rounded-none">
           <DataTable
             title=""
             columns={GOODS_RECEIPT_COLUMNS}
@@ -508,7 +510,7 @@ function RelatedActivityTabs() {
       id: "bookings",
       label: "Bookings",
       content: (
-        <div className="[&>section]:space-y-0 [&_.bg-white\/80]:bg-transparent [&_.border]:border-0 [&_.rounded-2xl]:rounded-none">
+        <div className="[&>section]:space-y-0 [&_.bg-white\/80]:bg-transparent [&_.border]:border-0 [&_.rounded-lg]:rounded-none">
           <DataTable title="" columns={BOOKING_COLUMNS} data={BOOKINGS} />
         </div>
       ),

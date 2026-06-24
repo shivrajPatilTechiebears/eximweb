@@ -26,62 +26,54 @@ export function KpiCard({
   value,
   delta,
   deltaVariant = "blue",
-  description,
-  highlight,
   trendPct,
   icon,
-  bgColor,
   iconBgColor,
   iconColor,
   trend = "up",
-  trendColor = "text-blue-500",
   detailsHref = "#",
 }: KpiCardProps) {
+  const progressBg = iconColor.replace("text-", "bg-");
+
   return (
-    <div className={`${bgColor} p-3.5 rounded-2xl border border-white flex flex-col gap-2`}>
-      {/* Icon + See Details */}
-      <div className="flex justify-between items-center">
-        <div className={`${iconBgColor} p-1.5 rounded-lg`}>
-          <Icon name={icon} className={`${iconColor} text-[20px]`} />
+    <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md">
+      {/* Icon + badge */}
+      <div className="flex items-start justify-between mb-3">
+        <div className={`${iconBgColor} p-2.5 rounded-xl`}>
+          <Icon name={icon} className={`${iconColor} text-[18px]`} />
         </div>
-        <Link
-          href={detailsHref}
-          className="text-[10px] font-semibold text-gray-500 bg-white px-2 py-0.5 rounded-lg border border-gray-100 hover:bg-gray-50 hover:text-gray-700 transition-colors"
-        >
-          See Details
-        </Link>
-      </div>
-
-      {/* Title */}
-      <h4 className="text-gray-500 font-medium text-sm">{title}</h4>
-
-      {/* Value + Delta */}
-      <div className="flex items-baseline gap-2">
-        <span className="text-[26px] font-bold text-gray-900 leading-none">{value}</span>
         <span
-          className={`text-[11px] font-bold px-1.5 py-0.5 rounded ${
+          className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
             deltaVariant === "pink"
-              ? "text-pink-600 bg-pink-100"
-              : "text-blue-600 bg-blue-100"
+              ? "text-rose-600 bg-rose-50"
+              : "text-[#884D70] bg-[#FFDBCB]/40"
           }`}
         >
           {delta}
         </span>
       </div>
 
-      {/* Description + Trend */}
-      <div className="flex items-center justify-between">
-        <p className="text-[11px] text-gray-400 max-w-[95px] leading-snug">
-          {description}{" "}
-          <span className="text-gray-900 font-bold">{highlight}</span> in last 7 days
-        </p>
-        <div className={`flex items-center gap-0.5 ${trendColor}`}>
-          <Icon
-            name={trend === "down" ? "trending_down" : "trending_up"}
-            className="text-[18px]"
-          />
-          <span className="text-[11px] font-bold">{trendPct}</span>
-        </div>
+      {/* Value */}
+      <p className="text-2xl font-black text-slate-900 tracking-tight leading-none">{value}</p>
+      <p className="text-[10px] text-slate-400 mt-1.5 font-medium">{title}</p>
+
+      {/* Progress bar */}
+      <div className="mt-3.5 h-0.5 w-full bg-[#FFDBCB]/50 rounded-full overflow-hidden">
+        <div className={`h-full ${progressBg} rounded-full`} style={{ width: trendPct }} />
+      </div>
+
+      {/* See details link */}
+      <div className="mt-3 flex items-center justify-between">
+        <span className={`flex items-center gap-0.5 text-[9px] font-semibold ${trend === "down" ? "text-rose-400" : "text-emerald-500"}`}>
+          <Icon name={trend === "down" ? "trending_down" : "trending_up"} className="text-[14px]" />
+          {trendPct}
+        </span>
+        <Link
+          href={detailsHref}
+          className="text-[9px] font-semibold text-slate-400 hover:text-slate-600 transition-colors"
+        >
+          See details →
+        </Link>
       </div>
     </div>
   );

@@ -81,7 +81,7 @@ export function SpeedDial({ actions, label = "Quick Actions", dismissLabel = "Di
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="w-full relative flex items-center gap-3 px-4 py-2.5 rounded-xl text-white bg-gradient-to-br from-on-primary-container via-surface-tint to-primary shadow-[0_4px_20px_-2px_rgba(125,82,97,0.55)] hover:shadow-[0_6px_28px_-2px_rgba(125,82,97,0.75)] hover:brightness-110 active:scale-[0.97] transition-all duration-200"
+        className="w-full relative flex items-center gap-3 px-4 py-2.5 rounded-xl text-white bg-teal-600 shadow-[0_4px_16px_-2px_rgba(20,184,166,0.45)] hover:bg-teal-500 hover:shadow-[0_6px_22px_-2px_rgba(20,184,166,0.55)] active:scale-[0.97] transition-all duration-200"
       >
         <div className="absolute inset-x-0 top-0 h-px rounded-t-xl bg-gradient-to-r from-white/0 via-white/25 to-white/0 pointer-events-none" />
 

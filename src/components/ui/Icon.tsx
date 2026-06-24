@@ -40,6 +40,7 @@ import {
   Download01Icon,
   PrinterIcon,
   SentIcon,
+  CheckIcon,
 } from "@hugeicons/core-free-icons";
 
 // ── Icon name → HugeIcons data map ────────────────────────────────────────────
@@ -105,6 +106,7 @@ const ICON_MAP: Record<string, IconSvgElement> = {
   attachment:           Attachment01Icon,
   filter_list:          ListFilter,
   add_photo_alternate:  ImageAdd01Icon,
+  check:                CheckIcon,
 };
 
 // ── Component ─────────────────────────────────────────────────────────────────

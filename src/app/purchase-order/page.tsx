@@ -1,345 +1,301 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
-import Link from "next/link";
-import { AppShell } from "@/components/layout/AppShell";
-import { Footer } from "@/components/layout/Footer";
-import { MetricCard } from "@/components/cards/MetricCard";
-import { DataTable } from "@/components/table/DataTable";
-import { type TableColumn } from "@/components/ui/Table";
-import { Pagination } from "@/components/table/Pagination";
-import { SearchBar } from "@/components/ui/SearchBar";
-import { FilterDropdown } from "@/components/ui/FilterDropdown";
-import { DateRangeDropdown } from "@/components/ui/DateRangeDropdown";
-import { Button } from "@/components/ui/Button";
-import { Icon } from "@/components/ui/Icon";
-import { ColumnVisibilitySelector, useColumnVisibility } from "@/components/ui/ColumnVisibilitySelector";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+import { useState } from "react";
+import Link from "next/link";
+import { Icon } from "@/components/ui/Icon";
+import { FloatingNavbar } from "@/components/layout/FloatingNavbar";
+import { SecondaryNav } from "@/components/layout/SecondaryNav";
+import { DashboardPageHeader } from "@/components/layout/PageHeader";
+import StatCard from "@/components/cards/StatCard";
+import { SearchInput } from "@/components/ui/SearchInput";
+import { ExcelTable, type Column } from "@/components/table/DataTable";
+import { TableActions } from "@/components/table/TableActions";
+import { ColumnSelector } from "@/components/ui/ColumnSelector";
+import { Pagination } from "@/components/ui/Pagination";
+import { Button } from "@/components/ui/Button";
+import { TabbedTable } from "@/components/table/TabbedTable";
+
+// ── Data ───────────────────────────────────────────────────────────────────────
+
+const STAT_CARDS = [
+  { title: "Total POs", value: "6", badge: "+12%", badgeClassName: "text-emerald-600 bg-emerald-50", accentColor: "#884D70", subtitle: "All time" },
+  { title: "Pending", value: "1", badge: "17%", badgeClassName: "text-amber-600 bg-amber-50", accentColor: "#fbbf24", subtitle: "Awaiting approval" },
+  { title: "Created", value: "3", badge: "+50%", badgeClassName: "text-emerald-600 bg-emerald-50", accentColor: "#34d399", subtitle: "Processed orders" },
+  { title: "Approved", value: "1", badge: "17%", badgeClassName: "text-sky-600 bg-sky-50", accentColor: "#38bdf8", subtitle: "Ready to dispatch" },
+];
 
 type POStatus = "created" | "pending";
 
 interface PurchaseOrder {
-  id: string;
-  poNumber: string;
-  poType: string;
-  deliveryLocation: string;
-  itemName: string;
-  itemQty: number;
-  price: string;
-  currency: string;
-  shipTerm: string;
-  payTerm: string;
-  transporter: string;
-  truckNo: string;
-  driver: string;
-  status: POStatus;
-  active: boolean;
+  id: string; poNumber: string; poType: string; deliveryLocation: string;
+  itemName: string; itemQty: number; price: string; currency: string;
+  shipTerm: string; payTerm: string; transporter: string; truckNo: string;
+  driver: string; status: POStatus;
 }
-
-// ─── Static data ──────────────────────────────────────────────────────────────
-
-const METRICS = [
-  { title: "Total PRs",  value: 6, subtitle: "All Time",  icon: "shopping_cart", iconBg: "bg-indigo-100", iconColor: "text-indigo-500" },
-  { title: "Submitted",  value: 1, subtitle: "Waiting",   icon: "send",          iconBg: "bg-amber-100",  iconColor: "text-amber-500"  },
-  { title: "Approved",   value: 1, subtitle: "Ready",     icon: "task_alt",      iconBg: "bg-green-100",  iconColor: "text-green-500"  },
-  { title: "PO Created", value: 3, subtitle: "Closed",    icon: "description",   iconBg: "bg-rose-100",   iconColor: "text-rose-500"   },
-];
 
 const STATUS_STYLE: Record<POStatus, string> = {
   created: "text-emerald-600 bg-emerald-50",
-  pending: "text-amber-500 bg-amber-50",
+  pending: "text-amber-600 bg-amber-50",
 };
 
-const STATUS_OPTIONS: POStatus[] = ["created", "pending"];
-const DATE_RANGES = ["Today", "Last 7 days", "Last 30 days", "Jan 1 – Dec 30, 2024"];
-
-const PAGINATION = { current: 1, total: 10, totalPages: 2 };
-
 const PURCHASE_ORDERS: PurchaseOrder[] = [
-  {
-    id: "PO-001",
-    poNumber: "PO-2024-00139",
-    poType: "Paddler",
-    deliveryLocation: "Mumbai Port Terminal 2",
-    itemName: "Steel Wire Mesh G12",
-    itemQty: 150,
-    price: "$12,500",
-    currency: "USD",
-    shipTerm: "EXW - Ex Works",
-    payTerm: "Net 30 Days",
-    transporter: "SafeLogistics Pvt Ltd",
-    truckNo: "MH05-1234",
-    driver: "Shivraj P.",
-    status: "created",
-    active: true,
-  },
-  {
-    id: "PO-002",
-    poNumber: "PO-2024-00140",
-    poType: "Direct",
-    deliveryLocation: "Delhi Warehouse A",
-    itemName: "Hydraulic Seal Kit",
-    itemQty: 45,
-    price: "$3,400",
-    currency: "USD",
-    shipTerm: "FOB - Free on Board",
-    payTerm: "15% Advance",
-    transporter: "Global Freight",
-    truckNo: "KA01-9988",
-    driver: "Amit S.",
-    status: "pending",
-    active: false,
-  },
+  { id: "PO-001", poNumber: "PO-2024-00139", poType: "Paddler", deliveryLocation: "Mumbai Port Terminal 2", itemName: "Steel Wire Mesh G12", itemQty: 150, price: "$12,500", currency: "USD", shipTerm: "EXW - Ex Works", payTerm: "Net 30 Days", transporter: "SafeLogistics Pvt Ltd", truckNo: "MH05-1234", driver: "Shivraj P.", status: "created" },
+  { id: "PO-002", poNumber: "PO-2024-00140", poType: "Direct", deliveryLocation: "Delhi Warehouse A", itemName: "Hydraulic Seal Kit", itemQty: 45, price: "$3,400", currency: "USD", shipTerm: "FOB - Free on Board", payTerm: "15% Advance", transporter: "Global Freight", truckNo: "KA01-9988", driver: "Amit S.", status: "pending" },
 ];
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
+const TABS: { label: string; statuses: POStatus[] | null }[] = [
+  { label: "All", statuses: null },
+  { label: "Open", statuses: ["pending"] },
+  { label: "Created", statuses: ["created"] },
+];
+
+const COLUMN_KEYS = [
+  "poNumber", "poType", "itemName", "itemQty", "price", "currency",
+  "deliveryLocation", "shipTerm", "payTerm", "transporter", "truckNo", "driver",
+  "status", "actions",
+] as const;
+
+const DEFAULT_VISIBLE = new Set<string>(["poNumber", "itemName", "itemQty", "price", "deliveryLocation", "status", "actions"]);
+
+const PAGE_SIZE = 10;
+
+// ── Page ───────────────────────────────────────────────────────────────────────
 
 export default function PurchaseOrderListPage() {
-  const [orders, setOrders]               = useState([...PURCHASE_ORDERS]);
-  const [deleteId, setDeleteId]           = useState<string | null>(null);
-  const [moreMenuId, setMoreMenuId]       = useState<string | null>(null);
-  const [activeStatuses, setActiveStatuses] = useState<Set<string>>(new Set(STATUS_OPTIONS));
-  const [selectedRange, setSelectedRange] = useState(DATE_RANGES[3]);
-  const moreMenuRef = useRef<HTMLDivElement>(null);
-
-
-  useEffect(() => {
-    const handle = () => setMoreMenuId(null);
-    document.addEventListener("mousedown", handle);
-    return () => document.removeEventListener("mousedown", handle);
-  }, []);
-
-  const handleDelete = (id: string) => {
-    setOrders((prev) => prev.filter((o) => o.id !== id));
-    setDeleteId(null);
+  const [orders, setOrders] = useState([...PURCHASE_ORDERS]);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const [activeTab, setActiveTab] = useState(0);
+  const [sortKey, setSortKey] = useState<string | null>(null);
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [visibleCols, setVisibleCols] = useState<Set<string>>(DEFAULT_VISIBLE);
+  const [currentPage, setCurrentPage] = useState(1);
+  const handleSort = (key: string) => {
+    if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    else { setSortKey(key); setSortDir("asc"); }
   };
 
-  const toggleStatus = (s: string) => {
-    setActiveStatuses((prev) => {
-      const next = new Set(prev);
-      next.has(s) ? next.delete(s) : next.add(s);
-      return next;
+  const handleTabChange = (tab: number) => { setActiveTab(tab); setCurrentPage(1); };
+  const handleSearchChange = (value: string) => { setSearch(value); setCurrentPage(1); };
+  const toggleCol = (key: string) =>
+    setVisibleCols((prev) => { const n = new Set(prev); n.has(key) ? n.delete(key) : n.add(key); n.add("actions"); return n; });
+
+  const tabStatuses = TABS[activeTab].statuses;
+
+  const filteredOrders = [...orders]
+    .filter((o) => {
+      if (tabStatuses && !tabStatuses.includes(o.status)) return false;
+      if (!search) return true;
+      const q = search.toLowerCase();
+      return o.poNumber.toLowerCase().includes(q) || o.itemName.toLowerCase().includes(q) || o.deliveryLocation.toLowerCase().includes(q);
+    })
+    .sort((a, b) => {
+      if (!sortKey) return 0;
+      const av = String((a as unknown as Record<string, unknown>)[sortKey] ?? "");
+      const bv = String((b as unknown as Record<string, unknown>)[sortKey] ?? "");
+      return sortDir === "asc" ? av.localeCompare(bv, undefined, { numeric: true }) : bv.localeCompare(av, undefined, { numeric: true });
     });
-  };
 
-  const filteredOrders = orders.filter((o) => activeStatuses.has(o.status));
+  const totalValue = orders.reduce((s, o) => s + parseFloat(o.price.replace(/[$,]/g, "")), 0);
+  const totalPages = Math.max(1, Math.ceil(filteredOrders.length / PAGE_SIZE));
+  const pagedOrders = filteredOrders.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
-  const ALL_COLUMNS: TableColumn<PurchaseOrder>[] = [
+  // ── Column definitions ────────────────────────────────────────────────────────
+
+  const allColumns: Column<PurchaseOrder>[] = [
     {
-      field: "poNumber",
-      header: "PO NUMBER",
-      body: (row) => (
-        <span className="text-sm font-semibold text-primary">{row.poNumber}</span>
+      key: "poNumber", header: "PO Number", sortable: true, align: "left",
+      cell: (row) => (
+        <Link href={`/purchase-order/${row.id}`} className="text-[11px] font-semibold text-[#884D70] hover:underline underline-offset-2">
+          {row.poNumber}
+        </Link>
       ),
     },
     {
-      field: "poType",
-      header: "PO Type",
-      body: (row) => <span className="text-sm text-gray-700">{row.poType}</span>,
+      key: "poType", header: "Type", sortable: true, align: "left",
+      cell: (row) => <span className="text-[11px] text-gray-700">{row.poType}</span>,
     },
     {
-      field: "deliveryLocation",
-      header: "Delivery Location",
-      body: (row) => <span className="text-sm text-gray-700">{row.deliveryLocation}</span>,
+      key: "itemName", header: "Item", sortable: true, align: "left",
+      cell: (row) => <span className="text-[11px] text-slate-800 font-medium">{row.itemName}</span>,
     },
     {
-      field: "itemName",
-      header: "Item Name",
-      body: (row) => <span className="text-sm text-gray-700">{row.itemName}</span>,
+      key: "itemQty", header: "Qty", sortable: true, align: "right",
+      cell: (row) => <span className="text-[11px] font-semibold text-slate-800 tabular-nums">{row.itemQty}</span>,
     },
     {
-      field: "itemQty",
-      header: "Item Qty",
-      center: true,
-      body: (row) => <span className="text-sm font-semibold text-gray-800 tabular-nums">{row.itemQty}</span>,
+      key: "price", header: "Price", sortable: true, align: "right",
+      cell: (row) => <span className="text-[11px] font-bold text-slate-900 tabular-nums">{row.price}</span>,
     },
     {
-      field: "price",
-      header: "Price",
-      body: (row) => <span className="text-sm font-semibold text-gray-800 tabular-nums">{row.price}</span>,
+      key: "currency", header: "Currency", sortable: false, align: "center",
+      cell: (row) => <span className="text-[11px] text-gray-600 font-medium tracking-wide">{row.currency}</span>,
     },
     {
-      field: "currency",
-      header: "Currency",
-      body: (row) => <span className="text-sm text-gray-500">{row.currency}</span>,
+      key: "deliveryLocation", header: "Delivery", sortable: true, align: "left",
+      cell: (row) => <span className="text-[11px] text-gray-700 max-w-40 truncate block">{row.deliveryLocation}</span>,
     },
     {
-      field: "shipTerm",
-      header: "Shipment Terms",
-      body: (row) => <span className="text-sm text-gray-600">{row.shipTerm}</span>,
+      key: "shipTerm", header: "Ship Terms", sortable: false, align: "left",
+      cell: (row) => <span className="text-[11px] text-gray-700">{row.shipTerm}</span>,
     },
     {
-      field: "payTerm",
-      header: "Payment Terms",
-      body: (row) => <span className="text-sm text-gray-600">{row.payTerm}</span>,
+      key: "payTerm", header: "Pay Terms", sortable: false, align: "left",
+      cell: (row) => <span className="text-[11px] text-gray-700">{row.payTerm}</span>,
     },
     {
-      field: "transporter",
-      header: "Transporter",
-      body: (row) => <span className="text-sm text-gray-700">{row.transporter}</span>,
+      key: "transporter", header: "Transporter", sortable: true, align: "left",
+      cell: (row) => <span className="text-[11px] text-gray-700">{row.transporter}</span>,
     },
     {
-      field: "truckNo",
-      header: "Truck No",
-      body: (row) => <span className="text-sm text-gray-600 tabular-nums">{row.truckNo}</span>,
+      key: "truckNo", header: "Truck No", sortable: false, align: "left",
+      cell: (row) => <span className="text-[11px] text-gray-700 tabular-nums font-mono">{row.truckNo}</span>,
     },
     {
-      field: "driver",
-      header: "Driver",
-      body: (row) => <span className="text-sm text-gray-700">{row.driver}</span>,
+      key: "driver", header: "Driver", sortable: true, align: "left",
+      cell: (row) => <span className="text-[11px] text-gray-700">{row.driver}</span>,
     },
     {
-      field: "status",
-      header: "Status",
-      body: (row) => (
-        <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${STATUS_STYLE[row.status]}`}>
+      key: "status", header: "Status", sortable: true, align: "center",
+      cell: (row) => (
+        <span className={`text-[9px] font-semibold px-2 py-0.5 rounded-full capitalize ${STATUS_STYLE[row.status]}`}>
           {row.status}
         </span>
       ),
     },
     {
-      field: "actions",
-      header: "Action",
-      center: true,
-      body: (row) => (
-        <div className="flex items-center justify-center gap-2.5 text-black/30">
-          <Link href="/purchase-order/view">
-            <button className="hover:text-gray-700 transition-colors" title="View">
-              <Icon name="visibility" size={16} />
-            </button>
-          </Link>
-          <Link href="/purchase-order/edit">
-            <button className="hover:text-gray-700 transition-colors" title="Edit">
-              <Icon name="edit" size={16} />
-            </button>
-          </Link>
-          <button
-            onClick={() => setDeleteId(row.id)}
-            className="hover:text-red-500 transition-colors"
-            title="Delete"
-          >
-            <Icon name="delete" size={16} />
-          </button>
-          <div className="relative" ref={moreMenuRef}>
-            <button
-              onClick={(e) => { e.stopPropagation(); setMoreMenuId(moreMenuId === row.id ? null : row.id); }}
-              className="hover:text-gray-700 transition-colors"
-              title="More"
-            >
-              <Icon name="more_vert" size={16} />
-            </button>
-            {moreMenuId === row.id && (
-              <div className="absolute right-0 bottom-6 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50 w-40">
-                {[
-                  { label: "View Details", href: "/purchase-order/details" },
-                  { label: "Duplicate",    href: "#" },
-                  { label: "Export PDF",   href: "#" },
-                ].map((item) => (
-                  <Link key={item.label} href={item.href}>
-                    <button
-                      className="w-full text-left px-4 py-2 text-xs text-gray-700 hover:bg-gray-50 transition-colors"
-                      onClick={() => setMoreMenuId(null)}
-                    >
-                      {item.label}
-                    </button>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
+      key: "actions", header: "Actions", sortable: false, align: "right",
+      cell: (row) => (
+        <TableActions
+          viewHref={`/purchase-order/${row.id}`}
+          editHref={`/purchase-order/${row.id}/edit`}
+          onDelete={() => setDeleteId(deleteId === row.id ? null : row.id)}
+        />
       ),
     },
   ];
 
-  const { visibleColumns, setVisibleColumns, filteredColumns } = useColumnVisibility(ALL_COLUMNS);
+  const shownCols = allColumns.filter((c) => visibleCols.has(c.key));
+
+  // ── Delete confirmation row ───────────────────────────────────────────────────
+
+  const expandedRow = (row: PurchaseOrder, colSpan: number) =>
+    deleteId !== row.id ? null : (
+      <tr className="bg-red-100/50 backdrop-blur-sm">
+        <td colSpan={colSpan} className="px-4 py-2.5 border-b border-red-100">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] text-red-700 font-medium">
+              Delete <strong>{row.poNumber}</strong>? This cannot be undone.
+            </span>
+            <div className="flex gap-2">
+              <Button
+                variant="danger"
+                onClick={() => { setOrders((p) => p.filter((o) => o.id !== row.id)); setDeleteId(null); }}
+              >
+                Confirm
+              </Button>
+              <Button variant="ghost-glass" onClick={() => setDeleteId(null)}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </td>
+      </tr>
+    );
+
+  // ── Status bar ────────────────────────────────────────────────────────────────
+
+  const statusBar = (
+    <>
+      <div className="flex items-center gap-4 text-[10px] text-gray-500">
+        <span>Count: <strong className="text-gray-700 font-semibold">{filteredOrders.length}</strong></span>
+        <span className="text-gray-300">|</span>
+        <span>Total Value: <strong className="text-gray-700 font-semibold">${totalValue.toLocaleString()}</strong></span>
+        <span className="text-gray-300">|</span>
+        <span>Created: <strong className="text-emerald-600 font-semibold">{orders.filter((o) => o.status === "created").length}</strong></span>
+        <span className="text-gray-300">·</span>
+        <span>Pending: <strong className="text-amber-600 font-semibold">{orders.filter((o) => o.status === "pending").length}</strong></span>
+      </div>
+      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+    </>
+  );
+
+  // ── Render ────────────────────────────────────────────────────────────────────
 
   return (
-    <AppShell title="Purchase Orders" activeNavLabel="All Purchase order">
-      <main className="p-6 space-y-5 flex-1 overflow-x-hidden">
+    <div className="min-h-screen flex flex-col antialiased text-slate-800">
 
-        {/* ── KPI Cards ─────────────────────────────────────────────────────── */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          {METRICS.map((m) => (
-            <MetricCard key={m.title} {...m} />
-          ))}
+      <FloatingNavbar />
+      <SecondaryNav />
+
+      <DashboardPageHeader
+        title="Purchase Orders"
+        breadcrumbs={[
+          { label: "Dashboard", href: "/" },
+          { label: "Purchase Orders" },
+        ]}
+        summary={`${orders.length} total · ${orders.filter((o) => o.status === "pending").length} pending`}
+        buttonText="Create PO"
+        buttonHref="/purchase-order/create"
+      />
+
+      <div className="px-6 pt-4 pb-0 grid grid-cols-4 gap-3">
+        {STAT_CARDS.map((card) => (
+          <StatCard key={card.title} {...card} />
+        ))}
+      </div>
+
+      <main className="flex-1 px-6 pt-3 pb-4 flex flex-col gap-2">
+
+        <div className="flex items-center justify-end gap-2 px-1">
+          <SearchInput value={search} onChange={handleSearchChange} placeholder="Search orders…" />
+          <div className="w-px h-4 bg-gray-300/60 shrink-0" />
+          <ColumnSelector
+            columns={allColumns.filter((c) => c.key !== "actions")}
+            visibleColumns={visibleCols}
+            onToggle={toggleCol}
+          />
+          <Button variant="brand">
+            <Icon name="download" size={13} />
+            Export
+          </Button>
         </div>
 
-        {/* ── Purchase Orders Table ─────────────────────────────────────────── */}
-        <DataTable
-          title="Purchase Orders"
-          description="All purchase order records."
-          toolbarActions={
-            <>
-              <SearchBar />
-              <FilterDropdown
-                label="Status"
-                groupLabel="Status"
-                options={STATUS_OPTIONS}
-                active={activeStatuses}
-                onChange={toggleStatus}
-                renderOption={(option) => (
-                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${STATUS_STYLE[option as POStatus]}`}>
-                    {option}
-                  </span>
-                )}
+        <TabbedTable
+          selectedIndex={activeTab}
+          onChange={handleTabChange}
+          tabs={TABS.map((tab) => ({
+            label: tab.label,
+            count: tab.statuses
+              ? orders.filter((o) => tab.statuses!.includes(o.status)).length
+              : orders.length,
+            content: (
+              <ExcelTable<PurchaseOrder>
+                columns={shownCols}
+                data={pagedOrders}
+                rowKey={(row) => row.id}
+                sortKey={sortKey}
+                sortDir={sortDir}
+                onSort={handleSort}
+                rowClassName={(row, i) =>
+                  deleteId === row.id
+                    ? "bg-red-100/60"
+                    : i % 2 === 0
+                      ? "bg-white/45 hover:bg-white/70"
+                      : "bg-white/20 hover:bg-white/50"
+                }
+                expandedRow={expandedRow}
+                emptyMessage="No purchase orders found."
+                statusBar={statusBar}
+                className=""
+                statusBarClassName="px-4 py-2 bg-white/30 border-t border-white/40 flex items-center justify-between rounded-b-xl"
               />
-              <DateRangeDropdown
-                value={selectedRange}
-                onChange={setSelectedRange}
-                options={DATE_RANGES}
-              />
-              <ColumnVisibilitySelector
-                columns={ALL_COLUMNS}
-                visibleColumns={visibleColumns}
-                onVisibilityChange={setVisibleColumns}
-              />
-              <Button variant="outlined">Export</Button>
-              <Link href="/purchase-order/create">
-                <Button variant="primary" icon="add">Create PO</Button>
-              </Link>
-            </>
-          }
-          columns={filteredColumns}
-          data={filteredOrders}
-          rowKey={(row) => row.id}
-          rowStyle={(row, i) => ({
-            backgroundColor: deleteId === row.id
-              ? "var(--color-row-danger)"
-              : i % 2 === 0
-              ? "#ffffff"
-              : "var(--color-row-alt)",
-          })}
-          expandedRow={(row) =>
-            deleteId === row.id ? (
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-red-700 font-medium">
-                  Delete <strong>{row.poNumber}</strong>? This cannot be undone.
-                </span>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handleDelete(row.id)}
-                    className="px-3 py-1 bg-red-500 text-white text-xs font-semibold rounded-lg hover:bg-red-600 transition-colors"
-                  >
-                    Confirm
-                  </button>
-                  <button
-                    onClick={() => setDeleteId(null)}
-                    className="px-3 py-1 bg-white text-gray-700 text-xs font-semibold rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            ) : null
-          }
-          showingCurrent={PAGINATION.current}
-          showingTotal={PAGINATION.total}
-          pagination={<Pagination current={PAGINATION.current} totalPages={PAGINATION.totalPages} />}
+            ),
+          }))}
         />
 
       </main>
-      <Footer />
-    </AppShell>
+
+    </div>
   );
 }

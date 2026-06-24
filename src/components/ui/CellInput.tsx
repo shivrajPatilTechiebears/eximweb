@@ -1,26 +1,25 @@
-import React from "react";
+"use client";
 
-interface CellInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+import { Input } from "@headlessui/react";
+import type { InputHTMLAttributes } from "react";
+
+interface CellInputProps extends InputHTMLAttributes<HTMLInputElement> {
   align?: "left" | "center" | "right";
   width?: string;
 }
 
-/**
- * Borderless input for use inside editable table cells.
- * Tab / Enter navigation is handled by the parent table wrapper
- * via `useTableEnterHandler`.
- */
 export function CellInput({ align = "left", width, className, ...props }: CellInputProps) {
   const alignClass =
     align === "center" ? "text-center" : align === "right" ? "text-right" : "";
 
   return (
-    <input
+    <Input
       className={[
-        "w-full bg-transparent border-0 focus:ring-0 text-sm text-gray-800",
-        "p-0 outline-none placeholder:text-gray-400 tabular-nums",
+        "px-2 py-1.5 text-[11px] text-slate-800 bg-transparent outline-none",
+        "focus:bg-[#FFF0EB] focus:ring-1 focus:ring-[#884D70]/20 rounded",
+        "placeholder:text-gray-500 tabular-nums transition-all",
         alignClass,
-        width ?? "",
+        width ?? "w-full",
         className ?? "",
       ]
         .filter(Boolean)

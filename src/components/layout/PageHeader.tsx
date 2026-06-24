@@ -1,6 +1,93 @@
+"use client";
+
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import { Icon } from "@/components/ui/Icon";
+import { MODULE_TABS, WHITE_LABEL_TABS } from "./SecondaryNav";
+
+// Returns true for any path that renders a SecondaryNav bar
+function hasSecondaryNav(pathname: string) {
+  const inModule = MODULE_TABS.some(
+    tab =>
+      pathname.startsWith(tab.href) ||
+      (tab.sub?.some(s => pathname.startsWith(s.href)) ?? false)
+  );
+  const inWhiteLabel = WHITE_LABEL_TABS.some(tab => pathname.startsWith(tab.href));
+  return inModule || inWhiteLabel;
+}
+
+// ─── Dashboard-style page header (list pages with breadcrumbs) ────────────────
+
+interface DashboardPageHeaderProps {
+  title: string;
+  breadcrumbs: { label: string; href?: string }[];
+  summary?: string;
+  buttonText?: string;
+  buttonHref?: string;
+  rightContent?: ReactNode;
+}
+
+export function DashboardPageHeader({
+  title,
+  breadcrumbs,
+  summary,
+  buttonText,
+  buttonHref,
+  rightContent,
+}: DashboardPageHeaderProps) {
+  const pathname = usePathname();
+  const topPadding = hasSecondaryNav(pathname) ? "pt-30" : "pt-16";
+
+  return (
+    <div className={`${topPadding} bg-white/60 backdrop-blur-xl border-b border-white/50 px-10 pt-5 pb-4 flex items-center justify-between shrink-0`}>
+      <div>
+        <div className="flex items-center gap-1.5 text-[10px] text-gray-400 mb-0.5">
+          {breadcrumbs.map((crumb, i) => (
+            <span key={crumb.label} className="flex items-center gap-1.5">
+              {i > 0 && (
+                <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
+                </svg>
+              )}
+              {crumb.href ? (
+                <Link href={crumb.href} className="hover:text-slate-600 transition-colors">
+                  {crumb.label}
+                </Link>
+              ) : (
+                <span className="text-slate-600 font-medium">{crumb.label}</span>
+              )}
+            </span>
+          ))}
+        </div>
+        <p className="text-sm font-bold text-slate-800">{title}</p>
+      </div>
+
+      <div className="flex items-center gap-2.5">
+        {rightContent ?? (
+          <>
+            {summary && (
+              <span className="text-[12px] text-gray-500 font-medium">{summary}</span>
+            )}
+            {buttonText && buttonHref && (
+              <>
+                <div className="w-px h-4 bg-gray-200" />
+                <Link href={buttonHref}>
+                  <button className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#884D70] text-white text-[12px] font-semibold rounded-full hover:bg-[#6B3A5A] transition-colors shadow-md">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 4v16m8-8H4" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" />
+                    </svg>
+                    {buttonText}
+                  </button>
+                </Link>
+              </>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
 
 // ─── Standalone back button ────────────────────────────────────────────────────
 

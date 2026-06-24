@@ -147,7 +147,7 @@ export function PurchaseOrdersTable() {
               <Icon name="more_vert" className="text-[16px]" />
             </button>
             {moreMenuId === row.id && (
-              <div className="absolute right-0 bottom-6 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50 w-36">
+              <div className="absolute right-0 bottom-6 bg-white/80 backdrop-blur-xl rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.10)] border border-white/60 py-1 z-50 w-36">
                 {["View Details", "Duplicate", "Export", "Archive"].map((action) => (
                   <button
                     key={action}
@@ -170,15 +170,18 @@ export function PurchaseOrdersTable() {
   return (
     <DataTable
       title="Purchase Orders"
+      titleClassName="text-[13px] font-bold text-slate-800"
       columns={columns}
       data={filteredOrders}
       emptyMessage="No orders match the current filters."
+      className="bg-white/50 backdrop-blur-xl rounded-2xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.06)] p-4 space-y-3"
+      tableClassName="bg-white/30 rounded-xl border border-white/50 overflow-hidden"
       rowStyle={(row, i) => ({
         backgroundColor: deleteId === row.id
-          ? "var(--color-row-danger)"
+          ? "rgba(254,226,226,0.60)"
           : i % 2 === 0
-          ? "#ffffff"
-          : "var(--color-row-alt)",
+          ? "rgba(255,255,255,0.45)"
+          : "rgba(255,255,255,0.20)",
       })}
       expandedRow={(row) =>
         deleteId === row.id ? (

@@ -1,18 +1,12 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { Checkbox, Field, Label } from "@headlessui/react";
 import { Button } from "./Button";
 import type { TableColumn } from "@/components/table/DataTable";
 
 // ── Hook ──────────────────────────────────────────────────────────────────────
 
-/**
- * Manages column visibility state for a set of columns.
- * Returns visibleColumns map, setter, and pre-filtered columns array.
- *
- * Usage:
- *   const { visibleColumns, setVisibleColumns, filteredColumns } = useColumnVisibility(COLUMNS);
- */
 export function useColumnVisibility<T extends object>(columns: TableColumn<T>[]) {
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>(
     () => Object.fromEntries(columns.map((col) => [col.field, true]))
@@ -75,7 +69,7 @@ export function ColumnVisibilitySelector<T>({
   const dropdown = (
     <div
       ref={dropdownRef}
-      className="fixed w-64 bg-white rounded-xl border border-gray-100 shadow-xl z-[9999] max-h-[400px] overflow-hidden flex flex-col"
+      className="fixed w-64 bg-white rounded-xl border border-gray-100 shadow-xl z-9999 max-h-100 overflow-hidden flex flex-col"
       style={{ top: pos.top, right: pos.right }}
     >
       <div className="p-3 border-b border-gray-100">
@@ -84,18 +78,26 @@ export function ColumnVisibilitySelector<T>({
       </div>
       <div className="p-2 overflow-y-auto flex-1">
         {columns.map((col) => (
-          <label
+          <Field
             key={col.field}
             className="flex items-center gap-2 px-2 py-1.5 hover:bg-gray-50 rounded cursor-pointer transition-colors"
           >
-            <input
-              type="checkbox"
+            <Checkbox
               checked={visibleColumns[col.field] !== false}
               onChange={() => toggle(col.field)}
-              className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary focus:ring-offset-0"
-            />
-            <span className="text-sm text-gray-700">{col.header}</span>
-          </label>
+              className="group w-4 h-4 rounded border border-gray-300 cursor-pointer transition-colors flex items-center justify-center outline-none data-checked:bg-primary data-checked:border-primary"
+            >
+              <svg
+                className="w-2.5 h-2.5 text-white opacity-0 group-data-checked:opacity-100"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" />
+              </svg>
+            </Checkbox>
+            <Label className="text-sm text-gray-700 cursor-pointer">{col.header}</Label>
+          </Field>
         ))}
       </div>
       <div className="p-2 border-t border-gray-100 flex gap-2">
