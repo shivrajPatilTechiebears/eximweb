@@ -48,7 +48,6 @@ const ALL_COLS: Column<Company>[] = [
 ];
 
 const DEFAULT_VISIBLE = new Set(["name", "domain", "email", "phone", "country", "status", "actions"]);
-
 const PAGE_SIZE = 10;
 
 // ── Page ───────────────────────────────────────────────────────────────────────
