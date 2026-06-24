@@ -1,3 +1,5 @@
+"use client";
+
 import { AppShell } from "@/components/layout/AppShell";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { SummaryFooter, type SummaryFooterItem } from "@/components/layout/SummaryFooter";
