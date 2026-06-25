@@ -118,7 +118,7 @@ export function PermissionMatrix({ onChange }: PermissionMatrixProps) {
     }));
 
   return (
-    <div className="bg-white/50 backdrop-blur-xl rounded-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.06)] overflow-hidden">
+    <div className="card-glass rounded-xl overflow-hidden">
 
       {/* Toolbar */}
       <div className="flex items-center justify-between px-5 py-2.5 border-b border-gray-100/80 bg-white/30">

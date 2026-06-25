@@ -146,13 +146,13 @@ export default function RolePermissionsPage() {
             <div className="flex gap-2">
               <button
                 onClick={() => { setRoles((p) => p.filter((r) => r.id !== row.id)); setDeleteId(null); }}
-                className="px-3 py-1 bg-red-500 text-white text-[10px] font-semibold rounded-lg hover:bg-red-600 transition-colors"
+                className="btn-danger"
               >
                 Confirm
               </button>
               <button
                 onClick={() => setDeleteId(null)}
-                className="px-3 py-1 bg-white/60 backdrop-blur-sm text-gray-700 text-[10px] font-semibold rounded-lg border border-white/60 hover:bg-white/80 transition-colors"
+                className="btn-ghost-glass"
               >
                 Cancel
               </button>
@@ -208,7 +208,7 @@ export default function RolePermissionsPage() {
             visibleColumns={visibleCols}
             onToggle={toggleCol}
           />
-          <button className="flex items-center gap-1.5 text-[11px] font-semibold text-white px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#884D70] to-[#6B3A5A] hover:from-[#9E6080] hover:to-[#9E6080] shadow-[0_2px_10px_rgba(136,77,112,0.35)] hover:shadow-[0_4px_16px_rgba(136,77,112,0.5)] transition-all">
+          <button className="btn-brand">
             <Icon name="download" size={13} />
             Export
           </button>
@@ -232,8 +232,8 @@ export default function RolePermissionsPage() {
           expandedRow={expandedRow}
           emptyMessage="No roles found."
           statusBar={statusBar}
-          className="bg-white/50 backdrop-blur-xl rounded-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.06)]"
-          statusBarClassName="px-4 py-2 bg-white/30 border-t border-white/40 flex items-center justify-between rounded-b-xl"
+          className="card-glass rounded-xl"
+          statusBarClassName="table-status-bar-glass"
         />
       </main>
 

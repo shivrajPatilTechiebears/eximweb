@@ -42,7 +42,7 @@ export function TabbedTable({
   defaultTab,
   selectedIndex,
   onChange,
-  className = "bg-white/50 backdrop-blur-xl rounded-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.06)]",
+  className = "card-glass rounded-xl",
 }: TabbedTableProps) {
   const defaultIndex = Math.max(tabs.findIndex((t) => t.label === defaultTab), 0);
   const [internalIndex, setInternalIndex] = useState(defaultIndex);
@@ -62,15 +62,10 @@ export function TabbedTable({
         <div className="flex items-center border-b border-white/40 px-1">
           <TabList className="flex">
             {tabs.map((tab) => (
-              <Tab
-                key={tab.label}
-                className="group flex items-center gap-1 px-4 py-2.5 text-[11px] font-medium border-b-2 -mb-px transition-all outline-none border-transparent text-gray-400 hover:text-gray-600 data-selected:border-[#884D70] data-selected:text-[#884D70]"
-              >
+              <Tab key={tab.label} className="tab-item">
                 {tab.label}
                 {tab.count !== undefined && (
-                  <span className="text-[9px] px-1 py-px rounded font-semibold text-gray-400 group-data-selected:text-[#884D70]">
-                    {tab.count}
-                  </span>
+                  <span className="tab-count">{tab.count}</span>
                 )}
               </Tab>
             ))}
@@ -99,10 +94,7 @@ export function TabbedTable({
                   expandedRow={tab.table.expandedRow}
                   onReorder={tab.table.onReorder}
                   statusBar={tab.table.statusBar}
-                  statusBarClassName={
-                    tab.table.statusBarClassName ??
-                    "px-4 py-2 bg-white/30 border-t border-white/40 flex items-center justify-between rounded-b-xl"
-                  }
+                  statusBarClassName={tab.table.statusBarClassName ?? "table-status-bar-glass"}
                   emptyMessage={tab.table.emptyMessage}
                   cellClassName={tab.table.cellClassName ?? "px-1 py-0.5"}
                   className=""

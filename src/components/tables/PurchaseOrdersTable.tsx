@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { Icon } from "@/components/ui/Icon";
+import { useState } from "react";
 import { type TableColumn } from "@/components/ui/Table";
 import { DataTable } from "@/components/table/DataTable";
+import { EditActionButton, DeleteActionButton } from "@/components/ui/ActionButtons";
+import { OverflowMenu } from "@/components/ui/OverflowMenu";
 import { TimeframeToggle } from "@/components/ui/TimeframeToggle";
 import { DateRangeDropdown } from "@/components/ui/DateRangeDropdown";
 import { FilterDropdown } from "@/components/ui/FilterDropdown";
@@ -48,15 +49,6 @@ export function PurchaseOrdersTable() {
   );
   const [orders, setOrders] = useState([...PURCHASE_ORDERS]);
   const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [moreMenuId, setMoreMenuId] = useState<string | null>(null);
-
-  const moreMenuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handle = () => setMoreMenuId(null);
-    document.addEventListener("mousedown", handle);
-    return () => document.removeEventListener("mousedown", handle);
-  }, []);
 
   const filteredOrders = timeframeOn
     ? orders.filter((o) => activeStatuses.has(o.status))
@@ -123,43 +115,17 @@ export function PurchaseOrdersTable() {
       field: "action",
       header: "Action",
       body: (row) => (
-        <div className="flex items-center gap-2.5 text-black/30">
-          <button
-            onClick={() => alert(`Edit ${row.id}`)}
-            className="hover:text-gray-700 transition-colors"
-            title="Edit"
-          >
-            <Icon name="edit" className="text-[16px]" />
-          </button>
-          <button
-            onClick={() => setDeleteId(row.id)}
-            className="hover:text-red-500 transition-colors"
-            title="Delete"
-          >
-            <Icon name="delete" className="text-[16px]" />
-          </button>
-          <div className="relative" ref={moreMenuRef}>
-            <button
-              onClick={(e) => { e.stopPropagation(); setMoreMenuId(moreMenuId === row.id ? null : row.id); }}
-              className="hover:text-gray-700 transition-colors"
-              title="More"
-            >
-              <Icon name="more_vert" className="text-[16px]" />
-            </button>
-            {moreMenuId === row.id && (
-              <div className="absolute right-0 bottom-6 bg-white/80 backdrop-blur-xl rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.10)] border border-white/60 py-1 z-50 w-36">
-                {["View Details", "Duplicate", "Export", "Archive"].map((action) => (
-                  <button
-                    key={action}
-                    onClick={() => { alert(`${action}: ${row.id}`); setMoreMenuId(null); }}
-                    className="w-full text-left px-4 py-2 text-xs text-gray-700 hover:bg-gray-50 transition-colors"
-                  >
-                    {action}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+        <div className="flex items-center gap-2.5">
+          <EditActionButton onClick={() => alert(`Edit ${row.id}`)} />
+          <DeleteActionButton onClick={() => setDeleteId(row.id)} />
+          <OverflowMenu
+            items={[
+              { label: "View Details", onClick: () => alert(`View Details: ${row.id}`) },
+              { label: "Duplicate",    onClick: () => alert(`Duplicate: ${row.id}`) },
+              { label: "Export",       onClick: () => alert(`Export: ${row.id}`) },
+              { label: "Archive",      onClick: () => alert(`Archive: ${row.id}`) },
+            ]}
+          />
         </div>
       ),
     },
@@ -174,7 +140,7 @@ export function PurchaseOrdersTable() {
       columns={columns}
       data={filteredOrders}
       emptyMessage="No orders match the current filters."
-      className="bg-white/50 backdrop-blur-xl rounded-2xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.06)] p-4 space-y-3"
+      className="dash-card space-y-3"
       tableClassName="bg-white/30 rounded-xl border border-white/50 overflow-hidden"
       rowStyle={(row, i) => ({
         backgroundColor: deleteId === row.id
@@ -192,13 +158,13 @@ export function PurchaseOrdersTable() {
             <div className="flex gap-2">
               <button
                 onClick={() => handleDelete(row.id)}
-                className="px-3 py-1 bg-red-500 text-white text-xs font-semibold rounded-lg hover:bg-red-600 transition-colors"
+                className="btn-danger"
               >
                 Confirm
               </button>
               <button
                 onClick={() => setDeleteId(null)}
-                className="px-3 py-1 bg-white text-gray-700 text-xs font-semibold rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                className="btn-ghost"
               >
                 Cancel
               </button>

@@ -131,7 +131,7 @@ export function CompanyDetails({
   companyData, logoUrl, permissions, onChange, onLogoChange, onPermissionsChange, disabled,
 }: CompanyDetailsProps) {
   return (
-    <Card className="bg-white/50 backdrop-blur-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.06)]">
+    <Card className="card-glass">
       <CardHeader
         title="Company Details"
         hint={disabled ? undefined : "Tab · Enter to move between fields"}

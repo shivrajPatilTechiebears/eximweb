@@ -13,15 +13,15 @@ export const buttonVariantStyles: Record<ButtonVariant, string> = {
   text:
     "text-primary font-bold text-xs hover:underline transition-colors",
   icon:
-    "text-black/30 hover:text-gray-700 transition-colors",
+    "btn-icon",
   "icon-danger":
-    "text-black/30 hover:text-red-500 transition-colors",
+    "btn-icon-danger",
   /** Ghost add-row button — "+ Add Item / Schedule" pattern */
   add:
     "flex items-center gap-1 text-[11px] font-medium text-[#884D70] hover:bg-[#884D70]/8 px-2.5 py-1 rounded-lg transition-colors",
   /** Rounded-full solid pill — page header / footer actions */
   "pill-primary":
-    "flex items-center gap-1.5 px-3.5 py-1.5 bg-[#884D70] text-white text-[12px] font-semibold rounded-full hover:bg-[#6B3A5A] transition-colors shadow-md",
+    "btn-primary-pill",
   /** Rounded-full outlined pill — secondary page actions */
   "pill-secondary":
     "text-[12px] font-medium text-gray-500 px-3.5 py-1.5 border border-gray-200 rounded-full hover:bg-gray-50 transition-colors",
@@ -30,16 +30,16 @@ export const buttonVariantStyles: Record<ButtonVariant, string> = {
     "text-[12px] font-medium text-gray-500 px-3.5 py-1.5 rounded-full hover:bg-gray-100 transition-colors",
   /** Brand gradient — Export / primary CTA with shadow (e.g. toolbar Export button) */
   brand:
-    "flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-linear-to-r from-[#884D70] to-[#6B3A5A] hover:from-[#9E6080] hover:to-[#9E6080] text-white text-[11px] font-semibold shadow-[0_2px_10px_rgba(136,77,112,0.35)] hover:shadow-[0_4px_16px_rgba(136,77,112,0.5)] transition-all",
+    "btn-brand",
   /** Filled danger red — destructive confirmations */
   danger:
-    "flex items-center gap-1 px-3 py-1 bg-red-500 text-white text-[10px] font-semibold rounded-lg hover:bg-red-600 transition-colors",
+    "btn-danger",
   /** Glass-style secondary — cancel inside glassmorphism surfaces */
   "ghost-glass":
-    "flex items-center gap-1 px-3 py-1 bg-white/60 backdrop-blur-sm text-gray-700 text-[10px] font-semibold rounded-lg border border-white/60 hover:bg-white/80 transition-colors",
+    "btn-ghost-glass",
   /** Dropdown menu item — full-width row in floating menus */
   "menu-item":
-    "w-full text-left px-4 py-2 text-[11px] text-gray-700 hover:bg-gray-50 transition-colors",
+    "btn-menu-item",
 };
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {

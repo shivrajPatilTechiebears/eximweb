@@ -168,7 +168,7 @@ export default function ViewPurchaseOrderPage() {
             <StatusBadge label={statusLabel} color={statusColor} />
             <div className="w-px h-4 bg-gray-200" />
             <Link href={`/purchase-order/${id}/edit`}>
-              <button className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#884D70] text-white text-[12px] font-semibold rounded-full hover:bg-[#6B3A5A] transition-colors shadow-md">
+              <button className="btn-primary-pill">
                 Edit PO
               </button>
             </Link>
@@ -266,7 +266,7 @@ export default function ViewPurchaseOrderPage() {
             </button>
           </Link>
           <Link href="/purchase-order">
-            <button className="flex items-center gap-1.5 px-4 py-1.5 bg-[#884D70] text-white text-[12px] font-semibold rounded-full hover:bg-[#6B3A5A] transition-colors shadow-md">
+            <button className="btn-primary-pill">
               Back to List
             </button>
           </Link>

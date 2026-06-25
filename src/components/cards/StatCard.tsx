@@ -19,7 +19,7 @@ export default function StatCard({
 }: StatCardProps) {
   return (
     <div
-      className={`bg-white/50 backdrop-blur-xl rounded-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.06)] p-3 relative overflow-hidden group hover:shadow-[0_8px_32px_rgba(0,0,0,0.10)] hover:-translate-y-px transition-all cursor-default ${className}`}
+      className={`card-glass card-glass-lift rounded-xl p-3 relative overflow-hidden group cursor-default ${className}`}
     >
       <div
         className="absolute top-0 left-0 right-0 h-[3px] rounded-t-xl"

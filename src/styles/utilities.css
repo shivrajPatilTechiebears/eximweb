@@ -1,3 +1,589 @@
+/* ── Dashboard card shell (centralised surface + shape + spacing) ────────── */
+
+@utility dash-card {
+  background-color: rgb(255 255 255 / 0.26);
+  backdrop-filter: blur(32px) saturate(160%);
+  -webkit-backdrop-filter: blur(32px) saturate(160%);
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(255 255 255 / 0.55);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+/* ── Glass card surface ──────────────────────────────────────────────────── */
+
+@utility card-glass {
+  background-color: rgb(255 255 255 / 0.66);
+  backdrop-filter: blur(32px) saturate(160%);
+  -webkit-backdrop-filter: blur(32px) saturate(160%);
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(255 255 255 / 0.55);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
+@utility card-glass-lift {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+  &:hover {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
+    transform: translateY(-1px);
+  }
+}
+
+@utility card-header-glass {
+  background-color: rgb(255 255 255 / 0.60);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: rgb(255 255 255 / 0.50);
+}
+
+/* ── Section card header atoms ───────────────────────────────────────────── */
+
+@utility section-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgb(30 41 59);
+}
+
+@utility section-link {
+  font-size: 9px;
+  color: rgb(156 163 175);
+  transition: color 150ms;
+  &:hover {
+    color: rgb(51 65 85);
+  }
+}
+
+@utility section-subtitle {
+  font-size: 10px;
+  color: rgb(156 163 175);
+}
+
+@utility section-delta {
+  font-size: 9px;
+  color: rgb(16 185 129);
+  font-weight: 600;
+}
+
+@utility section-total {
+  font-size: 1rem;
+  font-weight: 900;
+  color: rgb(15 23 42);
+}
+
+/* ── Card structural patterns ────────────────────────────────────────────── */
+
+@utility card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+@utility card-menu-btn {
+  color: rgb(209 213 219);
+  transition: color 150ms;
+  &:hover {
+    color: rgb(107 114 128);
+  }
+}
+
+@utility metric-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  margin-bottom: 6px;
+}
+
+@utility metric-value {
+  font-weight: 700;
+  color: rgb(51 65 85);
+}
+
+@utility brand-badge {
+  width: 28px;
+  height: 28px;
+  background-color: #884D70;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 9px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* ── Order breakdown card ────────────────────────────────────────────────── */
+
+@utility donut-pct-badge {
+  font-size: 9px;
+  font-weight: 700;
+  background-color: white;
+  padding: 2px 6px;
+  border-radius: 9999px;
+  border: 1px solid rgb(243 244 246);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+@utility breakdown-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px;
+  margin-left: -8px;
+  margin-right: -8px;
+  border-radius: 0.75rem;
+  cursor: default;
+  transition: background-color 150ms;
+  &:hover {
+    background-color: rgb(249 250 251);
+  }
+}
+
+@utility breakdown-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgb(51 65 85);
+}
+
+@utility breakdown-value {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgb(15 23 42);
+}
+
+@utility card-cta-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 0.75rem;
+  background-color: rgb(255 255 255 / 0.40);
+  border: 1px solid rgb(255 255 255 / 0.60);
+  transition: all 150ms;
+  &:hover {
+    background-color: rgb(136 77 112 / 0.10);
+    border-color: rgb(136 77 112 / 0.30);
+  }
+}
+
+@utility brand-badge-sm {
+  width: 20px;
+  height: 20px;
+  background-color: #884D70;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ── Card internals ──────────────────────────────────────────────────────── */
+
+@utility card-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: rgb(30 41 59);
+}
+
+@utility card-metric {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: rgb(15 23 42);
+  line-height: 1;
+}
+
+@utility card-delta {
+  font-size: 10px;
+  font-weight: 700;
+  color: rgb(16 185 129);
+}
+
+@utility metric-bar-track {
+  width: 100%;
+  height: 8px;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+@utility card-cta {
+  background-color: rgb(255 255 255 / 0.40);
+  padding: 12px;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(255 255 255 / 0.60);
+  transition: background-color 150ms;
+  &:hover {
+    background-color: rgb(255 255 255 / 0.60);
+  }
+}
+
+/* ── Stat tile internals ─────────────────────────────────────────────────── */
+
+@utility stat-delta {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 9999px;
+}
+
+@utility stat-delta-up {
+  color: rgb(5 150 105);
+  background-color: rgb(236 253 245);
+}
+
+@utility stat-delta-down {
+  color: rgb(225 29 72);
+  background-color: rgb(255 241 242);
+}
+
+@utility stat-bar-track {
+  margin-top: 8px;
+  height: 3px;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+@utility stat-bar-fill {
+  height: 100%;
+  border-radius: 9999px;
+}
+
+@utility stat-hint {
+  font-size: 9px;
+  color: rgb(156 163 175);
+  margin-top: 6px;
+  height: 12px;
+  opacity: 0;
+  transition-property: opacity;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+  .group:hover & {
+    opacity: 1;
+  }
+}
+
+/* ── Button variants ─────────────────────────────────────────────────────── */
+
+@utility btn-brand {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 0.75rem;
+  background-image: linear-gradient(to right, #884D70, #6B3A5A);
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  box-shadow: 0 2px 10px rgba(136, 77, 112, 0.35);
+  transition: all 150ms;
+  &:hover {
+    background-image: linear-gradient(to right, #9E6080, #9E6080);
+    box-shadow: 0 4px 16px rgba(136, 77, 112, 0.50);
+  }
+}
+
+@utility btn-brand-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 20px;
+  border-radius: 9999px;
+  background-image: linear-gradient(to right, #884D70, #6B3A5A);
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 2px 10px rgba(136, 77, 112, 0.35);
+  transition: all 150ms;
+  &:hover {
+    background-image: linear-gradient(to right, #9E6080, #9E6080);
+    box-shadow: 0 4px 16px rgba(136, 77, 112, 0.50);
+  }
+}
+
+@utility btn-primary-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  background-color: #884D70;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.10);
+  transition: background-color 150ms;
+  &:hover {
+    background-color: #6B3A5A;
+  }
+}
+
+@utility btn-danger {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  background-color: rgb(239 68 68);
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transition: background-color 150ms;
+  &:hover {
+    background-color: rgb(220 38 38);
+  }
+}
+
+@utility btn-ghost {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  background-color: white;
+  color: rgb(55 65 81);
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(229 231 235);
+  transition: background-color 150ms;
+  &:hover {
+    background-color: rgb(249 250 251);
+  }
+}
+
+@utility btn-ghost-glass {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  background-color: rgb(255 255 255 / 0.60);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  color: rgb(55 65 81);
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(255 255 255 / 0.60);
+  transition: background-color 150ms;
+  &:hover {
+    background-color: rgb(255 255 255 / 0.80);
+  }
+}
+
+@utility btn-icon {
+  color: rgb(0 0 0 / 0.30);
+  transition-property: color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+  &:hover {
+    color: rgb(55 65 81);
+  }
+}
+
+@utility btn-icon-danger {
+  color: rgb(0 0 0 / 0.30);
+  transition-property: color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+  &:hover {
+    color: rgb(239 68 68);
+  }
+}
+
+@utility dropdown-glass {
+  background-color: rgb(255 255 255 / 0.80);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(255 255 255 / 0.60);
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+@utility btn-menu-item {
+  width: 100%;
+  text-align: left;
+  padding: 8px 16px;
+  font-size: 11px;
+  color: rgb(55 65 81);
+  transition-property: background-color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+  &:hover {
+    background-color: rgb(249 250 251);
+  }
+}
+
+/* ── Excel table internals ───────────────────────────────────────────────── */
+
+@utility table-th-gutter {
+  width: 36px;
+  background-color: rgb(255 255 255 / 0.20);
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-right-width: 1px;
+  border-right-style: solid;
+  border-color: rgb(229 231 235 / 0.60);
+  user-select: none;
+}
+
+@utility table-th {
+  background-color: rgb(255 255 255 / 0.20);
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-right-width: 1px;
+  border-right-style: solid;
+  border-color: rgb(229 231 235 / 0.60);
+  padding: 6px 12px;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 600;
+  color: rgb(51 65 85);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  user-select: none;
+}
+
+@utility table-th-sortable {
+  cursor: pointer;
+  transition-property: background-color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+  &:hover {
+    background-color: rgb(255 255 255 / 0.30);
+  }
+}
+
+@utility table-td-gutter {
+  width: 36px;
+  text-align: center;
+  font-size: 10px;
+  color: rgb(107 114 128);
+  font-variant-numeric: tabular-nums;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-right-width: 1px;
+  border-right-style: solid;
+  border-color: rgb(229 231 235 / 0.60);
+  background-color: rgb(255 255 255 / 0.20);
+  transition-property: background-color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+  user-select: none;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  .group:hover & {
+    background-color: rgb(255 255 255 / 0.40);
+  }
+}
+
+@utility table-td {
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-right-width: 1px;
+  border-right-style: solid;
+  border-color: rgb(229 231 235 / 0.60);
+}
+
+@utility table-status-bar-glass {
+  padding: 8px 16px;
+  background-color: rgb(255 255 255 / 0.30);
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-top-color: rgb(255 255 255 / 0.40);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom-left-radius: 0.75rem;
+  border-bottom-right-radius: 0.75rem;
+}
+
+/* ── Tabbed-table tab atoms ──────────────────────────────────────────────── */
+
+@utility tab-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 16px;
+  font-size: 11px;
+  font-weight: 500;
+  border-bottom-width: 2px;
+  margin-bottom: -1px;
+  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+  border-color: transparent;
+  color: rgb(156 163 175);
+  &:hover {
+    color: rgb(75 85 99);
+  }
+  &[data-selected] {
+    border-color: #884D70;
+    color: #884D70;
+  }
+}
+
+@utility tab-count {
+  font-size: 9px;
+  padding: 1px 4px;
+  border-radius: 0.25rem;
+  font-weight: 600;
+  color: rgb(156 163 175);
+  [data-selected] & {
+    color: #884D70;
+  }
+}
+
+/* ── Table cell text atoms ───────────────────────────────────────────────── */
+
+@utility cell-text {
+  font-size: 11px;
+  color: rgb(55 65 81);
+}
+
+/* ── Inline status badge atoms ───────────────────────────────────────────── */
+
+@utility status-badge {
+  font-size: 9px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  text-transform: capitalize;
+}
+
+@utility badge-success {
+  color: rgb(5 150 105);
+  background-color: rgb(236 253 245);
+}
+
+@utility badge-warning {
+  color: rgb(217 119 6);
+  background-color: rgb(255 251 235);
+}
+
+@utility badge-info {
+  color: rgb(2 132 199);
+  background-color: rgb(240 249 255);
+}
+
 /* ── Custom text-size utilities ─────────────────────────────────────────── */
 
 @utility text-display-lg {

@@ -11,7 +11,7 @@ import {
 
 export function AdminDetails({ formData, onChange, disabled, isView }: AdminDetailsProps) {
   return (
-    <Card className="bg-white/50 backdrop-blur-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.06)]">
+    <Card className="card-glass">
       <CardHeader
         title="Admin Details"
         hint={disabled ? undefined : "Tab · Enter to move between fields"}

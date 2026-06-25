@@ -18,10 +18,10 @@ import { TabbedTable } from "@/components/table/TabbedTable";
 // ── Data ───────────────────────────────────────────────────────────────────────
 
 const STAT_CARDS = [
-  { title: "Total POs", value: "6", badge: "+12%", badgeClassName: "text-emerald-600 bg-emerald-50", accentColor: "#884D70", subtitle: "All time" },
-  { title: "Pending", value: "1", badge: "17%", badgeClassName: "text-amber-600 bg-amber-50", accentColor: "#fbbf24", subtitle: "Awaiting approval" },
-  { title: "Created", value: "3", badge: "+50%", badgeClassName: "text-emerald-600 bg-emerald-50", accentColor: "#34d399", subtitle: "Processed orders" },
-  { title: "Approved", value: "1", badge: "17%", badgeClassName: "text-sky-600 bg-sky-50", accentColor: "#38bdf8", subtitle: "Ready to dispatch" },
+  { title: "Total POs", value: "6", badge: "+12%", badgeClassName: "badge-success", accentColor: "#884D70", subtitle: "All time" },
+  { title: "Pending", value: "1", badge: "17%", badgeClassName: "badge-warning", accentColor: "#fbbf24", subtitle: "Awaiting approval" },
+  { title: "Created", value: "3", badge: "+50%", badgeClassName: "badge-success", accentColor: "#34d399", subtitle: "Processed orders" },
+  { title: "Approved", value: "1", badge: "17%", badgeClassName: "badge-info", accentColor: "#38bdf8", subtitle: "Ready to dispatch" },
 ];
 
 type POStatus = "created" | "pending";
@@ -34,8 +34,8 @@ interface PurchaseOrder {
 }
 
 const STATUS_STYLE: Record<POStatus, string> = {
-  created: "text-emerald-600 bg-emerald-50",
-  pending: "text-amber-600 bg-amber-50",
+  created: "badge-success",
+  pending: "badge-warning",
 };
 
 const PURCHASE_ORDERS: PurchaseOrder[] = [
@@ -58,6 +58,11 @@ const COLUMN_KEYS = [
 const DEFAULT_VISIBLE = new Set<string>(["poNumber", "itemName", "itemQty", "price", "deliveryLocation", "status", "actions"]);
 
 const PAGE_SIZE = 10;
+
+const CX = {
+  statVal: "text-gray-700 font-semibold",
+  statSep: "text-gray-300",
+} as const;
 
 // ── Page ───────────────────────────────────────────────────────────────────────
 
@@ -113,7 +118,7 @@ export default function PurchaseOrderListPage() {
     },
     {
       key: "poType", header: "Type", sortable: true, align: "left",
-      cell: (row) => <span className="text-[11px] text-gray-700">{row.poType}</span>,
+      cell: (row) => <span className="cell-text">{row.poType}</span>,
     },
     {
       key: "itemName", header: "Item", sortable: true, align: "left",
@@ -137,15 +142,15 @@ export default function PurchaseOrderListPage() {
     },
     {
       key: "shipTerm", header: "Ship Terms", sortable: false, align: "left",
-      cell: (row) => <span className="text-[11px] text-gray-700">{row.shipTerm}</span>,
+      cell: (row) => <span className="cell-text">{row.shipTerm}</span>,
     },
     {
       key: "payTerm", header: "Pay Terms", sortable: false, align: "left",
-      cell: (row) => <span className="text-[11px] text-gray-700">{row.payTerm}</span>,
+      cell: (row) => <span className="cell-text">{row.payTerm}</span>,
     },
     {
       key: "transporter", header: "Transporter", sortable: true, align: "left",
-      cell: (row) => <span className="text-[11px] text-gray-700">{row.transporter}</span>,
+      cell: (row) => <span className="cell-text">{row.transporter}</span>,
     },
     {
       key: "truckNo", header: "Truck No", sortable: false, align: "left",
@@ -153,12 +158,12 @@ export default function PurchaseOrderListPage() {
     },
     {
       key: "driver", header: "Driver", sortable: true, align: "left",
-      cell: (row) => <span className="text-[11px] text-gray-700">{row.driver}</span>,
+      cell: (row) => <span className="cell-text">{row.driver}</span>,
     },
     {
       key: "status", header: "Status", sortable: true, align: "center",
       cell: (row) => (
-        <span className={`text-[9px] font-semibold px-2 py-0.5 rounded-full capitalize ${STATUS_STYLE[row.status]}`}>
+        <span className={`status-badge ${STATUS_STYLE[row.status]}`}>
           {row.status}
         </span>
       ),
@@ -208,12 +213,12 @@ export default function PurchaseOrderListPage() {
   const statusBar = (
     <>
       <div className="flex items-center gap-4 text-[10px] text-gray-500">
-        <span>Count: <strong className="text-gray-700 font-semibold">{filteredOrders.length}</strong></span>
-        <span className="text-gray-300">|</span>
-        <span>Total Value: <strong className="text-gray-700 font-semibold">${totalValue.toLocaleString()}</strong></span>
-        <span className="text-gray-300">|</span>
+        <span>Count: <strong className={CX.statVal}>{filteredOrders.length}</strong></span>
+        <span className={CX.statSep}>|</span>
+        <span>Total Value: <strong className={CX.statVal}>${totalValue.toLocaleString()}</strong></span>
+        <span className={CX.statSep}>|</span>
         <span>Created: <strong className="text-emerald-600 font-semibold">{orders.filter((o) => o.status === "created").length}</strong></span>
-        <span className="text-gray-300">·</span>
+        <span className={CX.statSep}>·</span>
         <span>Pending: <strong className="text-amber-600 font-semibold">{orders.filter((o) => o.status === "pending").length}</strong></span>
       </div>
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
@@ -288,7 +293,7 @@ export default function PurchaseOrderListPage() {
                 emptyMessage="No purchase orders found."
                 statusBar={statusBar}
                 className=""
-                statusBarClassName="px-4 py-2 bg-white/30 border-t border-white/40 flex items-center justify-between rounded-b-xl"
+                statusBarClassName="table-status-bar-glass"
               />
             ),
           }))}

@@ -73,7 +73,7 @@ export function ExcelTable<T>({
   header,
   className = "bg-white rounded-xl border border-gray-300/50 shadow-[0_4px_20px_rgba(0,0,0,0.1)]",
   cellClassName = "px-3 py-2 whitespace-nowrap text-left",
-  statusBarClassName = "px-4 py-1.5 bg-[#e8eaed] border-t border-gray-300/50 flex items-center justify-between rounded-b-xl",
+  statusBarClassName = "table-status-bar-glass",
   onReorder,
 }: ExcelTableProps<T>) {
   // ── Drag state ──────────────────────────────────────────────────────────────
@@ -127,7 +127,7 @@ export function ExcelTable<T>({
             {table.getHeaderGroups().map((hg) => (
               <tr key={hg.id}>
                 {/* row-number gutter */}
-                <th className="w-9 bg-white/20 border-b border-r border-gray-200/60 select-none" />
+                <th className="table-th-gutter" />
 
                 {hg.headers.map((header) => {
                   const canSort = header.column.columnDef.meta?.sortable;
@@ -136,9 +136,7 @@ export function ExcelTable<T>({
                     <th
                       key={header.id}
                       onClick={() => canSort && onSort?.(header.id)}
-                      className={`bg-white/20 border-b border-r border-gray-200/60 px-3 py-1.5 text-left text-[10px] font-semibold text-slate-700 uppercase tracking-widest whitespace-nowrap select-none ${
-                        canSort ? "cursor-pointer hover:bg-white/30 transition-colors" : ""
-                      }`}
+                      className={`table-th ${canSort ? "table-th-sortable" : ""}`}
                     >
                       <div className="flex items-center gap-1">
                         <span>{flexRender(header.column.columnDef.header, header.getContext())}</span>
@@ -182,7 +180,7 @@ export function ExcelTable<T>({
                         onDragOver={(e) => handleDragOver(e, i)}
                         onDrop={() => handleDrop(i)}
                         onDragEnd={handleDragEnd}
-                        className={`w-9 text-center text-[10px] text-gray-500 tabular-nums font-mono border-b border-r border-gray-200/60 bg-white/20 group-hover:bg-white/40 transition-colors select-none py-2 ${onReorder ? "cursor-grab active:cursor-grabbing" : ""}`}
+                        className={`table-td-gutter ${onReorder ? "cursor-grab active:cursor-grabbing" : ""}`}
                       >
                         <span className={`${onReorder ? "group-hover:hidden" : ""} block`}>{i + 1}</span>
                         {onReorder && (
@@ -193,7 +191,7 @@ export function ExcelTable<T>({
                       </td>
 
                       {row.getVisibleCells().map((cell) => (
-                        <td key={cell.id} className={`border-b border-r border-gray-200/60 ${cellClassName}`}>
+                        <td key={cell.id} className={`table-td ${cellClassName}`}>
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </td>
                       ))}

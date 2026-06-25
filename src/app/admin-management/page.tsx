@@ -157,13 +157,13 @@ export default function AdminManagementPage() {
             <div className="flex gap-2">
               <button
                 onClick={() => { setAdmins((p) => p.filter((a) => a.id !== row.id)); setDeleteId(null); }}
-                className="px-3 py-1 bg-red-500 text-white text-[10px] font-semibold rounded-lg hover:bg-red-600 transition-colors"
+                className="btn-danger"
               >
                 Confirm
               </button>
               <button
                 onClick={() => setDeleteId(null)}
-                className="px-3 py-1 bg-white/60 backdrop-blur-sm text-gray-700 text-[10px] font-semibold rounded-lg border border-white/60 hover:bg-white/80 transition-colors"
+                className="btn-ghost-glass"
               >
                 Cancel
               </button>
@@ -248,7 +248,7 @@ export default function AdminManagementPage() {
             visibleColumns={visibleCols}
             onToggle={toggleCol}
           />
-          <button className="flex items-center gap-1.5 text-[11px] font-semibold text-white px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#884D70] to-[#6B3A5A] hover:from-[#9E6080] hover:to-[#9E6080] shadow-[0_2px_10px_rgba(136,77,112,0.35)] hover:shadow-[0_4px_16px_rgba(136,77,112,0.5)] transition-all">
+          <button className="btn-brand">
             <Icon name="download" size={13} />
             Export
           </button>

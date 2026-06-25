@@ -283,7 +283,7 @@ export default function EditPurchaseOrderPage() {
 
         {/* ── Order Details ── */}
         <div className="relative">
-          <Card className="bg-white/50 backdrop-blur-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.06)]">
+          <Card className="card-glass">
           <CardHeader title="Order Details" hint="Tab · Enter to move between fields" />
           <div className="px-5 py-4 grid grid-cols-4 gap-x-4 gap-y-3">
             <FormCombobox
@@ -352,7 +352,7 @@ export default function EditPurchaseOrderPage() {
           columns={purchaseItemColumns}
           data={items}
           rowKey={(row) => String(row.id)}
-          className="bg-white/50 backdrop-blur-xl rounded-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.06)] relative z-0"
+          className="card-glass rounded-xl relative z-0"
           cellClassName="px-1 py-0.5"
           header={<h2 className="text-[10px] font-semibold text-slate-600 uppercase tracking-widest">Purchase Items</h2>}
           statusBarClassName="px-3 py-1.5 flex items-center justify-between rounded-b-xl"
@@ -372,7 +372,7 @@ export default function EditPurchaseOrderPage() {
           columns={scheduleColumns}
           data={scheduleRows}
           rowKey={(row) => String(row.id)}
-          className="bg-white/50 backdrop-blur-xl rounded-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.06)]"
+          className="card-glass rounded-xl"
           cellClassName="px-1 py-0.5"
           header={<h2 className="text-[10px] font-semibold text-slate-600 uppercase tracking-widest">Schedule</h2>}
           statusBarClassName="px-3 py-1.5 flex items-center justify-between rounded-b-xl"
