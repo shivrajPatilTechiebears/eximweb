@@ -1,9 +1,12 @@
 import React from "react";
 import { Icon } from "./Icon";
 
-export type ButtonVariant = "primary" | "secondary" | "outlined" | "text" | "icon" | "icon-danger" | "add" | "pill-primary" | "pill-secondary" | "pill-ghost" | "brand" | "danger" | "ghost-glass" | "menu-item";
+export type ButtonVariant = "cta" | "primary" | "secondary" | "outlined" | "text" | "icon" | "icon-danger" | "add" | "pill-primary" | "pill-secondary" | "pill-ghost" | "brand" | "danger" | "ghost-glass" | "menu-item";
 
 export const buttonVariantStyles: Record<ButtonVariant, string> = {
+  /** Gradient pill CTA — primary action in page headers and key surfaces */
+  cta:
+    "btn-cta",
   primary:
     "flex items-center gap-1 px-3 h-8 bg-gradient-to-br from-primary to-surface-tint text-white font-bold text-[11px] rounded shadow-sm hover:opacity-90 transition-all active:scale-[0.98]",
   secondary:

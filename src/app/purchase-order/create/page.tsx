@@ -364,7 +364,7 @@ export default function CreatePurchaseOrderPage() {
           <>
             <ButtonLink href="/purchase-order" variant="pill-ghost">Cancel</ButtonLink>
             <Button variant="pill-secondary">Save as Draft</Button>
-            <Button variant="pill-primary" icon="check">Submit PO</Button>
+            <Button variant="cta" icon="check">Submit PO</Button>
           </>
         }
       />

@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { Icon } from "@/components/ui/Icon";
+import { Button } from "@/components/ui/Button";
 import { MODULE_TABS, WHITE_LABEL_TABS } from "./SecondaryNav";
 
 // Returns true for any path that renders a SecondaryNav bar
@@ -73,12 +74,7 @@ export function DashboardPageHeader({
               <>
                 <div className="w-px h-4 bg-gray-200" />
                 <Link href={buttonHref}>
-                  <button className="btn-primary-pill">
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 4v16m8-8H4" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" />
-                    </svg>
-                    {buttonText}
-                  </button>
+                  <Button variant="cta" icon="add">{buttonText}</Button>
                 </Link>
               </>
             )}
