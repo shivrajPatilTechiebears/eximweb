@@ -7,7 +7,7 @@ import { useNavCtx } from "./NavProvider";
 
 export function FloatingNavbar() {
   const pathname = usePathname();
-  const { activeSection, setActiveSection } = useNavCtx();
+  const { activeSection, setActiveSection, enterHover, leaveHover } = useNavCtx();
   const [visible, setVisible] = useState(true);
   const lastY = useRef(0);
 
@@ -51,19 +51,23 @@ export function FloatingNavbar() {
 
         <div className="flex items-center gap-0.5 px-1.5">
 
-          {/* Create / Update — sets section + navigates */}
+          {/* Create / Update — sets section + navigates; hover reveals secondary nav */}
           <Link
             href="/purchase-order"
             onClick={() => setActiveSection("createUpdate")}
+            onMouseEnter={() => enterHover("createUpdate")}
+            onMouseLeave={leaveHover}
             className={pill(activeSection === "createUpdate")}
           >
             Create / Update
           </Link>
 
-          {/* White Label — sets section + navigates (NO dropdown) */}
+          {/* White Label — sets section + navigates; hover reveals secondary nav */}
           <Link
             href="/admin-management"
             onClick={() => setActiveSection("whiteLabel")}
+            onMouseEnter={() => enterHover("whiteLabel")}
+            onMouseLeave={leaveHover}
             className={pill(activeSection === "whiteLabel")}
           >
             White Label

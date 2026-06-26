@@ -15,7 +15,7 @@
 /* ── Glass card surface ──────────────────────────────────────────────────── */
 
 @utility card-glass {
-  background-color: rgb(255 255 255 / 0.66);
+  background-color: rgb(255 255 255 / 0.26);
   backdrop-filter: blur(32px) saturate(160%);
   -webkit-backdrop-filter: blur(32px) saturate(160%);
   border-width: 1px;
@@ -35,7 +35,7 @@
 }
 
 @utility card-header-glass {
-  background-color: rgb(255 255 255 / 0.60);
+  background-color: rgb(255 255 255 / 0.36);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border-bottom-width: 1px;

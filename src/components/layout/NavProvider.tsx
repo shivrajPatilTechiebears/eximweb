@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -22,11 +22,17 @@ function sectionFromPath(pathname: string): NavSection {
 interface NavCtxValue {
   activeSection: NavSection;
   setActiveSection: (s: NavSection) => void;
+  hoveredSection: NavSection;
+  enterHover: (section: NavSection) => void;
+  leaveHover: () => void;
 }
 
 const NavCtx = createContext<NavCtxValue>({
   activeSection: null,
   setActiveSection: () => {},
+  hoveredSection: null,
+  enterHover: () => {},
+  leaveHover: () => {},
 });
 
 // ── Provider ──────────────────────────────────────────────────────────────────
@@ -36,15 +42,26 @@ export function NavProvider({ children }: { children: React.ReactNode }) {
 
   // Initialise from the current URL so there's no flash on first render
   const [activeSection, setActiveSection] = useState<NavSection>(() => sectionFromPath(pathname));
+  const [hoveredSection, setHoveredSection] = useState<NavSection>(null);
+  const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Keep in sync when the URL changes (browser back/forward, direct navigation)
   useEffect(() => {
-    const section = sectionFromPath(pathname);
-    setActiveSection(section);
+    setActiveSection(sectionFromPath(pathname));
   }, [pathname]);
 
+  const enterHover = (section: NavSection) => {
+    if (hoverTimer.current) clearTimeout(hoverTimer.current);
+    setHoveredSection(section);
+  };
+
+  // 200ms grace period lets the mouse travel the gap between the pill and the secondary nav
+  const leaveHover = () => {
+    hoverTimer.current = setTimeout(() => setHoveredSection(null), 200);
+  };
+
   return (
-    <NavCtx.Provider value={{ activeSection, setActiveSection }}>
+    <NavCtx.Provider value={{ activeSection, setActiveSection, hoveredSection, enterHover, leaveHover }}>
       {children}
     </NavCtx.Provider>
   );

@@ -2,21 +2,8 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { usePathname } from "next/navigation";
 import { Icon } from "@/components/ui/Icon";
 import { Button } from "@/components/ui/Button";
-import { MODULE_TABS, WHITE_LABEL_TABS } from "./SecondaryNav";
-
-// Returns true for any path that renders a SecondaryNav bar
-function hasSecondaryNav(pathname: string) {
-  const inModule = MODULE_TABS.some(
-    tab =>
-      pathname.startsWith(tab.href) ||
-      (tab.sub?.some(s => pathname.startsWith(s.href)) ?? false)
-  );
-  const inWhiteLabel = WHITE_LABEL_TABS.some(tab => pathname.startsWith(tab.href));
-  return inModule || inWhiteLabel;
-}
 
 // ─── Dashboard-style page header (list pages with breadcrumbs) ────────────────
 
@@ -37,8 +24,7 @@ export function DashboardPageHeader({
   buttonHref,
   rightContent,
 }: DashboardPageHeaderProps) {
-  const pathname = usePathname();
-  const topPadding = hasSecondaryNav(pathname) ? "pt-30" : "pt-16";
+  const topPadding = "pt-16";
 
   return (
     <div className={`${topPadding} card-header-glass px-10 pt-5 pb-4 flex items-center justify-between shrink-0`}>
