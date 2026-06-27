@@ -78,16 +78,16 @@ export default function CreatePurchaseOrderPage() {
   const orderDetailsFields = { poType, currency, shipmentTerms, paymentTerms, transporter, truckNo, driverDetails, deliveryLocation };
 
   const steps = [
-    { label: "Order Details", complete: Object.values(orderDetailsFields).every(Boolean) },
+    { label: "Order Details",   icon: "receipt_long",  complete: Object.values(orderDetailsFields).every(Boolean) },
     {
-      label: "Purchase Items",
+      label: "Purchase Items",  icon: "shopping_cart",
       complete: items.length > 0 && items.every(({ id: _id, ...fields }) => Object.values(fields).every(Boolean)),
     },
     {
-      label: "Schedule",
+      label: "Schedule",        icon: "schedule",
       complete: scheduleRows.length > 0 && scheduleRows.every(({ id: _id, ...fields }) => Object.values(fields).every(Boolean)),
     },
-    { label: "Review & Submit", complete: false },
+    { label: "Review & Submit", icon: "send",          complete: false },
   ];
 
 
@@ -217,12 +217,12 @@ export default function CreatePurchaseOrderPage() {
           { label: "Create" },
         ]}
         rightContent={
-          <div className="flex items-center gap-3">
-            <StatusBadge label="Draft PO-9284" color="warning" pulse />
-            <ProgressPill steps={steps} />
-          </div>
+          <StatusBadge label="Draft PO-9284" color="warning" pulse />
         }
       />
+
+      {/* ═══ PROGRESS STEPPER ═══ */}
+      <ProgressPill steps={steps} />
 
       {/* ═══ MAIN CONTENT ═══ */}
       <main className="flex-1 px-6 py-4 pb-20 space-y-3">

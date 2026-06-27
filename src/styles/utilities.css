@@ -673,3 +673,110 @@
     transform: scale(0.95);
   }
 }
+
+/* ── Form stepper ─────────────────────────────────────────────────────────── */
+
+@utility stepper-strip {
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
+  height: 6rem;
+  display: flex;
+  align-items: center;
+}
+
+@utility stepper-track {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+}
+
+@utility stepper-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1 1 0%;
+  padding-top: 1.25rem;
+}
+
+@utility stepper-node-row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+
+@utility stepper-connector {
+  flex: 1 1 0%;
+  height: 1px;
+  transition-property: background-color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 500ms;
+}
+
+@utility stepper-connector-filled {
+  background-color: #884D70;
+}
+
+@utility stepper-connector-empty {
+  background-color: rgb(136 77 112 / 0.15);
+}
+
+@utility stepper-connector-hidden {
+  background-color: transparent;
+}
+
+@utility stepper-node {
+  position: relative;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@utility stepper-node-done {
+  background-color: #884D70;
+  color: white;
+  box-shadow: 0 0 0 4px rgba(136, 77, 112, 0.12);
+}
+
+@utility stepper-node-active {
+  background-color: white;
+  border: 2px solid #884D70;
+  color: #884D70;
+  box-shadow: 0 0 0 4px rgba(136, 77, 112, 0.12), 0 0 12px rgba(136, 77, 112, 0.12);
+}
+
+@utility stepper-node-idle {
+  background-color: rgb(136 77 112 / 0.06);
+  border: 1px solid rgb(136 77 112 / 0.20);
+  color: rgb(136 77 112 / 0.35);
+}
+
+@utility stepper-pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 2px solid rgb(136 77 112 / 0.30);
+}
+
+@utility stepper-label {
+  margin-top: 0.5rem;
+  font-size: 10px;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+  transition-property: color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+@utility stepper-label-active {
+  color: #884D70;
+}
+
+@utility stepper-label-idle {
+  color: rgb(136 77 112 / 0.35);
+}
