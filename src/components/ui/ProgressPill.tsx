@@ -1,5 +1,8 @@
+import { Icon } from "@/components/ui/Icon";
+
 interface Step {
   label: string;
+  icon?: string;
   complete: boolean;
 }
 
@@ -8,25 +11,64 @@ interface ProgressPillProps {
 }
 
 export function ProgressPill({ steps }: ProgressPillProps) {
-  const completedCount = steps.filter((s) => s.complete).length;
+  const activeIndex = steps.findIndex((s) => !s.complete);
 
   return (
-    <div className="inline-flex items-center bg-[#FFDBCB]/10 border border-[#884D70]/20 rounded-full shadow-[0_4px_24px_rgba(136,77,112,0.13)] px-3 py-2 gap-2">
-      <span className="text-[9px] font-medium text-[#884D70]/60 uppercase tracking-wide">Progress</span>
-      <div className="flex items-center gap-1">
-        {steps.map((step) => (
-          <div
-            key={step.label}
-            title={step.label}
-            className={`h-1.5 rounded-full transition-all duration-500 ${
-              step.complete ? "w-8 bg-[#884D70]" : "w-1.5 bg-[#FFDBCB]"
-            }`}
-          />
-        ))}
+    <div className="stepper-strip">
+      <div className="stepper-track">
+        {steps.map((step, i) => {
+          const isDone = step.complete;
+          const isActive = i === activeIndex;
+          const isFirst = i === 0;
+          const isLast = i === steps.length - 1;
+          const leftFilled = i > 0 && steps[i - 1].complete;
+          const rightFilled = !isLast && isDone;
+
+          const connectorLeft = isFirst
+            ? "stepper-connector stepper-connector-hidden"
+            : leftFilled
+            ? "stepper-connector stepper-connector-filled"
+            : "stepper-connector stepper-connector-empty";
+
+          const connectorRight = isLast
+            ? "stepper-connector stepper-connector-hidden"
+            : rightFilled
+            ? "stepper-connector stepper-connector-filled"
+            : "stepper-connector stepper-connector-empty";
+
+          const nodeState = isDone
+            ? "stepper-node stepper-node-done"
+            : isActive
+            ? "stepper-node stepper-node-active"
+            : "stepper-node stepper-node-idle";
+
+          return (
+            <div key={step.label} className="stepper-step">
+              <div className="stepper-node-row">
+                <div className={connectorLeft} />
+
+                <div className={nodeState}>
+                  {isActive && <span className="stepper-pulse animate-ping" />}
+
+                  {isDone ? (
+                    <Icon name="check" size={18} strokeWidth={2} />
+                  ) : step.icon ? (
+                    <Icon name={step.icon} size={18} strokeWidth={isActive ? 1.75 : 1.5} />
+                  ) : (
+                    <span className="text-[10px] font-bold leading-none">{i + 1}</span>
+                  )}
+                </div>
+
+                <div className={connectorRight} />
+              </div>
+
+              <span className={`stepper-label ${isDone || isActive ? "stepper-label-active" : "stepper-label-idle"}`}>
+                {step.label}
+              </span>
+            </div>
+          );
+        })}
       </div>
-      <span className="text-[10px] font-semibold text-[#884D70] tabular-nums">
-        {completedCount}/{steps.length}
-      </span>
     </div>
   );
 }
