@@ -4,27 +4,7 @@ interface PaginationProps {
   onPageChange: (page: number) => void;
 }
 
-type PageEntry = number | "ellipsis";
-
-function getPageNumbers(current: number, total: number): PageEntry[] {
-  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
-
-  const pages: PageEntry[] = [1];
-  if (current > 3) pages.push("ellipsis");
-
-  const start = Math.max(2, current - 1);
-  const end = Math.min(total - 1, current + 1);
-  for (let i = start; i <= end; i++) pages.push(i);
-
-  if (current < total - 2) pages.push("ellipsis");
-  pages.push(total);
-
-  return pages;
-}
-
 export function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
-  const pages = getPageNumbers(currentPage, totalPages);
-
   return (
     <div className="flex items-center gap-1">
       <button
@@ -35,25 +15,9 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
         ← Prev
       </button>
 
-      {pages.map((p, i) =>
-        p === "ellipsis" ? (
-          <span key={`ellipsis-${i}`} className="px-1.5 text-[10px] text-gray-400 select-none">
-            …
-          </span>
-        ) : (
-          <button
-            key={p}
-            onClick={() => onPageChange(p)}
-            className={
-              p === currentPage
-                ? "px-2.5 py-1 text-[10px] bg-[#884D70] text-white rounded font-semibold"
-                : "px-2.5 py-1 text-[10px] text-gray-500 hover:bg-gray-200 rounded transition-colors"
-            }
-          >
-            {p}
-          </button>
-        )
-      )}
+      <span className="px-2.5 py-1 text-[10px] stepper-connector-filled text-white rounded font-semibold min-w-6.5 text-center">
+        {currentPage}
+      </span>
 
       <button
         onClick={() => onPageChange(currentPage + 1)}

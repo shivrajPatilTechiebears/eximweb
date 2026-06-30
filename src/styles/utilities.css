@@ -780,3 +780,295 @@
 @utility stepper-label-idle {
   color: rgb(136 77 112 / 0.35);
 }
+
+/* ── Image Gallery Modal ─────────────────────────────────────────────────── */
+
+@utility gallery-panel {
+  background-color: rgb(255 255 255 / 0.62);
+  backdrop-filter: blur(32px) saturate(160%);
+  -webkit-backdrop-filter: blur(32px) saturate(160%);
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(255 255 255 / 0.70);
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.12),
+    0 2px 12px rgba(136, 77, 112, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.80);
+}
+
+@utility gallery-header {
+  background-color: rgb(255 219 203 / 0.12);
+  border-bottom: 1px solid rgb(136 77 112 / 0.25);
+  box-shadow: 0 2px 12px rgba(136, 77, 112, 0.08);
+}
+
+@utility gallery-divider {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.40);
+}
+
+@utility gallery-search {
+  background-color: rgb(255 255 255 / 0.55);
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(211 194 198 / 0.50);
+}
+
+@utility gallery-search-focus {
+  background-color: rgb(255 255 255 / 0.80);
+  border-color: rgb(136 77 112 / 0.55);
+  box-shadow: 0 0 0 3px rgba(136, 77, 112, 0.10);
+}
+
+@utility gallery-chip {
+  background-color: rgb(255 255 255 / 0.55);
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(211 194 198 / 0.50);
+  font-size: 10px;
+  font-weight: 600;
+  color: rgb(51 65 85);
+  transition: all 150ms;
+}
+
+@utility gallery-chip-hover {
+  background-color: rgb(136 77 112 / 0.08);
+  border-color: rgba(136, 77, 112, 0.35);
+  color: #884D70;
+}
+
+@utility gallery-tile {
+  border-width: 1.5px;
+  border-style: solid;
+  border-color: rgb(255 255 255 / 0.80);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
+}
+
+@utility gallery-tile-selected {
+  border-width: 2px;
+  border-style: solid;
+  border-color: #884D70;
+  box-shadow:
+    0 0 0 3px rgba(136, 77, 112, 0.18),
+    0 4px 16px rgba(136, 77, 112, 0.22);
+  transform: scale(1.04);
+}
+
+@utility gallery-tile-overlay-selected {
+  background-color: rgb(136 77 112 / 0.18);
+}
+
+@utility gallery-tile-overlay-hover {
+  background-color: rgb(136 77 112 / 0.06);
+  border-width: 1.5px;
+  border-style: solid;
+  border-color: rgb(136 77 112 / 0.50);
+}
+
+@utility gallery-check-badge {
+  background: linear-gradient(135deg, #884D70, #6B3A5A);
+  box-shadow: 0 2px 8px rgba(136, 77, 112, 0.55);
+}
+
+@utility gallery-preview-strip {
+  background-color: rgb(136 77 112 / 0.08);
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(136 77 112 / 0.22);
+}
+
+@utility gallery-preview-thumb {
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(136 77 112 / 0.30);
+}
+
+@utility gallery-footer {
+  background-color: rgb(255 255 255 / 0.40);
+  border-top: 1px solid rgba(211, 194, 198, 0.40);
+}
+
+@utility gallery-btn-cancel {
+  background-color: rgb(255 255 255 / 0.65);
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(211 194 198 / 0.55);
+  color: rgb(107 114 128);
+  font-size: 11px;
+  font-weight: 600;
+  height: 2rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-radius: 0.5rem;
+  transition: all 150ms;
+  &:hover {
+    color: rgb(55 65 81);
+    background-color: rgb(255 255 255 / 0.90);
+  }
+}
+
+/* ── Shared nav / sidebar design language ────────────────────────────────── */
+
+/* Floating shell: FloatingNavbar + SecondaryNav inner containers */
+@utility nav-surface {
+  background-color: rgb(255 219 203 / 0.10);
+  border: 1px solid rgb(136 77 112 / 0.25);
+  box-shadow: 0 4px 24px rgba(136, 77, 112, 0.13);
+}
+
+/* Rail shell: SidePanel aside — right-border-only variant */
+@utility nav-panel {
+  background-color: rgb(255 219 203 / 0.10);
+  border-right: 1px solid rgb(136 77 112 / 0.25);
+}
+
+/* Hairline separator inside FloatingNavbar */
+@utility nav-separator {
+  background-color: #FFDBCB;
+}
+
+/* Brand logo mark — small square used in nav headers */
+@utility nav-logo-mark {
+  width: 1rem;
+  height: 1rem;
+  background-color: #884D70;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+@utility nav-logo-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: white;
+  border-radius: 2px;
+}
+
+/* Floating nav pill (rounded-full, medium weight) — FloatingNavbar */
+@utility nav-pill {
+  display: flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 500;
+  transition: all 150ms;
+  white-space: nowrap;
+}
+
+@utility nav-pill-active {
+  background-color: #884D70;
+  color: white;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+@utility nav-pill-inactive {
+  color: rgb(136 77 112 / 0.70);
+  &:hover {
+    color: #884D70;
+    background-color: rgb(136 77 112 / 0.10);
+  }
+}
+
+/* Tab pill (rounded-[10px], semibold) — SecondaryNav */
+@utility tab-pill {
+  display: flex;
+  align-items: center;
+  padding: 6px 16px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  transition: all 200ms;
+  white-space: nowrap;
+}
+
+@utility tab-pill-active {
+  background-color: rgb(255 255 255 / 0.95);
+  color: #884D70;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.10), 0 0 0 0.5px rgba(0, 0, 0, 0.04);
+}
+
+@utility tab-pill-inactive {
+  color: rgb(136 77 112 / 0.60);
+  &:hover {
+    color: #884D70;
+    background-color: rgb(136 77 112 / 0.08);
+  }
+}
+
+/* Side nav item (full-width, rounded-[10px], semibold) — SidePanel */
+@utility side-nav-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  transition: all 200ms;
+  text-align: left;
+}
+
+@utility side-nav-item-active {
+  background-color: #884D70;
+  color: white;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+@utility side-nav-item-inactive {
+  color: rgb(136 77 112 / 0.70);
+  &:hover {
+    color: #884D70;
+    background-color: rgb(136 77 112 / 0.10);
+  }
+}
+
+/* Section label inside SidePanel */
+@utility nav-section-label {
+  font-size: 9px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgb(136 77 112 / 0.40);
+}
+
+/* Count badge inside SidePanel nav items */
+@utility nav-badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 9999px;
+}
+
+@utility nav-badge-active {
+  background-color: rgb(255 255 255 / 0.25);
+  color: white;
+}
+
+@utility nav-badge-inactive {
+  background-color: rgb(136 77 112 / 0.10);
+  color: rgb(136 77 112 / 0.60);
+}
+
+@utility gallery-btn-select {
+  background: linear-gradient(135deg, #884D70, #6B3A5A);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  height: 2rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-radius: 0.5rem;
+  transition: all 150ms;
+  &:hover:not(:disabled) {
+    filter: brightness(1.1);
+    box-shadow: 0 4px 16px rgba(136, 77, 112, 0.50);
+  }
+  &:disabled {
+    opacity: 0.40;
+    cursor: not-allowed;
+  }
+}

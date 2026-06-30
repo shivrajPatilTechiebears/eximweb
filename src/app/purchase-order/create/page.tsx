@@ -23,7 +23,7 @@ import { ProgressPill } from "@/components/ui/ProgressPill";
 
 interface PurchaseItem {
   id: number; name: string; qty: number; price: number;
-  uom: string; taxCode: string; packaging: string;
+  uom: string; taxCode: string; packaging: string; imageUrl?: string;
 }
 
 interface ScheduleRow {
@@ -122,8 +122,20 @@ export default function CreatePurchaseOrderPage() {
       key: "img", header: "Img",
       cell: (row) => (
         <div className="flex justify-center px-2 py-1">
-          <button onClick={() => { setSelectedItemId(row.id); setIsGalleryOpen(true); }} className="text-gray-400 hover:text-[#884D70] transition-colors" title="Attach image">
-            <Icon name="attachment" size={13} />
+          <button
+            onClick={() => { setSelectedItemId(row.id); setIsGalleryOpen(true); }}
+            className="relative group"
+            title={row.imageUrl ? "Change image" : "Attach image"}
+          >
+            {row.imageUrl ? (
+              <img
+                src={row.imageUrl}
+                alt="attached"
+                className="w-6 h-6 rounded object-cover border border-outline-variant group-hover:border-primary transition-colors"
+              />
+            ) : (
+              <Icon name="attachment" size={13} className="text-gray-400 group-hover:stepper-label-active transition-colors" />
+            )}
           </button>
         </div>
       ),
@@ -372,7 +384,12 @@ export default function CreatePurchaseOrderPage() {
       <ImageGalleryModal
         isOpen={isGalleryOpen}
         onClose={() => setIsGalleryOpen(false)}
-        onSelectImage={(image) => { console.log("Selected image for item", selectedItemId, ":", image); }}
+        onSelectImage={(image) => {
+          if (selectedItemId !== null) {
+            updateItem(selectedItemId, "imageUrl", image.src);
+          }
+          setIsGalleryOpen(false);
+        }}
       />
 
     </div>

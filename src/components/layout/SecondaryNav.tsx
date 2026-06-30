@@ -73,11 +73,7 @@ function TabPill({ tab }: { tab: ModuleTab }) {
   return (
     <Link
       href={tab.href}
-      className={`flex items-center px-4 py-1.5 rounded-[10px] text-[11px] font-semibold transition-all duration-200 whitespace-nowrap ${
-        isActive
-          ? "bg-white/95 text-[#884D70] shadow-[0_1px_4px_rgba(0,0,0,0.10),0_0_0_0.5px_rgba(0,0,0,0.04)]"
-          : "text-[#884D70]/60 hover:text-[#884D70] hover:bg-[#884D70]/8"
-      }`}
+      className={`tab-pill ${isActive ? "tab-pill-active" : "tab-pill-inactive"}`}
     >
       {tab.label}
     </Link>
@@ -118,7 +114,7 @@ export function SecondaryNav() {
     >
       {/* Horizontally scrollable on mobile */}
       <div className="flex justify-center py-2 px-4 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] scrollbar-none">
-        <div className="flex items-center bg-[#FFDBCB]/10 border border-[#884D70]/25 rounded-[14px] shadow-[0_4px_24px_rgba(136,77,112,0.13)] p-1 gap-0.5 min-w-max">
+        <div className="nav-surface rounded-[14px] flex items-center p-1 gap-0.5 min-w-max">
           {/*
             Changing `key` unmounts the old group and mounts the new one,
             replaying the CSS enter animation on every section switch.

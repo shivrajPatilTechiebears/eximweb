@@ -5,17 +5,9 @@ import { FloatingNavbar } from "@/components/layout/FloatingNavbar";
 import { SecondaryNav } from "@/components/layout/SecondaryNav";
 import { StatTile } from "@/components/ui/StatTile";
 import { DashboardPageHeader } from "@/components/layout/PageHeader";
-import { ProgressPill } from "@/components/ui/ProgressPill";
 import { PoTrendChartCard } from "@/components/cards/PoTrendChartCard";
 import { OrderSummaryCard } from "@/components/cards/OrderSummaryCard";
 import { OrderBreakdownCard } from "@/components/cards/OrderBreakdownCard";
-
-const PO_MONTH_STEPS = [
-  { label: "Wk 1", complete: true },
-  { label: "Wk 2", complete: true },
-  { label: "Wk 3", complete: true },
-  { label: "Wk 4", complete: false },
-];
 
 const STAT_TILES = [
   {
@@ -74,7 +66,6 @@ export default function HomePage() {
       <DashboardPageHeader
         title="Welcome Back, Shivam Chaudhari 👋"
         breadcrumbs={[{ label: "📅 Wednesday, 24 March 2026" }]}
-        rightContent={<ProgressPill steps={PO_MONTH_STEPS} />}
       />
 
       {/* ═══════════════════════ CONTENT GRID ═══════════════════════ */}
