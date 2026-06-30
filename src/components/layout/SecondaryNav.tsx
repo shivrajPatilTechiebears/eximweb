@@ -52,10 +52,14 @@ export const MODULE_TABS: ModuleTab[] = [
 ];
 
 export const WHITE_LABEL_TABS: ModuleTab[] = [
-  { label: "Admin Mgmt",    href: "/admin-management" },
-  { label: "Company Mgmt",  href: "/company-management" },
-  { label: "Role & Permissions", href: "/role-permissions" },
-  { label: "Employee Mgmt", href: "/employee-management" },
+  { label: "Admin Mgmt",        href: "/admin-management"   },
+  { label: "Organisation",      href: "/organisation"       },
+  { label: "Group of Company",  href: "/group-company"      },
+  { label: "Company Mgmt",      href: "/company-management" },
+  { label: "Branch",            href: "/branch"             },
+  { label: "Department",        href: "/department"         },
+  { label: "Role & Permissions", href: "/role-permissions"  },
+  { label: "Employee Mgmt",     href: "/employee-management"},
 ];
 
 // ── Single tab pill ───────────────────────────────────────────────────────────

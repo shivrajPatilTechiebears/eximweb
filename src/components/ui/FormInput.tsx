@@ -8,6 +8,7 @@ interface FormInputProps {
   value?: string;
   placeholder?: string;
   type?: string;
+  autoComplete?: string;
   onChange?: (value: string) => void;
   disabled?: boolean;
 }
@@ -18,6 +19,7 @@ export function FormInput({
   value,
   placeholder,
   type = "text",
+  autoComplete,
   onChange,
   disabled = false,
 }: FormInputProps) {
@@ -31,6 +33,7 @@ export function FormInput({
         name={name}
         value={value}
         placeholder={placeholder}
+        autoComplete={autoComplete}
         onChange={(e) => onChange?.(e.target.value)}
         className="w-full px-3 py-2 text-[12px] bg-white border border-gray-300 rounded-lg outline-none focus:border-[#884D70]/50 focus:ring-1 focus:ring-[#884D70]/10 placeholder:text-gray-500 text-slate-700 transition-all data-disabled:opacity-50 data-disabled:cursor-not-allowed"
       />

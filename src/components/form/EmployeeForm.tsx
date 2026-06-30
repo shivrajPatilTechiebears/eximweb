@@ -1,0 +1,136 @@
+"use client";
+
+import { useState } from "react";
+import { FloatingNavbar } from "@/components/layout/FloatingNavbar";
+import { SecondaryNav } from "@/components/layout/SecondaryNav";
+import { DashboardPageHeader } from "@/components/layout/PageHeader";
+import { StickyFooter } from "@/components/layout/StickyFooter";
+import { Button } from "@/components/ui/Button";
+import { ButtonLink } from "@/components/ui/ButtonLink";
+import { StatusBadge } from "@/components/ui/StatusBadge";
+import { ProgressPill } from "@/components/ui/ProgressPill";
+import { EmployeeDetails } from "@/components/employee/EmployeeDetails";
+import { MOCK_EMPLOYEES } from "@/components/employee/types";
+import type { EmployeeFormData } from "@/components/employee/types";
+
+// ── Types ─────────────────────────────────────────────────────────────────────
+
+export type EmployeeFormProps = {
+  mode: "create" | "view" | "edit";
+  employeeId?: string;
+};
+
+// ── Defaults ──────────────────────────────────────────────────────────────────
+
+const DEFAULT_FORM: EmployeeFormData = {
+  firstName: "", lastName: "",
+  email: "", mobile: "", password: "",
+  designation: "", userType: "", accessScope: "",
+  role: "", department: "",
+  organisation: "", groupCompany: "", company: "", location: "",
+};
+
+// ── EmployeeForm ──────────────────────────────────────────────────────────────
+
+export function EmployeeForm({ mode, employeeId }: EmployeeFormProps) {
+  const isView   = mode === "view";
+  const isEdit   = mode === "edit";
+  const isCreate = mode === "create";
+  const disabled = isView;
+
+  const initial = employeeId ? (MOCK_EMPLOYEES[employeeId] ?? null) : null;
+
+  const [form, setForm] = useState<EmployeeFormData>({ ...DEFAULT_FORM, ...initial?.form });
+
+  const handleChange = (key: keyof EmployeeFormData, value: string) =>
+    setForm((p) => ({ ...p, [key]: value }));
+
+  const totalFields = Object.keys(form).length;
+  const filledCount = Object.values(form).filter(Boolean).length;
+
+  const steps = [
+    {
+      label: "Personal Info",
+      complete: [
+        form.firstName, form.lastName,
+        form.email, form.mobile, form.designation,
+        form.userType, form.accessScope,
+      ].every(Boolean),
+    },
+    {
+      label: "Organisation",
+      complete: [
+        form.organisation, form.company,
+        form.department, form.role,
+      ].every(Boolean),
+    },
+    { label: "Review & Submit", complete: false },
+  ];
+
+  const title     = isCreate ? "Create Employee" : isView ? "View Employee" : "Edit Employee";
+  const lastCrumb = isCreate ? "Create" : isView ? "View" : "Edit";
+
+  return (
+    <div className="min-h-screen flex flex-col antialiased text-slate-800 bg-transparent">
+
+      <FloatingNavbar />
+      <SecondaryNav />
+
+      <DashboardPageHeader
+        title={title}
+        breadcrumbs={[
+          { label: "Dashboard",    href: "/" },
+          { label: "Employee Mgmt", href: "/employee-management" },
+          { label: lastCrumb },
+        ]}
+        rightContent={
+          isView ? (
+            <StatusBadge label="Read Only" color="warning" />
+          ) : (
+            <div className="flex items-center gap-3">
+              <StatusBadge label={isCreate ? "New Employee" : "Editing"} color="info" pulse />
+              <ProgressPill steps={steps} />
+            </div>
+          )
+        }
+      />
+
+      <main className="flex-1 px-6 py-4 pb-20 space-y-3">
+        <EmployeeDetails
+          formData={form}
+          onChange={handleChange}
+          disabled={disabled}
+          isView={isView}
+        />
+      </main>
+
+      {isView && (
+        <StickyFooter
+          actions={
+            <>
+              <ButtonLink href="/employee-management" variant="pill-ghost">Back</ButtonLink>
+              <ButtonLink href={`/employee-management/${employeeId}/edit`} variant="pill-primary">
+                Edit Employee
+              </ButtonLink>
+            </>
+          }
+        />
+      )}
+
+      {(isCreate || isEdit) && (
+        <StickyFooter
+          stats={[{ label: "Fields filled", value: `${filledCount} / ${totalFields}` }]}
+          actions={
+            <>
+              <ButtonLink href="/employee-management" variant="pill-ghost">Cancel</ButtonLink>
+              <Button variant="pill-primary" icon="check">
+                {isCreate ? "Create Employee" : "Update Employee"}
+              </Button>
+            </>
+          }
+        />
+      )}
+
+    </div>
+  );
+}
