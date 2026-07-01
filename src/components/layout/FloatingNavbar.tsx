@@ -24,8 +24,11 @@ export function FloatingNavbar() {
   const pill = (active: boolean) => `nav-pill ${active ? "nav-pill-active" : "nav-pill-inactive"}`;
 
   return (
+    // left-1/2 -translate-x-1/2 (instead of inset-x-0 + flex justify-center) makes this
+    // box shrink-wrap to its own content and centers it by its own width, so the fixed
+    // box never extends past the visible pill — no dead zone to swallow clicks elsewhere.
     <div
-      className={`fixed top-3 inset-x-0 z-50 flex justify-center transition-all duration-300 ease-out ${
+      className={`fixed top-3 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 ease-out ${
         visible ? "translate-y-0 opacity-100" : "-translate-y-3 opacity-0 pointer-events-none"
       }`}
     >

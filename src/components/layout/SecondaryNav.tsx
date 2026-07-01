@@ -105,15 +105,18 @@ export function SecondaryNav() {
   const groupKey     = isWhiteLabel ? "wl" : "cu";
 
   return (
+    // left-1/2 -translate-x-1/2 (instead of inset-x-0 + flex justify-center) makes this
+    // box shrink-wrap to its own content and centers it by its own width, so the fixed
+    // box never extends past the visible pill — no dead zone to swallow clicks elsewhere.
     <div
-      className={`fixed top-0 inset-x-0 z-40 transition-transform duration-500 ease-in-out ${
+      className={`fixed top-0 left-1/2 -translate-x-1/2 z-40 max-w-[calc(100vw-2rem)] transition-transform duration-500 ease-in-out ${
         navbarVisible ? "translate-y-15" : "translate-y-0"
       }`}
       onMouseEnter={() => enterHover(hoveredSection)}
       onMouseLeave={leaveHover}
     >
-      {/* Horizontally scrollable on mobile */}
-      <div className="flex justify-center py-2 px-4 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] scrollbar-none">
+      {/* Horizontally scrollable when the pill is wider than the viewport */}
+      <div className="py-2 px-4 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] scrollbar-none">
         <div className="nav-surface rounded-[14px] flex items-center p-1 gap-0.5 min-w-max">
           {/*
             Changing `key` unmounts the old group and mounts the new one,
