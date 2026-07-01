@@ -76,11 +76,11 @@ export function SidePanel({ sections, storage }: SidePanelProps) {
               <p className="nav-section-label">Storage</p>
               <span className="text-[9px] font-bold text-[#884D70]">{pct}%</span>
             </div>
-            <div className="h-1.5 rounded-full bg-gray-200/60 overflow-hidden mb-2">
+            <div className="h-1.5 rounded-full bg-white/70 overflow-hidden mb-2">
               <div className="h-full rounded-full bg-[#884D70]" style={{ width: `${pct}%` }} />
             </div>
-            <p className="text-[10px] text-gray-500">
-              {storage.usedGB} GB <span className="text-gray-400">of {storage.totalGB} GB used</span>
+            <p className="text-[10px] text-slate-700 font-medium">
+              {storage.usedGB} GB <span className="text-slate-600">of {storage.totalGB} GB used</span>
             </p>
           </div>
         </div>

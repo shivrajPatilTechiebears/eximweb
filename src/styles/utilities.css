@@ -1109,7 +1109,7 @@
 }
 
 @utility side-nav-item-inactive {
-  color: rgb(136 77 112 / 0.70);
+  color: rgb(136 77 112 / 0.85);
   &:hover {
     color: #884D70;
     background-color: rgb(136 77 112 / 0.10);
@@ -1122,7 +1122,7 @@
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: rgb(136 77 112 / 0.40);
+  color: rgb(136 77 112 / 0.65);
 }
 
 /* Count badge inside SidePanel nav items */
@@ -1139,8 +1139,8 @@
 }
 
 @utility nav-badge-inactive {
-  background-color: rgb(136 77 112 / 0.10);
-  color: rgb(136 77 112 / 0.60);
+  background-color: rgb(136 77 112 / 0.12);
+  color: rgb(136 77 112 / 0.80);
 }
 
 @utility gallery-btn-select {

@@ -318,7 +318,7 @@ export default function ImageLibraryPage() {
               className="shrink-0"
             />
             <div className="w-px h-4 bg-gray-200/80 shrink-0" />
-            <span className="text-[9px] font-black uppercase tracking-widest text-slate-500 shrink-0">
+            <span className="text-[9px] font-black uppercase tracking-widest text-slate-600 shrink-0">
               Quick Access:
             </span>
             <div className="flex items-center gap-1 flex-1 min-w-0 flex-wrap">
@@ -411,7 +411,7 @@ export default function ImageLibraryPage() {
                               <p className="text-[11px] font-semibold text-slate-700 truncate max-w-50">
                                 {file.name}
                               </p>
-                              <p className="text-[9px] text-gray-400 mt-0.5">{file.ext.toUpperCase()}</p>
+                              <p className="text-[9px] text-gray-500 mt-0.5">{file.ext.toUpperCase()}</p>
                             </div>
                           </div>
                         </td>
@@ -430,14 +430,14 @@ export default function ImageLibraryPage() {
 
                         {/* Size */}
                         <td className="table-td px-3 py-2.5 text-right">
-                          <span className="text-[11px] text-gray-500 tabular-nums font-medium">
+                          <span className="text-[11px] text-slate-600 tabular-nums font-medium">
                             {formatSize(file.sizeBytes)}
                           </span>
                         </td>
 
                         {/* Last modified */}
                         <td className="table-td px-3 py-2.5">
-                          <span className="text-[11px] text-gray-500">{formatDate(file.lastModified)}</span>
+                          <span className="text-[11px] text-slate-600">{formatDate(file.lastModified)}</span>
                         </td>
 
                         {/* Actions */}
@@ -473,13 +473,13 @@ export default function ImageLibraryPage() {
 
           {/* Status bar */}
           <div className="table-status-bar-glass shrink-0">
-            <div className="flex items-center gap-3 text-[10px] text-gray-500">
+            <div className="flex items-center gap-3 text-[10px] text-slate-500">
               <span>
-                Items: <strong className="text-gray-700 font-semibold">{filtered.length}</strong>
+                Items: <strong className="text-slate-700 font-semibold">{filtered.length}</strong>
               </span>
-              <span className="text-gray-300">·</span>
+              <span className="text-gray-400">·</span>
               <span>
-                Selected: <strong className={`font-semibold ${selected.size > 0 ? "text-[#884D70]" : "text-gray-700"}`}>{selected.size}</strong>
+                Selected: <strong className={`font-semibold ${selected.size > 0 ? "text-[#884D70]" : "text-slate-700"}`}>{selected.size}</strong>
               </span>
               {selected.size > 0 && (
                 <>
@@ -496,7 +496,7 @@ export default function ImageLibraryPage() {
             <div className="flex items-center gap-3">
               <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
               <div className="w-px h-4 bg-gray-200/80 shrink-0" />
-              <div className="flex items-center gap-1.5 text-[10px] text-gray-400">
+              <div className="flex items-center gap-1.5 text-[10px] text-slate-500">
                 <span>View:</span>
                 <ViewToggle view={view} onChange={setView} />
               </div>
