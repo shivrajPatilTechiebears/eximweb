@@ -5,9 +5,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useNavCtx } from "./NavProvider";
 
+// Module-level constants — never recreated on re-render
+const CREATE_UPDATE_PATHS = ["/purchase-order", "/purchase-request", "/shipments", "/bookings"];
+const WHITE_LABEL_PATHS   = ["/admin-management", "/organisation", "/group-company", "/company-management", "/branch", "/department", "/role-permissions", "/employee-management"];
+
 export function FloatingNavbar() {
   const pathname = usePathname();
-  const { activeSection, setActiveSection, enterHover, leaveHover } = useNavCtx();
+  const { setActiveSection, enterHover, leaveHover } = useNavCtx();
   const [visible, setVisible] = useState(true);
   const lastY = useRef(0);
 
@@ -20,6 +24,9 @@ export function FloatingNavbar() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const isCreateUpdate = CREATE_UPDATE_PATHS.some(p => pathname.startsWith(p));
+  const isWhiteLabel   = WHITE_LABEL_PATHS.some(p => pathname.startsWith(p));
 
   const pill = (active: boolean) => `nav-pill ${active ? "nav-pill-active" : "nav-pill-inactive"}`;
 
@@ -52,7 +59,7 @@ export function FloatingNavbar() {
             onClick={() => setActiveSection("createUpdate")}
             onMouseEnter={() => enterHover("createUpdate")}
             onMouseLeave={leaveHover}
-            className={pill(activeSection === "createUpdate")}
+            className={pill(isCreateUpdate)}
           >
             Create / Update
           </Link>
@@ -62,7 +69,7 @@ export function FloatingNavbar() {
             onClick={() => setActiveSection("whiteLabel")}
             onMouseEnter={() => enterHover("whiteLabel")}
             onMouseLeave={leaveHover}
-            className={pill(activeSection === "whiteLabel")}
+            className={pill(isWhiteLabel)}
           >
             White Label
           </Link>
@@ -71,7 +78,7 @@ export function FloatingNavbar() {
             Reports
           </Link>
 
-          <Link href="/document-library" onClick={() => setActiveSection(null)} className={pill(pathname.startsWith("/document-library"))}>
+          <Link href="/image-library" onClick={() => setActiveSection(null)} className={pill(pathname.startsWith("/image-library"))}>
             Document Library
           </Link>
 

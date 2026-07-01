@@ -12,7 +12,6 @@ type SubItem = { label: string; href: string; icon?: string };
 export type ModuleTab = { label: string; href: string; sub?: SubItem[] };
 
 export const MODULE_TABS: ModuleTab[] = [
-  { label: "Image Library", href: "/image-library" },
   {
     label: "Purchase Request",
     href: "/purchase-request",
