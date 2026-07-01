@@ -412,9 +412,9 @@ export default function EditPurchaseOrderPage() {
         ]}
         actions={
           <>
-            <ButtonLink href={`/purchase-order/${id}`} variant="pill-ghost">Cancel</ButtonLink>
+            <ButtonLink href={`/purchase-order/${id}`} variant="cta-ghost">Cancel</ButtonLink>
             <Button variant="pill-secondary">Save Changes</Button>
-            <Button variant="cta" icon="check">Submit PO</Button>
+            <Button variant="cta-sunset" icon="check">Submit PO</Button>
           </>
         }
       />

@@ -185,7 +185,7 @@ export default function TestSamplePage() {
                 visibleColumns={visibleColumns}
                 onVisibilityChange={setVisibleColumns}
               />
-              <Button variant="outlined" icon="download">
+              <Button variant="cta-secondary" icon="download">
                 Export CSV
               </Button>
             </>

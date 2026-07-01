@@ -60,7 +60,7 @@ export function DashboardPageHeader({
               <>
                 <div className="w-px h-4 bg-gray-200" />
                 <Link href={buttonHref}>
-                  <Button variant="cta" icon="add">{buttonText}</Button>
+                  <Button variant="cta-sunset" icon="add">{buttonText}</Button>
                 </Link>
               </>
             )}

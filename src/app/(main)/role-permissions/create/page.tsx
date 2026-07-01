@@ -55,7 +55,7 @@ export default function CreateRolePage() {
         stats={[{ label: "Permissions selected", value: String(totalActive) }]}
         actions={
           <>
-            <ButtonLink href="/role-permissions" variant="pill-ghost">Cancel</ButtonLink>
+            <ButtonLink href="/role-permissions" variant="cta-ghost">Cancel</ButtonLink>
             <button className="btn-brand-pill">
               <Icon name="check" size={14} />
               Create Role

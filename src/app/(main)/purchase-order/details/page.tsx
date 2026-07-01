@@ -545,7 +545,7 @@ export default function PurchaseOrderDetailsPage() {
               >
                 Edit PO
               </ButtonLink>
-              <Button variant="primary" icon="send">
+              <Button variant="cta-sunset" icon="send">
                 Submit
               </Button>
             </>

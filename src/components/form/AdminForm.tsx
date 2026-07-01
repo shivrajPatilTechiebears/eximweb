@@ -96,13 +96,12 @@ export function AdminForm({ mode, adminId }: AdminFormProps) {
           isView ? (
             <StatusBadge label="Read Only" color="warning" />
           ) : (
-            <div className="flex items-center gap-3">
-              <StatusBadge label={isCreate ? "New Admin" : "Editing"} color="info" pulse />
-              <ProgressPill steps={steps} />
-            </div>
+            <StatusBadge label={isCreate ? "New Admin" : "Editing"} color="info" pulse />
           )
         }
       />
+
+      {!isView && <ProgressPill steps={steps} />}
 
       <main className="flex-1 px-6 py-4 pb-20 space-y-3">
         <AdminDetails
@@ -129,7 +128,7 @@ export function AdminForm({ mode, adminId }: AdminFormProps) {
           actions={
             <>
               <ButtonLink href="/admin-management" variant="pill-ghost">Back</ButtonLink>
-              <ButtonLink href={`/admin-management/${adminId}/edit`} variant="pill-primary">
+              <ButtonLink href={`/admin-management/${adminId}/edit`} variant="cta-sunset">
                 Edit Admin
               </ButtonLink>
             </>
@@ -142,9 +141,9 @@ export function AdminForm({ mode, adminId }: AdminFormProps) {
           stats={[{ label: "Fields filled", value: `${filledCount} / ${totalFields}` }]}
           actions={
             <>
-              <ButtonLink href="/admin-management" variant="pill-ghost">Cancel</ButtonLink>
+              <ButtonLink href="/admin-management" variant="cta-ghost">Cancel</ButtonLink>
               {isCreate && <Button variant="pill-secondary">Save as Draft</Button>}
-              <Button variant="pill-primary" icon="check">
+              <Button variant="cta-sunset" icon="check">
                 {isCreate ? "Create Admin" : "Update Admin"}
               </Button>
             </>

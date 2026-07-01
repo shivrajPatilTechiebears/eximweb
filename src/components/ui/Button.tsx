@@ -1,12 +1,21 @@
 import React from "react";
 import { Icon } from "./Icon";
 
-export type ButtonVariant = "cta" | "primary" | "secondary" | "outlined" | "text" | "icon" | "icon-danger" | "add" | "pill-primary" | "pill-secondary" | "pill-ghost" | "brand" | "danger" | "ghost-glass" | "menu-item";
+export type ButtonVariant = "cta" | "cta-secondary" | "cta-ghost" | "cta-sunset" | "primary" | "secondary" | "outlined" | "text" | "icon" | "icon-danger" | "add" | "pill-primary" | "pill-secondary" | "pill-ghost" | "brand" | "danger" | "ghost-glass" | "menu-item";
 
 export const buttonVariantStyles: Record<ButtonVariant, string> = {
   /** Gradient pill CTA — primary action in page headers and key surfaces */
   cta:
     "btn-cta",
+  /** Glass outline pill, gradient-tinted — Cancel or other low-emphasis actions beside a cta button */
+  "cta-secondary":
+    "btn-cta-secondary",
+  /** Plain text ghost — lowest emphasis, Cancel links with no border/bg */
+  "cta-ghost":
+    "btn-cta-ghost",
+  /** Plum-to-peach "sunset" gradient pill, sourced from FloatingNavbar/SecondaryNav's own brand tones — confirm action (e.g. Submit) beside violet secondary actions */
+  "cta-sunset":
+    "btn-cta-sunset",
   primary:
     "flex items-center gap-1 px-3 h-8 bg-gradient-to-br from-primary to-surface-tint text-white font-bold text-[11px] rounded shadow-sm hover:opacity-90 transition-all active:scale-[0.98]",
   secondary:

@@ -116,7 +116,7 @@ export function CompanyForm({ mode, companyId }: CompanyFormProps) {
           actions={
             <>
               <ButtonLink href="/company-management" variant="pill-ghost">Back</ButtonLink>
-              <ButtonLink href={`/company-management/${companyId}/edit`} variant="pill-primary">
+              <ButtonLink href={`/company-management/${companyId}/edit`} variant="cta-sunset">
                 Edit Company
               </ButtonLink>
             </>
@@ -129,8 +129,8 @@ export function CompanyForm({ mode, companyId }: CompanyFormProps) {
           stats={[{ label: "Fields filled", value: `${filledCount} / ${totalFields}` }]}
           actions={
             <>
-              <ButtonLink href="/company-management" variant="pill-ghost">Cancel</ButtonLink>
-              <Button variant="pill-primary" icon="check">Update Company</Button>
+              <ButtonLink href="/company-management" variant="cta-ghost">Cancel</ButtonLink>
+              <Button variant="cta-sunset" icon="check">Update Company</Button>
             </>
           }
         />

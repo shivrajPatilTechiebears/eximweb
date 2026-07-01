@@ -256,7 +256,7 @@ export default function PurchaseOrderListPage() {
             visibleColumns={visibleCols}
             onToggle={toggleCol}
           />
-          <Button variant="brand">
+          <Button variant="cta-secondary">
             <Icon name="download" size={13} />
             Export
           </Button>

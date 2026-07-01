@@ -77,13 +77,12 @@ export function OrganisationForm({ mode, organisationId }: OrganisationFormProps
           isView ? (
             <StatusBadge label="Read Only" color="warning" />
           ) : (
-            <div className="flex items-center gap-3">
-              <StatusBadge label={isCreate ? "New Organisation" : "Editing"} color="info" pulse />
-              <ProgressPill steps={steps} />
-            </div>
+            <StatusBadge label={isCreate ? "New Organisation" : "Editing"} color="info" pulse />
           )
         }
       />
+
+      {!isView && <ProgressPill steps={steps} />}
 
       <main className="flex-1 px-6 py-4 pb-20 space-y-3">
         <OrganisationDetails
@@ -98,7 +97,7 @@ export function OrganisationForm({ mode, organisationId }: OrganisationFormProps
           actions={
             <>
               <ButtonLink href="/organisation" variant="pill-ghost">Back</ButtonLink>
-              <ButtonLink href={`/organisation/${organisationId}/edit`} variant="pill-primary">
+              <ButtonLink href={`/organisation/${organisationId}/edit`} variant="cta-sunset">
                 Edit Organisation
               </ButtonLink>
             </>
@@ -111,8 +110,8 @@ export function OrganisationForm({ mode, organisationId }: OrganisationFormProps
           stats={[{ label: "Fields filled", value: `${filledCount} / ${totalFields}` }]}
           actions={
             <>
-              <ButtonLink href="/organisation" variant="pill-ghost">Cancel</ButtonLink>
-              <Button variant="pill-primary" icon="check">
+              <ButtonLink href="/organisation" variant="cta-ghost">Cancel</ButtonLink>
+              <Button variant="cta-sunset" icon="check">
                 {isCreate ? "Create Organisation" : "Update Organisation"}
               </Button>
             </>

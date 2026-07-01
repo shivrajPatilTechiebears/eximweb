@@ -83,13 +83,12 @@ export function EmployeeForm({ mode, employeeId }: EmployeeFormProps) {
           isView ? (
             <StatusBadge label="Read Only" color="warning" />
           ) : (
-            <div className="flex items-center gap-3">
-              <StatusBadge label={isCreate ? "New Employee" : "Editing"} color="info" pulse />
-              <ProgressPill steps={steps} />
-            </div>
+            <StatusBadge label={isCreate ? "New Employee" : "Editing"} color="info" pulse />
           )
         }
       />
+
+      {!isView && <ProgressPill steps={steps} />}
 
       <main className="flex-1 px-6 py-4 pb-20 space-y-3">
         <EmployeeDetails
@@ -105,7 +104,7 @@ export function EmployeeForm({ mode, employeeId }: EmployeeFormProps) {
           actions={
             <>
               <ButtonLink href="/employee-management" variant="pill-ghost">Back</ButtonLink>
-              <ButtonLink href={`/employee-management/${employeeId}/edit`} variant="pill-primary">
+              <ButtonLink href={`/employee-management/${employeeId}/edit`} variant="cta-sunset">
                 Edit Employee
               </ButtonLink>
             </>
@@ -118,8 +117,8 @@ export function EmployeeForm({ mode, employeeId }: EmployeeFormProps) {
           stats={[{ label: "Fields filled", value: `${filledCount} / ${totalFields}` }]}
           actions={
             <>
-              <ButtonLink href="/employee-management" variant="pill-ghost">Cancel</ButtonLink>
-              <Button variant="pill-primary" icon="check">
+              <ButtonLink href="/employee-management" variant="cta-ghost">Cancel</ButtonLink>
+              <Button variant="cta-sunset" icon="check">
                 {isCreate ? "Create Employee" : "Update Employee"}
               </Button>
             </>

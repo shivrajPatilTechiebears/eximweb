@@ -69,13 +69,12 @@ export function DepartmentForm({ mode, departmentId }: DepartmentFormProps) {
           isView ? (
             <StatusBadge label="Read Only" color="warning" />
           ) : (
-            <div className="flex items-center gap-3">
-              <StatusBadge label={isCreate ? "New Department" : "Editing"} color="info" pulse />
-              <ProgressPill steps={steps} />
-            </div>
+            <StatusBadge label={isCreate ? "New Department" : "Editing"} color="info" pulse />
           )
         }
       />
+
+      {!isView && <ProgressPill steps={steps} />}
 
       <main className="flex-1 px-6 py-4 pb-20 space-y-3">
         <DepartmentDetails
@@ -90,7 +89,7 @@ export function DepartmentForm({ mode, departmentId }: DepartmentFormProps) {
           actions={
             <>
               <ButtonLink href="/department" variant="pill-ghost">Back</ButtonLink>
-              <ButtonLink href={`/department/${departmentId}/edit`} variant="pill-primary">
+              <ButtonLink href={`/department/${departmentId}/edit`} variant="cta-sunset">
                 Edit Department
               </ButtonLink>
             </>
@@ -103,8 +102,8 @@ export function DepartmentForm({ mode, departmentId }: DepartmentFormProps) {
           stats={[{ label: "Fields filled", value: `${filledCount} / ${totalFields}` }]}
           actions={
             <>
-              <ButtonLink href="/department" variant="pill-ghost">Cancel</ButtonLink>
-              <Button variant="pill-primary" icon="check">
+              <ButtonLink href="/department" variant="cta-ghost">Cancel</ButtonLink>
+              <Button variant="cta-sunset" icon="check">
                 {isCreate ? "Create Department" : "Update Department"}
               </Button>
             </>

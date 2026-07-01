@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui/Icon";
+import { Button } from "@/components/ui/Button";
 import { DashboardPageHeader } from "@/components/layout/PageHeader";
 import { SearchInput } from "@/components/ui/SearchInput";
 import { ExcelTable, type Column } from "@/components/table/DataTable";
@@ -204,10 +205,10 @@ export default function RolePermissionsPage() {
             visibleColumns={visibleCols}
             onToggle={toggleCol}
           />
-          <button className="btn-brand">
+          <Button variant="cta-secondary">
             <Icon name="download" size={13} />
             Export
-          </button>
+          </Button>
         </div>
 
         <ExcelTable

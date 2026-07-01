@@ -41,6 +41,7 @@ import {
   PrinterIcon,
   SentIcon,
   CheckIcon,
+  SaveIcon,
 } from "@hugeicons/core-free-icons";
 
 // ── Icon name → HugeIcons data map ────────────────────────────────────────────
@@ -107,6 +108,7 @@ const ICON_MAP: Record<string, IconSvgElement> = {
   filter_list:          ListFilter,
   add_photo_alternate:  ImageAdd01Icon,
   check:                CheckIcon,
+  save:                 SaveIcon,
 };
 
 // ── Component ─────────────────────────────────────────────────────────────────

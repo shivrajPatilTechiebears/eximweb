@@ -69,13 +69,12 @@ export function BranchForm({ mode, branchId }: BranchFormProps) {
           isView ? (
             <StatusBadge label="Read Only" color="warning" />
           ) : (
-            <div className="flex items-center gap-3">
-              <StatusBadge label={isCreate ? "New Branch" : "Editing"} color="info" pulse />
-              <ProgressPill steps={steps} />
-            </div>
+            <StatusBadge label={isCreate ? "New Branch" : "Editing"} color="info" pulse />
           )
         }
       />
+
+      {!isView && <ProgressPill steps={steps} />}
 
       <main className="flex-1 px-6 py-4 pb-20 space-y-3">
         <BranchDetails
@@ -90,7 +89,7 @@ export function BranchForm({ mode, branchId }: BranchFormProps) {
           actions={
             <>
               <ButtonLink href="/branch" variant="pill-ghost">Back</ButtonLink>
-              <ButtonLink href={`/branch/${branchId}/edit`} variant="pill-primary">
+              <ButtonLink href={`/branch/${branchId}/edit`} variant="cta-sunset">
                 Edit Branch
               </ButtonLink>
             </>
@@ -103,8 +102,8 @@ export function BranchForm({ mode, branchId }: BranchFormProps) {
           stats={[{ label: "Fields filled", value: `${filledCount} / ${totalFields}` }]}
           actions={
             <>
-              <ButtonLink href="/branch" variant="pill-ghost">Cancel</ButtonLink>
-              <Button variant="pill-primary" icon="check">
+              <ButtonLink href="/branch" variant="cta-ghost">Cancel</ButtonLink>
+              <Button variant="cta-sunset" icon="check">
                 {isCreate ? "Create Branch" : "Update Branch"}
               </Button>
             </>

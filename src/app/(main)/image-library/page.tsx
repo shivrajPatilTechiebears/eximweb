@@ -341,7 +341,7 @@ export default function ImageLibraryPage() {
               })}
             </div>
             <div className="w-px h-4 bg-gray-200/80 shrink-0" />
-            <Button variant="secondary" icon="download" className="h-7 text-[10px] shrink-0">
+            <Button variant="cta-secondary" icon="download" className="h-7 text-[10px] shrink-0">
               Export
             </Button>
           </div>
