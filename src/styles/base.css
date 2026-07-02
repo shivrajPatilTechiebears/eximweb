@@ -82,6 +82,13 @@ body::before {
   border-radius: 4px;
 }
 
+/* ── Hide browser native password reveal button ─────────────────────────── */
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
 /* ── Pointer cursor on all interactive elements ──────────────────────────── */
 
 a,
