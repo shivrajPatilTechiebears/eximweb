@@ -1,15 +1,88 @@
 "use client";
 
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { createContext, useContext, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { Icon } from "@/components/ui/Icon";
 import { Button } from "@/components/ui/Button";
+
+// ─── Breadcrumb trail (shared between DashboardPageHeader and in-page toolbars) ─
+
+interface BreadcrumbsProps {
+  items: { label: string; href?: string }[];
+  className?: string;
+  /** "default" for light toolbar/header surfaces, "muted" for tinted panels like the sidebar */
+  variant?: "default" | "muted";
+}
+
+export function Breadcrumbs({ items, className = "", variant = "default" }: BreadcrumbsProps) {
+  const isMuted = variant === "muted";
+
+  return (
+    <div
+      className={`flex items-center gap-1 flex-wrap ${
+        isMuted ? "text-[9px] text-[#884D70]/55 font-semibold" : "text-[10px] text-gray-400"
+      } ${className}`}
+    >
+      {items.map((crumb, i) => (
+        <span key={crumb.label} className="flex items-center gap-1">
+          {i > 0 && (
+            <svg className={`${isMuted ? "w-2 h-2 opacity-60" : "w-2.5 h-2.5"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
+            </svg>
+          )}
+          {crumb.href ? (
+            <Link
+              href={crumb.href}
+              className={isMuted ? "hover:text-[#884D70] transition-colors" : "text-gray-500 hover:text-slate-600 transition-colors"}
+            >
+              {crumb.label}
+            </Link>
+          ) : (
+            <span className={isMuted ? "text-[#884D70]/85" : "text-slate-600 font-medium"}>{crumb.label}</span>
+          )}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+// ─── Shared dashboard header slot (mounted once in the (main) layout) ─────────
+//
+// DashboardHeaderSlot renders the single glass bar shared by every page under
+// (main). Pages that need breadcrumbs / right-side content render
+// <DashboardPageHeader ... /> as before — it portals its content into that
+// shared bar instead of rendering its own, so pages with nothing to show
+// (the common case) don't need to render anything at all.
+
+const HeaderSlotCtx = createContext<{
+  slotNode: HTMLDivElement | null;
+  setSlotNode: (node: HTMLDivElement | null) => void;
+}>({ slotNode: null, setSlotNode: () => {} });
+
+export function DashboardHeaderProvider({ children }: { children: ReactNode }) {
+  const [slotNode, setSlotNode] = useState<HTMLDivElement | null>(null);
+  return (
+    <HeaderSlotCtx.Provider value={{ slotNode, setSlotNode }}>
+      {children}
+    </HeaderSlotCtx.Provider>
+  );
+}
+
+export function DashboardHeaderSlot() {
+  const { setSlotNode } = useContext(HeaderSlotCtx);
+  return (
+    <div
+      ref={setSlotNode}
+      className="pt-16 card-header-glass px-10 py-12 flex items-center justify-between shrink-0"
+    />
+  );
+}
 
 // ─── Dashboard-style page header (list pages with breadcrumbs) ────────────────
 
 interface DashboardPageHeaderProps {
-  title: string;
-  breadcrumbs: { label: string; href?: string }[];
+  breadcrumbs?: { label: string; href?: string }[];
   summary?: string;
   buttonText?: string;
   buttonHref?: string;
@@ -17,38 +90,18 @@ interface DashboardPageHeaderProps {
 }
 
 export function DashboardPageHeader({
-  title,
-  breadcrumbs,
+  breadcrumbs = [],
   summary,
   buttonText,
   buttonHref,
   rightContent,
 }: DashboardPageHeaderProps) {
-  const topPadding = "pt-16";
+  const { slotNode } = useContext(HeaderSlotCtx);
+  if (!slotNode) return null;
 
-  return (
-    <div className={`${topPadding} card-header-glass px-10 pt-5 pb-4 flex items-center justify-between shrink-0`}>
-      <div>
-        <div className="flex items-center gap-1.5 text-[10px] text-gray-400 mb-0.5">
-          {breadcrumbs.map((crumb, i) => (
-            <span key={crumb.label} className="flex items-center gap-1.5">
-              {i > 0 && (
-                <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
-                </svg>
-              )}
-              {crumb.href ? (
-                <Link href={crumb.href} className="hover:text-slate-600 transition-colors">
-                  {crumb.label}
-                </Link>
-              ) : (
-                <span className="text-slate-600 font-medium">{crumb.label}</span>
-              )}
-            </span>
-          ))}
-        </div>
-        <p className="text-sm font-bold text-slate-800">{title}</p>
-      </div>
+  return createPortal(
+    <>
+      <Breadcrumbs items={breadcrumbs} />
 
       <div className="flex items-center gap-2.5">
         {rightContent ?? (
@@ -67,7 +120,8 @@ export function DashboardPageHeader({
           </>
         )}
       </div>
-    </div>
+    </>,
+    slotNode
   );
 }
 

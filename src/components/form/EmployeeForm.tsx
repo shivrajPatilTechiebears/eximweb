@@ -65,7 +65,6 @@ export function EmployeeForm({ mode, employeeId }: EmployeeFormProps) {
     { label: "Review & Submit", complete: false },
   ];
 
-  const title     = isCreate ? "Create Employee" : isView ? "View Employee" : "Edit Employee";
   const lastCrumb = isCreate ? "Create" : isView ? "View" : "Edit";
 
   return (
@@ -73,7 +72,6 @@ export function EmployeeForm({ mode, employeeId }: EmployeeFormProps) {
 
 
       <DashboardPageHeader
-        title={title}
         breadcrumbs={[
           { label: "Dashboard",    href: "/" },
           { label: "Employee Mgmt", href: "/employee-management" },

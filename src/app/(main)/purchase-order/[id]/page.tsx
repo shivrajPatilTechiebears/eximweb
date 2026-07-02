@@ -151,10 +151,9 @@ export default function ViewPurchaseOrderPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col antialiased text-slate-800">
+    <div className="flex-1 flex flex-col antialiased text-slate-800">
 
       <DashboardPageHeader
-        title={po.poNumber}
         breadcrumbs={[
           { label: "Dashboard",       href: "/" },
           { label: "Purchase Orders", href: "/purchase-order" },

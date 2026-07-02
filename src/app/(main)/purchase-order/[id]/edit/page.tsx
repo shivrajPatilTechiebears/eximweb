@@ -238,12 +238,11 @@ export default function EditPurchaseOrderPage() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col antialiased text-slate-800 bg-transparent">
+    <div className="flex-1 flex flex-col antialiased text-slate-800 bg-transparent">
 
 
       {/* ═══ PAGE HEADER ═══ */}
       <DashboardPageHeader
-        title={`Edit · ${po.poNumber}`}
         breadcrumbs={[
           { label: "Dashboard",       href: "/" },
           { label: "Purchase Orders", href: "/purchase-order" },

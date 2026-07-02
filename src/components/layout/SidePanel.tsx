@@ -25,6 +25,7 @@ export interface SidePanelStorage {
 interface SidePanelProps {
   sections: SidePanelSection[];
   storage?: SidePanelStorage;
+  topContent?: ReactNode;
 }
 
 // ── Internal nav item ─────────────────────────────────────────────────────────
@@ -48,11 +49,13 @@ function NavItem({ icon, label, count, active, onClick }: SidePanelItem) {
 
 // ── SidePanel ─────────────────────────────────────────────────────────────────
 
-export function SidePanel({ sections, storage }: SidePanelProps) {
+export function SidePanel({ sections, storage, topContent }: SidePanelProps) {
   const pct = storage ? Math.round((storage.usedGB / storage.totalGB) * 100) : 0;
 
   return (
     <aside className="nav-panel w-56 shrink-0 flex flex-col">
+
+      {topContent && <div className="px-3 pt-3 pb-1">{topContent}</div>}
 
       {/* Sections */}
       <div className="flex flex-col gap-3 px-2 py-3 flex-1">

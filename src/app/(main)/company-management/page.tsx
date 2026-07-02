@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui/Icon";
 import { Button } from "@/components/ui/Button";
-import { DashboardPageHeader } from "@/components/layout/PageHeader";
+import { Breadcrumbs } from "@/components/layout/PageHeader";
 import { SearchInput } from "@/components/ui/SearchInput";
 import { ExcelTable, type Column } from "@/components/table/DataTable";
 import { TableActions } from "@/components/table/TableActions";
@@ -170,21 +170,14 @@ export default function CompanyManagementPage() {
   // ── Render ────────────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen flex flex-col antialiased text-slate-800">
+    <div className="flex-1 flex flex-col antialiased text-slate-800">
 
-
-      <DashboardPageHeader
-        title="Company Management"
-        breadcrumbs={[
-          { label: "Dashboard",          href: "/" },
-          { label: "Company Management" },
-        ]}
-      />
 
       <main className="flex-1 px-6 pt-4 pb-4">
 
         {/* ── Controls ── */}
         <div className="flex items-center px-1 pb-2 gap-2">
+          <Breadcrumbs items={[{ label: "Dashboard", href: "/" }, { label: "Company Management" }]} />
           <div className="flex-1" />
           <SearchInput value={search} onChange={handleSearchChange} placeholder="Search companies…" />
           <div className="w-px h-4 bg-gray-300/60 shrink-0" />

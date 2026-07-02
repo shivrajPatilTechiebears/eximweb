@@ -52,14 +52,12 @@ export function GroupCompanyForm({ mode, groupCompanyId }: GroupCompanyFormProps
     },
   ];
 
-  const title     = isCreate ? "Create Group Company" : isView ? "View Group Company" : "Edit Group Company";
   const lastCrumb = isCreate ? "Create" : isView ? "View" : "Edit";
 
   return (
     <div className="min-h-screen flex flex-col antialiased text-slate-800 bg-transparent">
 
       <DashboardPageHeader
-        title={title}
         breadcrumbs={[
           { label: "Dashboard",       href: "/" },
           { label: "Group of Company", href: "/group-company" },

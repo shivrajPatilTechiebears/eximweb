@@ -78,7 +78,6 @@ export function AdminForm({ mode, adminId }: AdminFormProps) {
     { label: "Review & Submit", complete: false },
   ];
 
-  const title     = isCreate ? "Create Admin" : isView ? "View Admin" : "Edit Admin";
   const lastCrumb = isCreate ? "Create" : isView ? "View" : "Edit";
 
   return (
@@ -86,7 +85,6 @@ export function AdminForm({ mode, adminId }: AdminFormProps) {
 
 
       <DashboardPageHeader
-        title={title}
         breadcrumbs={[
           { label: "Dashboard",  href: "/" },
           { label: "Admin Mgmt", href: "/admin-management" },

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { DashboardPageHeader } from "@/components/layout/PageHeader";
+import { useState, useMemo, useRef, useLayoutEffect } from "react";
+import Link from "next/link";
+import { Breadcrumbs } from "@/components/layout/PageHeader";
 import { SearchInput } from "@/components/ui/SearchInput";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
@@ -189,6 +190,41 @@ const tagIcon = (
   </svg>
 );
 
+// ── Fit-count measuring: shows only as many items as fully fit on one line ─────
+
+function useVisibleFitCount(itemCount: number, gapPx: number) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const measureRef = useRef<HTMLDivElement>(null);
+  const [visibleCount, setVisibleCount] = useState(itemCount);
+
+  useLayoutEffect(() => {
+    const container = containerRef.current;
+    const measure = measureRef.current;
+    if (!container || !measure) return;
+
+    const recalc = () => {
+      const available = container.clientWidth;
+      const items = Array.from(measure.children) as HTMLElement[];
+      let used = 0;
+      let fit = 0;
+      for (const item of items) {
+        const next = used + item.offsetWidth + (fit > 0 ? gapPx : 0);
+        if (next > available) break;
+        used = next;
+        fit++;
+      }
+      setVisibleCount(fit);
+    };
+
+    recalc();
+    const ro = new ResizeObserver(recalc);
+    ro.observe(container);
+    return () => ro.disconnect();
+  }, [itemCount, gapPx]);
+
+  return { containerRef, measureRef, visibleCount };
+}
+
 // ── Page ───────────────────────────────────────────────────────────────────────
 
 export default function ImageLibraryPage() {
@@ -199,6 +235,8 @@ export default function ImageLibraryPage() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [view, setView] = useState<ViewMode>("list");
   const [currentPage, setCurrentPage] = useState(1);
+  const { containerRef: quickAccessRef, measureRef: quickAccessMeasureRef, visibleCount: quickAccessVisibleCount } =
+    useVisibleFitCount(QUICK_ACCESS.length, 4);
 
   const filtered = useMemo(() => {
     let files = [...ALL_FILES];
@@ -345,22 +383,12 @@ export default function ImageLibraryPage() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col antialiased text-slate-800">
-
-      <DashboardPageHeader
-        title="Image Library"
-        breadcrumbs={[
-          { label: "Dashboard", href: "/" },
-          { label: "Image Library" },
-        ]}
-        summary={`${ALL_FILES.length} documents`}
-        buttonText="Upload"
-        buttonHref="#"
-      />
+    <div className="flex-1 flex flex-col antialiased text-slate-800">
 
       <div className="flex flex-1">
 
         <SidePanel
+          topContent={<Breadcrumbs variant="muted" items={[{ label: "Dashboard", href: "/" }, { label: "Image Library" }]} />}
           sections={sidebarSections}
           storage={{ usedGB: 7.2, totalGB: 10 }}
         />
@@ -380,24 +408,41 @@ export default function ImageLibraryPage() {
             <span className="text-[9px] font-black uppercase tracking-widest text-slate-600 shrink-0">
               Quick Access:
             </span>
-            <div className="flex items-center gap-1 flex-1 min-w-0 flex-wrap">
-              {QUICK_ACCESS.map((type) => {
-                const { dot, label } = DOC_TYPE_CFG[type];
-                return (
-                  <ToggleChip
-                    key={type}
-                    label={label}
-                    active={quickFilter === type}
-                    onClick={() => handleQuickFilter(type)}
-                    dotClassName={dot}
-                  />
-                );
-              })}
+            <div ref={quickAccessRef} className="relative flex-1 min-w-0 h-5">
+              {/* Hidden measuring row: renders every chip at natural width to decide how many fit */}
+              <div
+                ref={quickAccessMeasureRef}
+                className="absolute invisible flex items-center gap-1 whitespace-nowrap pointer-events-none"
+                aria-hidden="true"
+              >
+                {QUICK_ACCESS.map((type) => {
+                  const { dot, label } = DOC_TYPE_CFG[type];
+                  return <ToggleChip key={type} label={label} active={quickFilter === type} onClick={() => {}} dotClassName={dot} />;
+                })}
+              </div>
+
+              <div className="flex items-center gap-1">
+                {QUICK_ACCESS.slice(0, quickAccessVisibleCount).map((type) => {
+                  const { dot, label } = DOC_TYPE_CFG[type];
+                  return (
+                    <ToggleChip
+                      key={type}
+                      label={label}
+                      active={quickFilter === type}
+                      onClick={() => handleQuickFilter(type)}
+                      dotClassName={dot}
+                    />
+                  );
+                })}
+              </div>
             </div>
             <div className="w-px h-4 bg-gray-200/80 shrink-0" />
             <Button variant="cta-secondary" icon="download" className="h-7 text-[10px] shrink-0">
               Export
             </Button>
+            <Link href="#">
+              <Button variant="cta-sunset" icon="add" className="h-7 text-[10px] shrink-0">Upload</Button>
+            </Link>
             <ViewToggle view={view} onChange={setView} className="shrink-0" />
           </div>
 

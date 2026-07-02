@@ -525,8 +525,8 @@ function RelatedActivityTabs() {
 
 export default function PurchaseOrderDetailsPage() {
   return (
-    <div className="min-h-screen flex flex-col antialiased text-slate-800">
-      <div className="pt-16 p-4 pb-20 flex-1 flex flex-col gap-3">
+    <div className="flex-1 flex flex-col antialiased text-slate-800">
+      <div className="p-4 pb-20 flex-1 flex flex-col gap-3">
         <PageHeader
           title="Purchase Order Details"
           description="Status, line items, schedules, shipments, samples, receipts, and bookings."

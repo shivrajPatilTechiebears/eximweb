@@ -16,17 +16,17 @@ export const MODULE_TABS: ModuleTab[] = [
     label: "Purchase Request",
     href: "/purchase-request",
     sub: [
-      { label: "All Requests",  href: "/purchase-request",         icon: "format_list_bulleted" },
-      { label: "Open Requests", href: "/purchase-request/open",    icon: "pending_actions" },
-      { label: "PR Details",    href: "/purchase-request/details", icon: "description" },
+      { label: "All Requests", href: "/purchase-request", icon: "format_list_bulleted" },
+      { label: "Open Requests", href: "/purchase-request/open", icon: "pending_actions" },
+      { label: "PR Details", href: "/purchase-request/details", icon: "description" },
     ],
   },
   {
     label: "Purchase Order",
     href: "/purchase-order",
     sub: [
-      { label: "All Orders",    href: "/purchase-order",         icon: "format_list_bulleted" },
-      { label: "Open Orders",   href: "/purchase-order/open",    icon: "pending_actions" },
+      { label: "All Orders", href: "/purchase-order", icon: "format_list_bulleted" },
+      { label: "Open Orders", href: "/purchase-order/open", icon: "pending_actions" },
       { label: "Order Details", href: "/purchase-order/details", icon: "receipt_long" },
     ],
   },
@@ -34,31 +34,31 @@ export const MODULE_TABS: ModuleTab[] = [
     label: "Shipments",
     href: "/shipments",
     sub: [
-      { label: "All Shipments", href: "/shipments",           icon: "format_list_bulleted" },
-      { label: "Confirmed",     href: "/shipments/confirmed", icon: "task_alt" },
-      { label: "Intransit",     href: "/shipments/intransit", icon: "directions_boat" },
+      { label: "All Shipments", href: "/shipments", icon: "format_list_bulleted" },
+      { label: "Confirmed", href: "/shipments/confirmed", icon: "task_alt" },
+      { label: "Intransit", href: "/shipments/intransit", icon: "directions_boat" },
     ],
   },
   {
     label: "Bookings",
     href: "/bookings",
     sub: [
-      { label: "All Bookings", href: "/bookings",            icon: "format_list_bulleted" },
-      { label: "Confirmed",    href: "/bookings/confirmed",  icon: "event_available" },
-      { label: "Intransit",    href: "/bookings/intransit",  icon: "flight_takeoff" },
+      { label: "All Bookings", href: "/bookings", icon: "format_list_bulleted" },
+      { label: "Confirmed", href: "/bookings/confirmed", icon: "event_available" },
+      { label: "Intransit", href: "/bookings/intransit", icon: "flight_takeoff" },
     ],
   },
 ];
 
 export const WHITE_LABEL_TABS: ModuleTab[] = [
-  { label: "Admin Mgmt",        href: "/admin-management"   },
-  { label: "Organisation",      href: "/organisation"       },
-  { label: "Group of Company",  href: "/group-company"      },
-  { label: "Company Mgmt",      href: "/company-management" },
-  { label: "Branch",            href: "/branch"             },
-  { label: "Department",        href: "/department"         },
-  { label: "Role & Permissions", href: "/role-permissions"  },
-  { label: "Employee Mgmt",     href: "/employee-management"},
+  { label: "Admin Mgmt", href: "/admin-management" },
+  { label: "Organisation", href: "/organisation" },
+  { label: "Group of Company", href: "/group-company" },
+  { label: "Company Mgmt", href: "/company-management" },
+  { label: "Branch", href: "/branch" },
+  { label: "Department", href: "/department" },
+  { label: "Role & Permissions", href: "/role-permissions" },
+  { label: "Employee Mgmt", href: "/employee-management" },
 ];
 
 // ── Single tab pill ───────────────────────────────────────────────────────────
@@ -100,17 +100,16 @@ export function SecondaryNav() {
   if (!hoveredSection) return null;
 
   const isWhiteLabel = hoveredSection === "whiteLabel";
-  const tabs         = isWhiteLabel ? WHITE_LABEL_TABS : MODULE_TABS;
-  const groupKey     = isWhiteLabel ? "wl" : "cu";
+  const tabs = isWhiteLabel ? WHITE_LABEL_TABS : MODULE_TABS;
+  const groupKey = isWhiteLabel ? "wl" : "cu";
 
   return (
     // left-1/2 -translate-x-1/2 (instead of inset-x-0 + flex justify-center) makes this
     // box shrink-wrap to its own content and centers it by its own width, so the fixed
     // box never extends past the visible pill — no dead zone to swallow clicks elsewhere.
     <div
-      className={`fixed top-0 left-1/2 -translate-x-1/2 z-40 max-w-[calc(100vw-2rem)] transition-transform duration-500 ease-in-out ${
-        navbarVisible ? "translate-y-15" : "translate-y-0"
-      }`}
+      className={`fixed top-0 left-1/2 -translate-x-1/2 z-40 max-w-[calc(100vw-2rem)] transition-transform duration-500 ease-in-out ${navbarVisible ? "translate-y-14" : "translate-y-0"
+        }`}
       onMouseEnter={() => enterHover(hoveredSection)}
       onMouseLeave={leaveHover}
     >

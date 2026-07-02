@@ -76,7 +76,6 @@ export function CompanyForm({ mode, companyId }: CompanyFormProps) {
     (logoUrl ? 1 : 0) +
     permissions.length;
 
-  const title     = isView ? "View Company" : "Edit Company";
   const lastCrumb = isView ? "View" : "Edit";
 
   return (
@@ -84,7 +83,6 @@ export function CompanyForm({ mode, companyId }: CompanyFormProps) {
 
 
       <DashboardPageHeader
-        title={title}
         breadcrumbs={[
           { label: "Dashboard",          href: "/" },
           { label: "Company Mgmt",       href: "/company-management" },

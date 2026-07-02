@@ -16,10 +16,9 @@ export default function CreateRolePage() {
   const [description, setDescription]  = useState("");
 
   return (
-    <div className="min-h-screen flex flex-col antialiased text-slate-800 bg-transparent">
+    <div className="flex-1 flex flex-col antialiased text-slate-800 bg-transparent">
 
       <DashboardPageHeader
-        title="Create Role"
         breadcrumbs={[
           { label: "Dashboard",          href: "/"                 },
           { label: "Role & Permissions", href: "/role-permissions" },
