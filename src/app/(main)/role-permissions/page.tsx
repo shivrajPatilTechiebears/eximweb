@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui/Icon";
 import { Button } from "@/components/ui/Button";
-import { DashboardPageHeader } from "@/components/layout/PageHeader";
+import { Breadcrumbs } from "@/components/layout/PageHeader";
 import { SearchInput } from "@/components/ui/SearchInput";
 import { ExcelTable, type Column } from "@/components/table/DataTable";
 import { TableActions } from "@/components/table/TableActions";
@@ -179,24 +179,14 @@ export default function RolePermissionsPage() {
   // ── Render ────────────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen flex flex-col antialiased text-slate-800">
+    <div className="flex-1 flex flex-col antialiased text-slate-800">
 
-
-      <DashboardPageHeader
-        title="Role & Permissions"
-        breadcrumbs={[
-          { label: "Dashboard",         href: "/" },
-          { label: "Role & Permissions" },
-        ]}
-        summary={`${roles.length} total`}
-        buttonText="Create Role"
-        buttonHref="/role-permissions/create"
-      />
 
       <main className="flex-1 px-6 pt-4 pb-4">
 
         {/* Controls row */}
         <div className="flex items-center px-1 pb-2 gap-2">
+          <Breadcrumbs items={[{ label: "Dashboard", href: "/" }, { label: "Role & Permissions" }]} />
           <div className="flex-1" />
           <SearchInput value={search} onChange={handleSearchChange} placeholder="Search roles…" />
           <div className="w-px h-4 bg-gray-300/60 shrink-0" />
@@ -209,6 +199,9 @@ export default function RolePermissionsPage() {
             <Icon name="download" size={13} />
             Export
           </Button>
+          <Link href="/role-permissions/create">
+            <Button variant="cta-sunset" icon="add">Create Role</Button>
+          </Link>
         </div>
 
         <ExcelTable

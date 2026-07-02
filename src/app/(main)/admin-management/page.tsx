@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui/Icon";
 import { Button } from "@/components/ui/Button";
-import { DashboardPageHeader } from "@/components/layout/PageHeader";
+import { Breadcrumbs } from "@/components/layout/PageHeader";
 import { SearchInput } from "@/components/ui/SearchInput";
 import { TabbedTable, type TabbedTableTab } from "@/components/table/TabbedTable";
 import { type Column } from "@/components/table/DataTable";
@@ -219,24 +219,14 @@ export default function AdminManagementPage() {
   // ── Render ────────────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen flex flex-col antialiased text-slate-800">
+    <div className="flex-1 flex flex-col antialiased text-slate-800">
 
-
-      <DashboardPageHeader
-        title="Admin Management"
-        breadcrumbs={[
-          { label: "Dashboard",        href: "/" },
-          { label: "Admin Management" },
-        ]}
-        summary={`${admins.length} total`}
-        buttonText="Create Admin"
-        buttonHref="/admin-management/create"
-      />
 
       <main className="flex-1 px-6 pt-4 pb-4">
 
         {/* Controls row */}
         <div className="flex items-center px-1 pb-2 gap-2">
+          <Breadcrumbs items={[{ label: "Dashboard", href: "/" }, { label: "Admin Management" }]} />
           <div className="flex-1" />
           <SearchInput value={search} onChange={handleSearchChange} placeholder="Search admins…" />
           <div className="w-px h-4 bg-gray-300/60 shrink-0" />
@@ -249,6 +239,9 @@ export default function AdminManagementPage() {
             <Icon name="download" size={13} />
             Export
           </Button>
+          <Link href="/admin-management/create">
+            <Button variant="cta-sunset" icon="add">Create Admin</Button>
+          </Link>
         </div>
 
         <TabbedTable

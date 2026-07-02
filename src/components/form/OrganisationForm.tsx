@@ -60,14 +60,12 @@ export function OrganisationForm({ mode, organisationId }: OrganisationFormProps
     },
   ];
 
-  const title     = isCreate ? "Create Organisation" : isView ? "View Organisation" : "Edit Organisation";
   const lastCrumb = isCreate ? "Create" : isView ? "View" : "Edit";
 
   return (
     <div className="min-h-screen flex flex-col antialiased text-slate-800 bg-transparent">
 
       <DashboardPageHeader
-        title={title}
         breadcrumbs={[
           { label: "Dashboard",    href: "/" },
           { label: "Organisation", href: "/organisation" },

@@ -2,7 +2,7 @@
 
 import { PurchaseOrdersTable } from "@/components/tables/PurchaseOrdersTable";
 import { StatTile } from "@/components/ui/StatTile";
-import { DashboardPageHeader } from "@/components/layout/PageHeader";
+import { Breadcrumbs } from "@/components/layout/PageHeader";
 import { PoTrendChartCard } from "@/components/cards/PoTrendChartCard";
 import { OrderSummaryCard } from "@/components/cards/OrderSummaryCard";
 import { OrderBreakdownCard } from "@/components/cards/OrderBreakdownCard";
@@ -55,16 +55,14 @@ const STAT_TILES = [
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen flex flex-col antialiased text-slate-800 bg-transparent">
-
-      {/* ═══════ GREETING + ACTIVE POs STRIP ═══════ */}
-      <DashboardPageHeader
-        title="Welcome Back, Shivam Chaudhari 👋"
-        breadcrumbs={[{ label: "📅 Wednesday, 24 March 2026" }]}
-      />
+    <div className="flex-1 flex flex-col antialiased text-slate-800 bg-transparent">
 
       {/* ═══════════════════════ CONTENT GRID ═══════════════════════ */}
       <main className="flex-1 px-6 py-3 grid grid-cols-12 gap-3 content-start">
+
+        <div className="col-span-12">
+          <Breadcrumbs items={[{ label: "📅 Wednesday, 24 March 2026" }]} />
+        </div>
 
         {/* ── Stat tiles ── */}
         {STAT_TILES.map((tile) => (

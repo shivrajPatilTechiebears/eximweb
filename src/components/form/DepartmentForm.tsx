@@ -52,14 +52,12 @@ export function DepartmentForm({ mode, departmentId }: DepartmentFormProps) {
     },
   ];
 
-  const title     = isCreate ? "Create Department" : isView ? "View Department" : "Edit Department";
   const lastCrumb = isCreate ? "Create" : isView ? "View" : "Edit";
 
   return (
     <div className="min-h-screen flex flex-col antialiased text-slate-800 bg-transparent">
 
       <DashboardPageHeader
-        title={title}
         breadcrumbs={[
           { label: "Dashboard",  href: "/" },
           { label: "Department", href: "/department" },

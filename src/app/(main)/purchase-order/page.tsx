@@ -3,8 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/ui/Icon";
-import { DashboardPageHeader } from "@/components/layout/PageHeader";
-import StatCard from "@/components/cards/StatCard";
+import { Breadcrumbs } from "@/components/layout/PageHeader";
 import { SearchInput } from "@/components/ui/SearchInput";
 import { ExcelTable, type Column } from "@/components/table/DataTable";
 import { TableActions } from "@/components/table/TableActions";
@@ -14,13 +13,6 @@ import { Button } from "@/components/ui/Button";
 import { TabbedTable } from "@/components/table/TabbedTable";
 
 // ── Data ───────────────────────────────────────────────────────────────────────
-
-const STAT_CARDS = [
-  { title: "Total POs", value: "6", badge: "+12%", badgeClassName: "badge-success", accentColor: "#884D70", subtitle: "All time" },
-  { title: "Pending", value: "1", badge: "17%", badgeClassName: "badge-warning", accentColor: "#fbbf24", subtitle: "Awaiting approval" },
-  { title: "Created", value: "3", badge: "+50%", badgeClassName: "badge-success", accentColor: "#34d399", subtitle: "Processed orders" },
-  { title: "Approved", value: "1", badge: "17%", badgeClassName: "badge-info", accentColor: "#38bdf8", subtitle: "Ready to dispatch" },
-];
 
 type POStatus = "created" | "pending";
 
@@ -226,40 +218,29 @@ export default function PurchaseOrderListPage() {
   // ── Render ────────────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen flex flex-col antialiased text-slate-800">
+    <div className="flex-1 flex flex-col antialiased text-slate-800">
 
-
-      <DashboardPageHeader
-        title="Purchase Orders"
-        breadcrumbs={[
-          { label: "Dashboard", href: "/" },
-          { label: "Purchase Orders" },
-        ]}
-        summary={`${orders.length} total · ${orders.filter((o) => o.status === "pending").length} pending`}
-        buttonText="Create PO"
-        buttonHref="/purchase-order/create"
-      />
-
-      <div className="px-6 pt-4 pb-0 grid grid-cols-4 gap-3">
-        {STAT_CARDS.map((card) => (
-          <StatCard key={card.title} {...card} />
-        ))}
-      </div>
 
       <main className="flex-1 px-6 pt-3 pb-4 flex flex-col gap-2">
 
-        <div className="flex items-center justify-end gap-2 px-1">
-          <SearchInput value={search} onChange={handleSearchChange} placeholder="Search orders…" />
-          <div className="w-px h-4 bg-gray-300/60 shrink-0" />
-          <ColumnSelector
-            columns={allColumns.filter((c) => c.key !== "actions")}
-            visibleColumns={visibleCols}
-            onToggle={toggleCol}
-          />
-          <Button variant="cta-secondary">
-            <Icon name="download" size={13} />
-            Export
-          </Button>
+        <div className="flex items-center justify-between gap-2 px-1">
+          <Breadcrumbs items={[{ label: "Dashboard", href: "/" }, { label: "Purchase Orders" }]} />
+          <div className="flex items-center gap-2">
+            <SearchInput value={search} onChange={handleSearchChange} placeholder="Search orders…" />
+            <div className="w-px h-4 bg-gray-300/60 shrink-0" />
+            <ColumnSelector
+              columns={allColumns.filter((c) => c.key !== "actions")}
+              visibleColumns={visibleCols}
+              onToggle={toggleCol}
+            />
+            <Button variant="cta-secondary">
+              <Icon name="download" size={13} />
+              Export
+            </Button>
+            <Link href="/purchase-order/create">
+              <Button variant="cta-sunset" icon="add">Create PO</Button>
+            </Link>
+          </div>
         </div>
 
         <TabbedTable

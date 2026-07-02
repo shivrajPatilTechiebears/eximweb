@@ -155,8 +155,8 @@ export default function TestSamplePage() {
     },
   ];
   return (
-    <div className="min-h-screen flex flex-col antialiased text-slate-800">
-      <main className="pt-16 p-6 space-y-5 flex-1 overflow-x-hidden">
+    <div className="flex-1 flex flex-col antialiased text-slate-800">
+      <main className="p-6 space-y-5 flex-1 overflow-x-hidden">
         {/* Metric Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {METRICS.map((metric) => (
