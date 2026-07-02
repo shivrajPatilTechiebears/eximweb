@@ -1,5 +1,5 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
+import Image from "next/image";
 import { Modal } from "./Modal";
 import { Button } from "./Button";
 import { Icon } from "./Icon";
@@ -126,10 +126,12 @@ export function ViewTestSampleModal({ isOpen, onClose, sampleDetails = DEFAULT_S
               <div className="flex gap-2">
                 {sampleDetails.sampleImages.map((image, index) => (
                   <div key={index} className="group relative">
-                    <img
+                    <Image
                       className="w-20 h-20 object-cover rounded border border-outline-variant hover:border-primary transition-colors cursor-pointer"
                       src={image.src}
                       alt={image.label}
+                      width={80}
+                      height={80}
                     />
                     <p className="font-label-caps text-[9px] text-center mt-1 text-on-surface-variant">
                       {image.label}

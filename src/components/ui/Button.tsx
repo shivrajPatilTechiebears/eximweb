@@ -1,7 +1,7 @@
 import React from "react";
 import { Icon } from "./Icon";
 
-export type ButtonVariant = "cta" | "cta-secondary" | "cta-ghost" | "cta-sunset" | "primary" | "secondary" | "outlined" | "text" | "icon" | "icon-danger" | "add" | "pill-primary" | "pill-secondary" | "pill-ghost" | "brand" | "danger" | "ghost-glass" | "menu-item";
+export type ButtonVariant = "cta" | "cta-secondary" | "cta-ghost" | "cta-sunset" | "primary" | "secondary" | "outlined" | "text" | "text-brand" | "icon" | "icon-danger" | "icon-brand" | "icon-brand-danger" | "add" | "pill-primary" | "pill-secondary" | "pill-ghost" | "brand" | "danger" | "ghost-glass" | "menu-item" | "unstyled";
 
 export const buttonVariantStyles: Record<ButtonVariant, string> = {
   /** Gradient pill CTA — primary action in page headers and key surfaces */
@@ -24,10 +24,19 @@ export const buttonVariantStyles: Record<ButtonVariant, string> = {
     "px-3 h-8 border border-primary/30 text-primary font-bold text-[11px] rounded hover:bg-primary/5 transition-colors",
   text:
     "text-primary font-bold text-xs hover:underline transition-colors",
+  /** Brand-colored text link — small inline actions like "Select all" / "Clear selection" */
+  "text-brand":
+    "doc-link-brand font-semibold hover:underline transition-colors",
   icon:
     "btn-icon",
   "icon-danger":
     "btn-icon-danger",
+  /** Icon-only, brand-tinted hover — row/card actions (download, view) */
+  "icon-brand":
+    "doc-action-btn",
+  /** Icon-only, red-tinted hover — destructive row/card actions (delete) */
+  "icon-brand-danger":
+    "doc-action-btn-danger",
   /** Ghost add-row button — "+ Add Item / Schedule" pattern */
   add:
     "flex items-center gap-1 text-[11px] font-medium text-[#884D70] hover:bg-[#884D70]/8 px-2.5 py-1 rounded-lg transition-colors",
@@ -52,6 +61,9 @@ export const buttonVariantStyles: Record<ButtonVariant, string> = {
   /** Dropdown menu item — full-width row in floating menus */
   "menu-item":
     "btn-menu-item",
+  /** No base styles — fully styled via className, for one-off shapes (chips, custom pills) */
+  unstyled:
+    "",
 };
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {

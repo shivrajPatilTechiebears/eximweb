@@ -43,6 +43,8 @@ interface ExcelTableProps<T> {
   statusBar?: ReactNode;
   emptyMessage?: string;
   header?: ReactNode;
+  /** Override specific column header cells with custom content (e.g. a select-all checkbox), keyed by column key */
+  headerContent?: Record<string, ReactNode>;
   className?: string;
   cellClassName?: string;
   statusBarClassName?: string;
@@ -71,6 +73,7 @@ export function ExcelTable<T>({
   statusBar,
   emptyMessage = "No records found.",
   header,
+  headerContent,
   className = "bg-white rounded-xl border border-gray-300/50 shadow-[0_4px_20px_rgba(0,0,0,0.1)]",
   cellClassName = "px-3 py-2 whitespace-nowrap text-left",
   statusBarClassName = "table-status-bar-glass",
@@ -139,7 +142,7 @@ export function ExcelTable<T>({
                       className={`table-th ${canSort ? "table-th-sortable" : ""}`}
                     >
                       <div className="flex items-center gap-1">
-                        <span>{flexRender(header.column.columnDef.header, header.getContext())}</span>
+                        <span>{headerContent?.[header.id] ?? flexRender(header.column.columnDef.header, header.getContext())}</span>
                         {canSort && (
                           <span className={`text-[10px] leading-none transition-opacity ${isActive ? "opacity-100" : "opacity-20"}`}>
                             {isActive && sortDir === "asc" ? "↑" : isActive ? "↓" : "⇅"}

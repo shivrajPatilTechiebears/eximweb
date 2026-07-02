@@ -1163,3 +1163,163 @@
     cursor: not-allowed;
   }
 }
+
+/* ── Document library (Image Library page) ──────────────────────────────── */
+
+@utility doc-checkbox {
+  width: 0.8125rem;
+  height: 0.8125rem;
+  border-radius: 0.1875rem;
+  border-width: 1.5px;
+  border-style: solid;
+  border-color: rgb(148 163 184);
+  background-color: rgb(255 255 255 / 0.75);
+  cursor: pointer;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 150ms;
+  &:hover {
+    border-color: #884D70;
+  }
+  &[data-checked] {
+    background-color: #884D70;
+    border-color: #884D70;
+    box-shadow: 0 1px 2px rgba(136, 77, 112, 0.30);
+  }
+  &[data-focus] {
+    box-shadow: 0 0 0 2px rgb(136 77 112 / 0.22);
+  }
+}
+
+@utility doc-card {
+  position: relative;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-style: solid;
+  cursor: pointer;
+  transition: all 150ms;
+  background-color: rgb(255 255 255 / 0.50);
+  border-color: rgb(255 255 255 / 0.60);
+  &:hover {
+    background-color: rgb(255 255 255 / 0.80);
+    border-color: rgb(136 77 112 / 0.20);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+}
+
+@utility doc-card-selected {
+  background-color: rgb(136 77 112 / 0.06);
+  border-color: rgb(136 77 112 / 0.40);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+@utility doc-ref-chip {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-weight: 600;
+  color: #884D70;
+  background-color: rgb(136 77 112 / 0.06);
+  border-radius: 0.375rem;
+}
+
+@utility doc-action-btn {
+  color: rgb(100 116 139);
+  transition: all 150ms;
+  &:hover {
+    color: #884D70;
+    background-color: rgb(136 77 112 / 0.10);
+  }
+}
+
+@utility doc-action-btn-danger {
+  color: rgb(100 116 139);
+  transition: all 150ms;
+  &:hover {
+    color: rgb(239 68 68);
+    background-color: rgb(254 242 242);
+  }
+}
+
+@utility doc-link-brand {
+  color: #884D70;
+}
+
+@utility doc-row-hover {
+  border-left-color: transparent;
+  &:hover {
+    border-left-color: rgb(136 77 112 / 0.30);
+  }
+}
+
+@utility doc-row-selected {
+  background-color: rgb(136 77 112 / 0.06);
+  border-left-color: #884D70;
+}
+
+@utility doc-quick-chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 9px;
+  font-weight: 600;
+  border-width: 1px;
+  border-style: solid;
+  white-space: nowrap;
+  transition: all 150ms;
+}
+
+@utility doc-quick-chip-active {
+  background-color: #884D70;
+  color: white;
+  border-color: #884D70;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+@utility doc-quick-chip-inactive {
+  background-color: rgb(255 255 255 / 0.70);
+  color: rgb(71 85 105);
+  border-color: rgb(229 231 235 / 0.80);
+  &:hover {
+    border-color: rgb(136 77 112 / 0.40);
+    color: #884D70;
+  }
+}
+
+@utility view-toggle-btn {
+  padding: 0.375rem;
+  border-radius: 0.25rem;
+  transition: all 150ms;
+  color: rgb(156 163 175);
+  &:hover {
+    color: rgb(75 85 99);
+    background-color: rgb(243 244 246 / 0.60);
+  }
+  &[data-selected] {
+    background-color: #884D70;
+    color: white;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+  &[data-selected]:hover {
+    background-color: #884D70;
+    color: white;
+  }
+}
+
+@utility empty-state-icon-badge {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 1rem;
+  background-image: linear-gradient(to bottom right, rgb(136 77 112 / 0.10), rgb(136 77 112 / 0.05));
+  border: 1px solid rgb(136 77 112 / 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@utility empty-state-icon {
+  color: rgb(136 77 112 / 0.40);
+}

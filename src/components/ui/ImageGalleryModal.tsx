@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Dialog, DialogPanel, DialogTitle, DialogBackdrop } from "@headlessui/react";
+import Image from "next/image";
+import { Dialog, DialogPanel, DialogTitle, DialogBackdrop, Input } from "@headlessui/react";
 import { Icon } from "./Icon";
 
 interface GalleryImage {
@@ -98,7 +99,7 @@ export function ImageGalleryModal({ isOpen, onClose, onSelectImage }: ImageGalle
                 size={15}
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
               />
-              <input
+              <Input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -140,10 +141,12 @@ export function ImageGalleryModal({ isOpen, onClose, onSelectImage }: ImageGalle
                       className="group flex flex-col items-center gap-1.5 focus:outline-none"
                     >
                       <div className={`relative w-full aspect-square rounded-xl overflow-hidden transition-all duration-200 ${sel ? "gallery-tile-selected" : "gallery-tile"}`}>
-                        <img
+                        <Image
                           src={image.src}
                           alt={image.alt || image.label}
-                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                          fill
+                          sizes="(min-width: 640px) 100px, 150px"
+                          className="object-cover transition-transform duration-300 group-hover:scale-110"
                         />
 
                         {/* Hover glow (unselected) */}
@@ -174,9 +177,11 @@ export function ImageGalleryModal({ isOpen, onClose, onSelectImage }: ImageGalle
           {/* ── Selected preview strip ── */}
           {selectedImage && (
             <div className="gallery-preview-strip mx-5 mb-3 flex items-center gap-3 px-3 py-2 rounded-xl">
-              <img
+              <Image
                 src={selectedImage.src}
                 alt={selectedImage.label}
+                width={32}
+                height={32}
                 className="gallery-preview-thumb w-8 h-8 rounded-lg object-cover shrink-0"
               />
               <div className="flex-1 min-w-0">

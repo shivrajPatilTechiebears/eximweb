@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import { Icon } from "@/components/ui/Icon";
 import { FormInput } from "@/components/ui/FormInput";
 import { FormCombobox } from "@/components/ui/FormCombobox";
@@ -46,8 +47,15 @@ function LogoUpload({
     >
       {value ? (
         <>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={value} alt="Company logo" className="h-14 object-contain rounded-lg" />
+          <div className="relative h-14 w-full">
+            <Image
+              src={value}
+              alt="Company logo"
+              fill
+              unoptimized
+              className="object-contain rounded-lg"
+            />
+          </div>
           {!disabled && <span className="text-[10px] text-[#884D70] font-medium">Click to change</span>}
         </>
       ) : (

@@ -7,6 +7,13 @@ import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { Pagination } from "@/components/ui/Pagination";
 import { SidePanel } from "@/components/layout/SidePanel";
+import { Checkbox } from "@/components/ui/Checkbox";
+import { TagBadge } from "@/components/ui/TagBadge";
+import { FileTypeIcon, type FileExt } from "@/components/ui/FileTypeIcon";
+import { ViewToggle, type ViewMode } from "@/components/ui/ViewToggle";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { ExcelTable, type Column } from "@/components/table/DataTable";
+import { ToggleChip } from "@/components/ui/ToggleChip";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -26,19 +33,21 @@ type RefCategory = "Shipments" | "Purchase Orders" | "Inventory Items";
 interface DocFile {
   id: string;
   name: string;
-  ext: "pdf" | "jpg" | "png" | "xlsx" | "docx";
+  ext: FileExt;
   docType: DocType;
   reference: string;
   refCategory: RefCategory;
   sizeBytes: number;
   lastModified: Date;
+  /** Real preview image for the file, when one exists — falls back to the ext placeholder otherwise */
+  thumbnailUrl?: string;
 }
 
 // ── Mock data ──────────────────────────────────────────────────────────────────
 
 const ALL_FILES: DocFile[] = [
   { id: "1", name: "CI_SHP_2023_9941.pdf", ext: "pdf", docType: "COMMERCIAL INVOICE", reference: "SHP-994123", refCategory: "Shipments", sizeBytes: 2516582, lastModified: new Date("2023-10-24T11:20:00") },
-  { id: "2", name: "Container_Loading_IMG_1.jpg", ext: "jpg", docType: "LOADING IMAGE", reference: "PO-2023-X9", refCategory: "Purchase Orders", sizeBytes: 4300800, lastModified: new Date("2023-10-23T16:15:00") },
+  { id: "2", name: "Container_Loading_IMG_1.jpg", ext: "jpg", docType: "LOADING IMAGE", reference: "PO-2023-X9", refCategory: "Purchase Orders", sizeBytes: 4300800, lastModified: new Date("2023-10-23T16:15:00"), thumbnailUrl: "/images/gallery/1.jpg" },
   { id: "3", name: "BoL_Draft_v2.pdf", ext: "pdf", docType: "BILL OF LADING", reference: "SHP-994123", refCategory: "Shipments", sizeBytes: 1153433, lastModified: new Date("2023-10-23T09:00:00") },
   { id: "4", name: "Packing_List_X001.xlsx", ext: "xlsx", docType: "PACKING LIST", reference: "PO-100234", refCategory: "Purchase Orders", sizeBytes: 524288, lastModified: new Date("2023-10-22T14:45:00") },
   { id: "5", name: "Duty_Challan_TXN_002.pdf", ext: "pdf", docType: "DUTY CHALLAN", reference: "TXN-7721", refCategory: "Shipments", sizeBytes: 912384, lastModified: new Date("2023-10-21T11:15:00") },
@@ -47,7 +56,7 @@ const ALL_FILES: DocFile[] = [
   { id: "8", name: "CI_SHP_2023_8820.pdf", ext: "pdf", docType: "COMMERCIAL INVOICE", reference: "SHP-882000", refCategory: "Shipments", sizeBytes: 2100000, lastModified: new Date("2023-10-18T12:10:00") },
   { id: "9", name: "Transport_Doc_TXN_003.pdf", ext: "pdf", docType: "TRANSPORT DOCUMENT", reference: "TXN-7890", refCategory: "Shipments", sizeBytes: 658000, lastModified: new Date("2023-10-17T14:00:00") },
   { id: "10", name: "Inventory_Check_Aug.xlsx", ext: "xlsx", docType: "PACKING LIST", reference: "INV-20234", refCategory: "Inventory Items", sizeBytes: 340000, lastModified: new Date("2023-10-16T10:45:00") },
-  { id: "11", name: "Container_Photo_2.png", ext: "png", docType: "LOADING IMAGE", reference: "PO-2023-X9", refCategory: "Purchase Orders", sizeBytes: 3600000, lastModified: new Date("2023-10-15T08:30:00") },
+  { id: "11", name: "Container_Photo_2.png", ext: "png", docType: "LOADING IMAGE", reference: "PO-2023-X9", refCategory: "Purchase Orders", sizeBytes: 3600000, lastModified: new Date("2023-10-15T08:30:00"), thumbnailUrl: "/images/gallery/4.png" },
   { id: "12", name: "Packing_List_X002.xlsx", ext: "xlsx", docType: "PACKING LIST", reference: "PO-100236", refCategory: "Purchase Orders", sizeBytes: 490000, lastModified: new Date("2023-10-14T13:20:00") },
   { id: "13", name: "BoL_Final_SHP887.pdf", ext: "pdf", docType: "BILL OF LADING", reference: "SHP-887001", refCategory: "Shipments", sizeBytes: 1350000, lastModified: new Date("2023-10-13T11:00:00") },
   { id: "14", name: "Duty_Challan_TXN_004.pdf", ext: "pdf", docType: "DUTY CHALLAN", reference: "TXN-8001", refCategory: "Shipments", sizeBytes: 820000, lastModified: new Date("2023-10-12T09:15:00") },
@@ -102,68 +111,52 @@ const DOC_TYPE_CFG: Record<DocType, { badge: string; dot: string; label: string 
 
 function DocTypeBadge({ type }: { type: DocType }) {
   const { badge, dot, label } = DOC_TYPE_CFG[type];
-  return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[9px] font-bold border whitespace-nowrap ${badge}`}>
-      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${dot}`} />
-      {label}
-    </span>
-  );
+  return <TagBadge label={label} badgeClassName={badge} dotClassName={dot} />;
 }
 
-// ── File icon ─────────────────────────────────────────────────────────────────
+// ── Grid card ─────────────────────────────────────────────────────────────────
 
-function FileIcon({ ext }: { ext: DocFile["ext"] }) {
-  if (ext === "pdf") {
-    return (
-      <div className="w-9 h-9 rounded-xl bg-linear-to-br from-red-50 to-red-100 border border-red-200/60 shadow-sm flex items-center justify-center shrink-0">
-        <span className="text-[9px] font-black text-red-500 tracking-tight">PDF</span>
-      </div>
-    );
-  }
-  if (ext === "jpg" || ext === "png") {
-    return (
-      <div className="w-9 h-9 rounded-xl bg-linear-to-br from-blue-50 to-indigo-100 border border-blue-200/60 shadow-sm flex items-center justify-center shrink-0">
-        <Icon name="add_photo_alternate" size={15} className="text-blue-500" />
-      </div>
-    );
-  }
-  if (ext === "xlsx") {
-    return (
-      <div className="w-9 h-9 rounded-xl bg-linear-to-br from-emerald-50 to-emerald-100 border border-emerald-200/60 shadow-sm flex items-center justify-center shrink-0">
-        <span className="text-[9px] font-black text-emerald-600 tracking-tight">XLS</span>
-      </div>
-    );
-  }
+function GridCard({ file, selected, onToggle }: { file: DocFile; selected: boolean; onToggle: () => void }) {
+  const { dot, label } = DOC_TYPE_CFG[file.docType];
+
   return (
-    <div className="w-9 h-9 rounded-xl bg-gray-100 border border-gray-200/60 shadow-sm flex items-center justify-center shrink-0">
-      <Icon name="attachment" size={15} className="text-gray-400" />
-    </div>
-  );
-}
+    <div
+      className={`doc-card group ${selected ? "doc-card-selected" : ""}`}
+      onClick={onToggle}
+      title={`${file.name}\n${label} · ${file.reference}\n${formatSize(file.sizeBytes)} · ${formatDate(file.lastModified)}`}
+    >
+      {/* Checkbox */}
+      <div className="absolute top-1.5 left-1.5 z-10">
+        <Checkbox checked={selected} onChange={onToggle} />
+      </div>
 
-// ── View toggle ────────────────────────────────────────────────────────────────
+      {/* Hover actions */}
+      <div className="absolute top-1.5 right-1.5 z-10 flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+        <Button variant="icon-brand" title="Download" onClick={(e) => e.stopPropagation()}
+          className="p-1 rounded-md bg-white/90 border border-gray-200/60 shadow-sm">
+          <Icon name="download" size={10} />
+        </Button>
+        <Button variant="icon-brand" title="View" onClick={(e) => e.stopPropagation()}
+          className="p-1 rounded-md bg-white/90 border border-gray-200/60 shadow-sm">
+          <Icon name="visibility" size={10} />
+        </Button>
+        <Button variant="icon-brand-danger" title="Delete" onClick={(e) => e.stopPropagation()}
+          className="p-1 rounded-md bg-white/90 border border-gray-200/60 shadow-sm">
+          <Icon name="delete" size={10} />
+        </Button>
+      </div>
 
-function ViewToggle({ view, onChange }: { view: "list" | "grid"; onChange: (v: "list" | "grid") => void }) {
-  return (
-    <div className="flex items-center gap-0.5 bg-white/70 border border-gray-200/80 rounded-lg p-0.5 shadow-sm">
-      <button
-        onClick={() => onChange("list")}
-        className={`p-1.5 rounded transition-all ${view === "list" ? "bg-[#884D70] text-white shadow-sm" : "text-gray-400 hover:text-gray-600 hover:bg-gray-100/60"}`}
-        title="List view"
-      >
-        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path d="M4 6h16M4 10h16M4 14h16M4 18h16" strokeLinecap="round" strokeWidth="2" />
-        </svg>
-      </button>
-      <button
-        onClick={() => onChange("grid")}
-        className={`p-1.5 rounded transition-all ${view === "grid" ? "bg-[#884D70] text-white shadow-sm" : "text-gray-400 hover:text-gray-600 hover:bg-gray-100/60"}`}
-        title="Grid view"
-      >
-        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zM14 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
-      </button>
+      {/* Preview strip */}
+      <FileTypeIcon ext={file.ext} variant="tile" compact thumbnailUrl={file.thumbnailUrl} />
+
+      {/* Info */}
+      <div className="px-2 py-1.5">
+        <p className="text-[10.5px] font-semibold text-slate-700 truncate leading-tight">{file.name}</p>
+        <div className="flex items-center gap-1 mt-1">
+          <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${dot}`} />
+          <span className="text-[9px] text-slate-500 truncate">{file.reference}</span>
+        </div>
+      </div>
     </div>
   );
 }
@@ -204,7 +197,7 @@ export default function ImageLibraryPage() {
   const [quickFilter, setQuickFilter] = useState<DocType | null>(null);
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [view, setView] = useState<"list" | "grid">("list");
+  const [view, setView] = useState<ViewMode>("list");
   const [currentPage, setCurrentPage] = useState(1);
 
   const filtered = useMemo(() => {
@@ -227,10 +220,6 @@ export default function ImageLibraryPage() {
   const paged = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
   const allOnPageSelected = paged.length > 0 && paged.every((f) => selected.has(f.id));
 
-  const pdfCount = ALL_FILES.filter((f) => f.ext === "pdf").length;
-  const imgCount = ALL_FILES.filter((f) => f.ext === "jpg" || f.ext === "png").length;
-  const xlsCount = ALL_FILES.filter((f) => f.ext === "xlsx").length;
-
   function toggleAll() {
     setSelected((prev) => {
       const next = new Set(prev);
@@ -247,6 +236,76 @@ export default function ImageLibraryPage() {
       return next;
     });
   }
+
+  const fileColumns: Column<DocFile>[] = [
+    {
+      key: "select",
+      header: "",
+      cell: (file) => <Checkbox checked={selected.has(file.id)} onChange={() => toggleOne(file.id)} />,
+    },
+    {
+      key: "name",
+      header: "File Name",
+      cell: (file) => (
+        <div className="flex items-center gap-2.5">
+          <FileTypeIcon ext={file.ext} thumbnailUrl={file.thumbnailUrl} />
+          <div className="min-w-0">
+            <p className="text-[11px] font-semibold text-slate-700 truncate max-w-50">{file.name}</p>
+            <p className="text-[9px] text-slate-600 mt-0.5">{file.ext.toUpperCase()}</p>
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: "docType",
+      header: "Document Type",
+      cell: (file) => <DocTypeBadge type={file.docType} />,
+    },
+    {
+      key: "reference",
+      header: "Reference",
+      cell: (file) => (
+        <span className="doc-ref-chip inline-flex items-center gap-1 text-[11px] px-2 py-0.5">
+          {file.reference}
+        </span>
+      ),
+    },
+    {
+      key: "size",
+      header: "Size",
+      align: "right",
+      cell: (file) => (
+        <div className="text-right">
+          <span className="text-[11px] text-slate-600 tabular-nums font-medium">{formatSize(file.sizeBytes)}</span>
+        </div>
+      ),
+    },
+    {
+      key: "lastModified",
+      header: "Last Modified",
+      cell: (file) => <span className="text-[11px] text-slate-600">{formatDate(file.lastModified)}</span>,
+    },
+    {
+      key: "actions",
+      header: "Actions",
+      align: "right",
+      cell: () => (
+        <div className="flex justify-end">
+          <div className="inline-flex items-center gap-0.5 bg-white/60 border border-gray-200/60 rounded-lg p-0.5">
+            <Button variant="icon-brand" title="Download" className="p-1.5 rounded">
+              <Icon name="download" size={12} />
+            </Button>
+            <Button variant="icon-brand" title="View" className="p-1.5 rounded">
+              <Icon name="visibility" size={12} />
+            </Button>
+            <Button variant="icon-brand-danger" title="Delete" className="p-1.5 rounded">
+              <Icon name="delete" size={12} />
+            </Button>
+          </div>
+        </div>
+      ),
+    },
+  ];
 
   function handleQuickFilter(type: DocType) {
     setQuickFilter((prev) => (prev === type ? null : type));
@@ -323,20 +382,15 @@ export default function ImageLibraryPage() {
             </span>
             <div className="flex items-center gap-1 flex-1 min-w-0 flex-wrap">
               {QUICK_ACCESS.map((type) => {
-                const isActive = quickFilter === type;
                 const { dot, label } = DOC_TYPE_CFG[type];
                 return (
-                  <button
+                  <ToggleChip
                     key={type}
+                    label={label}
+                    active={quickFilter === type}
                     onClick={() => handleQuickFilter(type)}
-                    className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-semibold border transition-all whitespace-nowrap ${isActive
-                      ? "bg-[#884D70] text-white border-[#884D70] shadow-sm"
-                      : "bg-white/70 text-gray-600 border-gray-200/80 hover:border-[#884D70]/40 hover:text-[#884D70]"
-                      }`}
-                  >
-                    {!isActive && <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${dot}`} />}
-                    {label}
-                  </button>
+                    dotClassName={dot}
+                  />
                 );
               })}
             </div>
@@ -344,162 +398,80 @@ export default function ImageLibraryPage() {
             <Button variant="cta-secondary" icon="download" className="h-7 text-[10px] shrink-0">
               Export
             </Button>
+            <ViewToggle view={view} onChange={setView} className="shrink-0" />
           </div>
 
-          {/* Table */}
+          {/* Table / Grid */}
           <div className="flex-1 overflow-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr>
-                  <th className="table-th w-10 text-center">
-                    <input
-                      type="checkbox"
-                      checked={allOnPageSelected}
-                      onChange={toggleAll}
-                      className="w-3 h-3 rounded border-gray-300 accent-[#884D70] cursor-pointer"
+            {view === "list" ? (
+              <ExcelTable<DocFile>
+                columns={fileColumns}
+                data={paged}
+                rowKey={(file) => file.id}
+                rowClassName={(file, i) =>
+                  selected.has(file.id)
+                    ? "doc-row-selected"
+                    : i % 2 === 0
+                      ? "bg-white/45 hover:bg-white/70 doc-row-hover"
+                      : "bg-white/20 hover:bg-white/50 doc-row-hover"
+                }
+                emptyMessage="No files found — try adjusting your search or filters"
+                className=""
+                cellClassName="px-3 py-2.5"
+                headerContent={{ select: <Checkbox checked={allOnPageSelected} onChange={toggleAll} /> }}
+              />
+            ) : (
+              /* ── Grid view ── */
+              paged.length === 0 ? (
+                <EmptyState
+                  icon="photo_library"
+                  title="No files found"
+                  description="Try adjusting your search or filters"
+                />
+              ) : (
+                <div className="p-3 grid grid-cols-[repeat(auto-fill,minmax(112px,1fr))] gap-2.5">
+                  {paged.map((file) => (
+                    <GridCard
+                      key={file.id}
+                      file={file}
+                      selected={selected.has(file.id)}
+                      onToggle={() => toggleOne(file.id)}
                     />
-                  </th>
-                  <th className="table-th">File Name</th>
-                  <th className="table-th">Document Type</th>
-                  <th className="table-th">Reference</th>
-                  <th className="table-th text-right">Size</th>
-                  <th className="table-th">Last Modified</th>
-                  <th className="table-th text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {paged.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} className="py-20 text-center">
-                      <div className="flex flex-col items-center gap-3">
-                        <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-[#884D70]/10 to-[#884D70]/5 border border-[#884D70]/15 flex items-center justify-center">
-                          <Icon name="photo_library" size={24} className="text-[#884D70]/40" />
-                        </div>
-                        <p className="text-[13px] font-semibold text-gray-400">No files found</p>
-                        <p className="text-[11px] text-gray-300">Try adjusting your search or filters</p>
-                      </div>
-                    </td>
-                  </tr>
-                ) : (
-                  paged.map((file, i) => {
-                    const isSel = selected.has(file.id);
-                    return (
-                      <tr
-                        key={file.id}
-                        className={`group transition-all border-l-2 ${isSel
-                          ? "bg-[#884D70]/6 border-l-[#884D70]"
-                          : i % 2 === 0
-                            ? "bg-white/45 hover:bg-white/70 border-l-transparent hover:border-l-[#884D70]/30"
-                            : "bg-white/20 hover:bg-white/50 border-l-transparent hover:border-l-[#884D70]/30"
-                          }`}
-                      >
-                        {/* Checkbox */}
-                        <td className="table-td px-3 py-2.5 text-center">
-                          <input
-                            type="checkbox"
-                            checked={isSel}
-                            onChange={() => toggleOne(file.id)}
-                            className="w-3 h-3 rounded border-gray-300 accent-[#884D70] cursor-pointer"
-                          />
-                        </td>
-
-                        {/* File name */}
-                        <td className="table-td px-3 py-2.5">
-                          <div className="flex items-center gap-2.5">
-                            <FileIcon ext={file.ext} />
-                            <div className="min-w-0">
-                              <p className="text-[11px] font-semibold text-slate-700 truncate max-w-50">
-                                {file.name}
-                              </p>
-                              <p className="text-[9px] text-gray-500 mt-0.5">{file.ext.toUpperCase()}</p>
-                            </div>
-                          </div>
-                        </td>
-
-                        {/* Document type */}
-                        <td className="table-td px-3 py-2.5">
-                          <DocTypeBadge type={file.docType} />
-                        </td>
-
-                        {/* Reference */}
-                        <td className="table-td px-3 py-2.5">
-                          <span className="inline-flex items-center gap-1 text-[11px] font-mono font-semibold text-[#884D70] bg-[#884D70]/6 px-2 py-0.5 rounded-md">
-                            {file.reference}
-                          </span>
-                        </td>
-
-                        {/* Size */}
-                        <td className="table-td px-3 py-2.5 text-right">
-                          <span className="text-[11px] text-slate-600 tabular-nums font-medium">
-                            {formatSize(file.sizeBytes)}
-                          </span>
-                        </td>
-
-                        {/* Last modified */}
-                        <td className="table-td px-3 py-2.5">
-                          <span className="text-[11px] text-slate-600">{formatDate(file.lastModified)}</span>
-                        </td>
-
-                        {/* Actions */}
-                        <td className="table-td px-3 py-2.5 text-right">
-                          <div className="inline-flex items-center gap-0.5 bg-white/60 border border-gray-200/60 rounded-lg p-0.5">
-                            <button
-                              title="Download"
-                              className="p-1.5 rounded hover:bg-[#884D70]/10 text-gray-400 hover:text-[#884D70] transition-colors"
-                            >
-                              <Icon name="download" size={12} />
-                            </button>
-                            <button
-                              title="View"
-                              className="p-1.5 rounded hover:bg-[#884D70]/10 text-gray-400 hover:text-[#884D70] transition-colors"
-                            >
-                              <Icon name="visibility" size={12} />
-                            </button>
-                            <button
-                              title="Delete"
-                              className="p-1.5 rounded hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors"
-                            >
-                              <Icon name="delete" size={12} />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
+                  ))}
+                </div>
+              )
+            )}
           </div>
 
           {/* Status bar */}
           <div className="table-status-bar-glass shrink-0">
-            <div className="flex items-center gap-3 text-[10px] text-slate-500">
+            <div className="flex items-center gap-3 text-[10px] text-slate-600">
               <span>
                 Items: <strong className="text-slate-700 font-semibold">{filtered.length}</strong>
               </span>
-              <span className="text-gray-400">·</span>
+              <span className="text-slate-400">·</span>
               <span>
-                Selected: <strong className={`font-semibold ${selected.size > 0 ? "text-[#884D70]" : "text-slate-700"}`}>{selected.size}</strong>
+                Selected: <strong className={`font-semibold ${selected.size > 0 ? "doc-link-brand" : "text-slate-700"}`}>{selected.size}</strong>
               </span>
+              {view === "grid" && paged.length > 0 && !allOnPageSelected && (
+                <>
+                  <span className="text-slate-400">·</span>
+                  <Button variant="text-brand" onClick={toggleAll} className="text-[10px]">
+                    Select all
+                  </Button>
+                </>
+              )}
               {selected.size > 0 && (
                 <>
-                  <span className="text-gray-300">·</span>
-                  <button
-                    onClick={() => setSelected(new Set())}
-                    className="text-[10px] text-[#884D70] font-semibold hover:underline"
-                  >
+                  <span className="text-slate-400">·</span>
+                  <Button variant="text-brand" onClick={() => setSelected(new Set())} className="text-[10px]">
                     Clear selection
-                  </button>
+                  </Button>
                 </>
               )}
             </div>
             <div className="flex items-center gap-3">
               <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
-              <div className="w-px h-4 bg-gray-200/80 shrink-0" />
-              <div className="flex items-center gap-1.5 text-[10px] text-slate-500">
-                <span>View:</span>
-                <ViewToggle view={view} onChange={setView} />
-              </div>
             </div>
           </div>
         </main>

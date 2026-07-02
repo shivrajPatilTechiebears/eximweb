@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import Image from "next/image";
 import { Icon } from "@/components/ui/Icon";
 import { ImageGalleryModal } from "@/components/ui/ImageGalleryModal";
 import { DashboardPageHeader } from "@/components/layout/PageHeader";
@@ -126,9 +127,11 @@ export default function CreatePurchaseOrderPage() {
             title={row.imageUrl ? "Change image" : "Attach image"}
           >
             {row.imageUrl ? (
-              <img
+              <Image
                 src={row.imageUrl}
                 alt="attached"
+                width={24}
+                height={24}
                 className="w-6 h-6 rounded object-cover border border-outline-variant group-hover:border-primary transition-colors"
               />
             ) : (
