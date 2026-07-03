@@ -10,15 +10,6 @@ export interface GroupCompanyFormData {
   status: string;
 }
 
-// ── Component prop interface ──────────────────────────────────────────────────
-
-export interface GroupCompanyDetailsProps {
-  formData: GroupCompanyFormData;
-  onChange: (key: keyof GroupCompanyFormData, value: string) => void;
-  disabled: boolean;
-  isView: boolean;
-}
-
 // ── Options ───────────────────────────────────────────────────────────────────
 
 export const STATUS_OPTIONS = [

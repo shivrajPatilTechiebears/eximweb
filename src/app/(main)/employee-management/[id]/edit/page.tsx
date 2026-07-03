@@ -1,4 +1,4 @@
-import { EmployeeForm } from "@/components/form/EmployeeForm";
+import { EmployeeManagementForm } from "@/components/employee-management/EmployeeManagementForm";
 
 export default async function EditEmployeePage({
   params,
@@ -6,5 +6,5 @@ export default async function EditEmployeePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  return <EmployeeForm mode="edit" employeeId={id} />;
+  return <EmployeeManagementForm mode="edit" employeeId={id} />;
 }

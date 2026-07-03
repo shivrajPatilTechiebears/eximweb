@@ -27,7 +27,6 @@ export const MODULE_TABS: ModuleTab[] = [
     sub: [
       { label: "All Orders", href: "/purchase-order", icon: "format_list_bulleted" },
       { label: "Open Orders", href: "/purchase-order/open", icon: "pending_actions" },
-      { label: "Order Details", href: "/purchase-order/details", icon: "receipt_long" },
     ],
   },
   {

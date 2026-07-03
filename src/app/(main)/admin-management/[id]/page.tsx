@@ -1,4 +1,4 @@
-import { AdminForm } from "@/components/form/AdminForm";
+import { AdminManagementForm } from "@/components/admin-management/AdminManagementForm";
 
 export default async function ViewAdminPage({
   params,
@@ -6,5 +6,5 @@ export default async function ViewAdminPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  return <AdminForm mode="view" adminId={id} />;
+  return <AdminManagementForm mode="view" adminId={id} />;
 }

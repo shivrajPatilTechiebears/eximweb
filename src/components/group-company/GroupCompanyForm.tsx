@@ -7,9 +7,12 @@ import { Button } from "@/components/ui/Button";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { ProgressPill } from "@/components/ui/ProgressPill";
-import { GroupCompanyDetails } from "@/components/group-company/GroupCompanyDetails";
-import { MOCK_GROUP_COMPANIES } from "@/components/group-company/types";
-import type { GroupCompanyFormData } from "@/components/group-company/types";
+import { FormInput } from "@/components/ui/FormInput";
+import { FormCombobox } from "@/components/ui/FormCombobox";
+import { Card } from "@/components/ui/Card";
+import { CardHeader } from "@/components/ui/CardHeader";
+import { MOCK_GROUP_COMPANIES, STATUS_OPTIONS, ORGANISATION_OPTIONS } from "./types";
+import type { GroupCompanyFormData } from "./types";
 
 export type GroupCompanyFormProps = {
   mode: "create" | "view" | "edit";
@@ -75,12 +78,67 @@ export function GroupCompanyForm({ mode, groupCompanyId }: GroupCompanyFormProps
       {!isView && <ProgressPill steps={steps} />}
 
       <main className="flex-1 px-6 py-4 pb-20 space-y-3">
-        <GroupCompanyDetails
-          formData={form}
-          onChange={handleChange}
-          disabled={disabled}
-          isView={isView}
-        />
+
+        {/* ── Group Company Details ── */}
+        <Card className="card-glass">
+          <CardHeader
+            title="Group Company Details"
+            hint={disabled ? undefined : "Tab · Enter to move between fields"}
+          />
+          <div className="px-5 py-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-3">
+            <FormInput
+              disabled={disabled} label="Group Company Name"
+              value={form.groupCompanyName}
+              onChange={(v) => handleChange("groupCompanyName", v)}
+              placeholder="e.g. Group Alpha"
+              autoComplete="off"
+            />
+            <FormCombobox
+              disabled={disabled} label="Organisation"
+              value={form.organisation}
+              onChange={(v) => handleChange("organisation", v)}
+              options={ORGANISATION_OPTIONS}
+            />
+            <FormInput
+              disabled={disabled} label="Email"
+              value={form.email}
+              onChange={(v) => handleChange("email", v)}
+              placeholder="e.g. group@company.com"
+              type="email"
+              autoComplete="off"
+            />
+            <FormInput
+              disabled={disabled} label="Contact"
+              value={form.contact}
+              onChange={(v) => handleChange("contact", v)}
+              placeholder="e.g. +91 98000 00000"
+              autoComplete="off"
+            />
+            <FormInput
+              disabled={disabled} label="City"
+              value={form.city}
+              onChange={(v) => handleChange("city", v)}
+              placeholder="e.g. Mumbai"
+              autoComplete="off"
+            />
+            <FormCombobox
+              disabled={disabled} label="Status"
+              value={form.status}
+              onChange={(v) => handleChange("status", v)}
+              options={STATUS_OPTIONS}
+            />
+            <div className="lg:col-span-2">
+              <FormInput
+                disabled={disabled} label="Description"
+                value={form.description}
+                onChange={(v) => handleChange("description", v)}
+                placeholder="Brief description of this group company"
+                autoComplete="off"
+              />
+            </div>
+          </div>
+        </Card>
+
       </main>
 
       {isView && (

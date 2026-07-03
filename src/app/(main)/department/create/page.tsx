@@ -1,4 +1,4 @@
-import { DepartmentForm } from "@/components/form/DepartmentForm";
+import { DepartmentForm } from "@/components/department/DepartmentForm";
 
 export default function CreateDepartmentPage() {
   return <DepartmentForm mode="create" />;

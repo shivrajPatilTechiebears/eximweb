@@ -14,25 +14,6 @@ export interface CompanyFormData {
   theme: string; pincode: string; supportEmail: string; supportPhone: string;
 }
 
-// ── Component prop interfaces ─────────────────────────────────────────────────
-
-export interface AdminDetailsProps {
-  formData: AdminFormData;
-  onChange: (key: keyof AdminFormData, value: string) => void;
-  disabled: boolean;
-  isView: boolean;
-}
-
-export interface CompanyDetailsProps {
-  companyData: CompanyFormData;
-  logoUrl: string;
-  permissions: string[];
-  onChange: (key: keyof CompanyFormData, value: string) => void;
-  onLogoChange: (url: string) => void;
-  onPermissionsChange: (perms: string[]) => void;
-  disabled: boolean;
-}
-
 // ── Shared option arrays ──────────────────────────────────────────────────────
 
 export const ROLE_OPTIONS = [

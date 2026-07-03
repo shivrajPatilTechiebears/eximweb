@@ -8,12 +8,6 @@ export interface BranchFormData {
   status: string;
 }
 
-export interface BranchDetailsProps {
-  formData: BranchFormData;
-  onChange: (key: keyof BranchFormData, value: string) => void;
-  disabled: boolean;
-}
-
 export const STATUS_OPTIONS = [
   { label: "Active",    value: "ACTIVE"    },
   { label: "Inactive",  value: "INACTIVE"  },

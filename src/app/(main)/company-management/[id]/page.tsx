@@ -1,9 +1,9 @@
 "use client";
 
 import { use } from "react";
-import { CompanyForm } from "@/components/form/CompanyForm";
+import { CompanyManagementForm } from "@/components/company-management/CompanyManagementForm";
 
 export default function ViewCompanyPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  return <CompanyForm mode="view" companyId={id} />;
+  return <CompanyManagementForm mode="view" companyId={id} />;
 }

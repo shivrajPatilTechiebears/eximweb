@@ -22,14 +22,6 @@ export interface OrganisationFormData {
   status: string;
 }
 
-// ── Component prop interface ──────────────────────────────────────────────────
-
-export interface OrganisationDetailsProps {
-  formData: OrganisationFormData;
-  onChange: (key: keyof OrganisationFormData, value: string) => void;
-  disabled: boolean;
-}
-
 // ── Options ───────────────────────────────────────────────────────────────────
 
 export const STATUS_OPTIONS = [

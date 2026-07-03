@@ -1,4 +1,4 @@
-import { GroupCompanyForm } from "@/components/form/GroupCompanyForm";
+import { GroupCompanyForm } from "@/components/group-company/GroupCompanyForm";
 
 export default async function EditGroupCompanyPage({
   params,

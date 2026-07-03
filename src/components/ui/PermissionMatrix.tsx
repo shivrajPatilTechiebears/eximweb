@@ -86,14 +86,18 @@ function buildEmptyState(): PermState {
 // ── Props ─────────────────────────────────────────────────────────────────────
 
 interface PermissionMatrixProps {
+  initialState?: PermState;
+  disabled?: boolean;
   onChange?: (totalActive: number, permState: PermState) => void;
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export function PermissionMatrix({ onChange }: PermissionMatrixProps) {
-  const [permState, setPermState] = useState<PermState>(buildEmptyState);
-  const [expanded,  setExpanded]  = useState<Set<string>>(new Set());
+export function PermissionMatrix({ initialState, disabled = false, onChange }: PermissionMatrixProps) {
+  const [permState, setPermState] = useState<PermState>(() => initialState ?? buildEmptyState());
+  const [expanded,  setExpanded]  = useState<Set<string>>(() =>
+    initialState ? new Set(MODULE_TREE.map((m) => m.id)) : new Set()
+  );
 
   const totalActive = Object.values(permState).reduce(
     (s, p) => s + Object.values(p).filter(Boolean).length, 0
@@ -111,11 +115,13 @@ export function PermissionMatrix({ onChange }: PermissionMatrixProps) {
   const expandAll   = () => setExpanded(new Set(MODULE_TREE.map(m => m.id)));
   const collapseAll = () => setExpanded(new Set());
 
-  const toggleNode = (id: string, key: PermKey) =>
+  const toggleNode = (id: string, key: PermKey) => {
+    if (disabled) return;
     setPermState(prev => ({
       ...prev,
       [id]: { ...prev[id], [key]: !prev[id]?.[key] },
     }));
+  };
 
   return (
     <div className="card-glass rounded-xl overflow-hidden">
@@ -195,6 +201,7 @@ export function PermissionMatrix({ onChange }: PermissionMatrixProps) {
                         <PermCheckbox
                           state={(permState[module.id]?.[key] ?? false) ? "checked" : "unchecked"}
                           onToggle={() => toggleNode(module.id, key)}
+                          disabled={disabled}
                         />
                       </div>
                     </td>
@@ -223,6 +230,7 @@ export function PermissionMatrix({ onChange }: PermissionMatrixProps) {
                               <PermCheckbox
                                 state={(permState[child.id]?.[key] ?? false) ? "checked" : "unchecked"}
                                 onToggle={() => toggleNode(child.id, key)}
+                                disabled={disabled}
                               />
                             </div>
                           </td>

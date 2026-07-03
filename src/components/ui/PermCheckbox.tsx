@@ -5,13 +5,17 @@ export type PermCheckboxState = "checked" | "unchecked";
 interface PermCheckboxProps {
   state: PermCheckboxState;
   onToggle: () => void;
+  disabled?: boolean;
 }
 
-export function PermCheckbox({ state, onToggle }: PermCheckboxProps) {
+export function PermCheckbox({ state, onToggle, disabled = false }: PermCheckboxProps) {
   return (
     <button
-      onClick={onToggle}
+      onClick={disabled ? undefined : onToggle}
+      disabled={disabled}
       className={`w-5 h-5 rounded-[5px] flex items-center justify-center shrink-0 transition-all duration-150 outline-none focus-visible:ring-2 focus-visible:ring-[#884D70]/40 ${
+        disabled ? "cursor-default opacity-70" : "cursor-pointer"
+      } ${
         state === "checked"
           ? "bg-gradient-to-br from-[#A06080] to-[#884D70] border-2 border-[#884D70]/70 shadow-[0_1px_3px_rgba(136,77,112,0.25)]"
           : "bg-white border-2 border-[#94A3B8] shadow-[0_1px_3px_rgba(0,0,0,0.10)] hover:border-[#884D70]/70 hover:shadow-[0_1px_5px_rgba(136,77,112,0.15)]"

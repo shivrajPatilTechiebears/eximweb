@@ -1,5 +1,5 @@
-import { AdminForm } from "@/components/form/AdminForm";
+import { AdminManagementForm } from "@/components/admin-management/AdminManagementForm";
 
 export default function CreateAdminPage() {
-  return <AdminForm mode="create" />;
+  return <AdminManagementForm mode="create" />;
 }

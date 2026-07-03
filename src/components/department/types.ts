@@ -8,12 +8,6 @@ export interface DepartmentFormData {
   status: string;
 }
 
-export interface DepartmentDetailsProps {
-  formData: DepartmentFormData;
-  onChange: (key: keyof DepartmentFormData, value: string) => void;
-  disabled: boolean;
-}
-
 export const STATUS_OPTIONS = [
   { label: "Active",    value: "ACTIVE"    },
   { label: "Inactive",  value: "INACTIVE"  },

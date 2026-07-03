@@ -7,9 +7,12 @@ import { Button } from "@/components/ui/Button";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { ProgressPill } from "@/components/ui/ProgressPill";
-import { BranchDetails } from "@/components/branch/BranchDetails";
-import { MOCK_BRANCHES } from "@/components/branch/types";
-import type { BranchFormData } from "@/components/branch/types";
+import { FormInput } from "@/components/ui/FormInput";
+import { FormCombobox } from "@/components/ui/FormCombobox";
+import { Card } from "@/components/ui/Card";
+import { CardHeader } from "@/components/ui/CardHeader";
+import { MOCK_BRANCHES, STATUS_OPTIONS, ORGANISATION_OPTIONS, GROUP_COMPANY_OPTIONS } from "./types";
+import type { BranchFormData } from "./types";
 
 export type BranchFormProps = {
   mode: "create" | "view" | "edit";
@@ -75,11 +78,64 @@ export function BranchForm({ mode, branchId }: BranchFormProps) {
       {!isView && <ProgressPill steps={steps} />}
 
       <main className="flex-1 px-6 py-4 pb-20 space-y-3">
-        <BranchDetails
-          formData={form}
-          onChange={handleChange}
-          disabled={disabled}
-        />
+
+        {/* ── Branch Details ── */}
+        <Card className="card-glass">
+          <CardHeader
+            title="Branch Details"
+            hint={disabled ? undefined : "Tab · Enter to move between fields"}
+          />
+          <div className="px-5 py-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-3">
+            <FormInput
+              disabled={disabled} label="Branch Name"
+              value={form.branchName}
+              onChange={(v) => handleChange("branchName", v)}
+              placeholder="e.g. Mumbai HQ"
+              autoComplete="off"
+            />
+            <FormCombobox
+              disabled={disabled} label="Organisation"
+              value={form.organisation}
+              onChange={(v) => handleChange("organisation", v)}
+              options={ORGANISATION_OPTIONS}
+            />
+            <FormCombobox
+              disabled={disabled} label="Group Company"
+              value={form.groupCompany}
+              onChange={(v) => handleChange("groupCompany", v)}
+              options={GROUP_COMPANY_OPTIONS}
+            />
+            <FormInput
+              disabled={disabled} label="Email"
+              value={form.email}
+              onChange={(v) => handleChange("email", v)}
+              placeholder="e.g. branch@company.com"
+              type="email"
+              autoComplete="off"
+            />
+            <FormInput
+              disabled={disabled} label="Contact"
+              value={form.contact}
+              onChange={(v) => handleChange("contact", v)}
+              placeholder="e.g. +91 98000 00000"
+              autoComplete="off"
+            />
+            <FormInput
+              disabled={disabled} label="City"
+              value={form.city}
+              onChange={(v) => handleChange("city", v)}
+              placeholder="e.g. Mumbai"
+              autoComplete="off"
+            />
+            <FormCombobox
+              disabled={disabled} label="Status"
+              value={form.status}
+              onChange={(v) => handleChange("status", v)}
+              options={STATUS_OPTIONS}
+            />
+          </div>
+        </Card>
+
       </main>
 
       {isView && (

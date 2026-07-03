@@ -1,4 +1,4 @@
-import { BranchForm } from "@/components/form/BranchForm";
+import { BranchForm } from "@/components/branch/BranchForm";
 
 export default async function ViewBranchPage({
   params,

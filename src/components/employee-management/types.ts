@@ -17,15 +17,6 @@ export interface EmployeeFormData {
   location: string;
 }
 
-// ── Component prop interfaces ─────────────────────────────────────────────────
-
-export interface EmployeeDetailsProps {
-  formData: EmployeeFormData;
-  onChange: (key: keyof EmployeeFormData, value: string) => void;
-  disabled: boolean;
-  isView: boolean;
-}
-
 // ── Options ───────────────────────────────────────────────────────────────────
 
 export const USER_TYPE_OPTIONS = [

@@ -1,5 +1,5 @@
-import { EmployeeForm } from "@/components/form/EmployeeForm";
+import { EmployeeManagementForm } from "@/components/employee-management/EmployeeManagementForm";
 
 export default function CreateEmployeePage() {
-  return <EmployeeForm mode="create" />;
+  return <EmployeeManagementForm mode="create" />;
 }

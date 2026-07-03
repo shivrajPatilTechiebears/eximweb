@@ -1,4 +1,4 @@
-import { OrganisationForm } from "@/components/form/OrganisationForm";
+import { OrganisationForm } from "@/components/organisation/OrganisationForm";
 
 export default async function ViewOrganisationPage({
   params,

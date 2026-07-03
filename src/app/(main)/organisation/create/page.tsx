@@ -1,4 +1,4 @@
-import { OrganisationForm } from "@/components/form/OrganisationForm";
+import { OrganisationForm } from "@/components/organisation/OrganisationForm";
 
 export default function CreateOrganisationPage() {
   return <OrganisationForm mode="create" />;
