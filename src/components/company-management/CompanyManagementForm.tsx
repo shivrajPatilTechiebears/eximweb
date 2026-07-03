@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { Icon } from "@/components/ui/Icon";
-import { DashboardPageHeader } from "@/components/layout/PageHeader";
+import { Breadcrumbs } from "@/components/layout/PageHeader";
 import { StickyFooter } from "@/components/layout/StickyFooter";
 import { Button } from "@/components/ui/Button";
 import { ButtonLink } from "@/components/ui/ButtonLink";
@@ -177,22 +177,17 @@ export function CompanyManagementForm({ mode, companyId }: CompanyManagementForm
   return (
     <div className="min-h-screen flex flex-col antialiased text-slate-800 bg-transparent">
 
-      <DashboardPageHeader
-        breadcrumbs={[
-          { label: "Dashboard",          href: "/" },
-          { label: "Company Mgmt",       href: "/company-management" },
-          { label: lastCrumb },
-        ]}
-        rightContent={
-          isView ? (
-            <StatusBadge label="Read Only" color="warning" />
-          ) : (
-            <StatusBadge label="Editing" color="info" pulse />
-          )
-        }
-      />
-
       <main className="flex-1 px-6 py-4 pb-20">
+
+        <div className="flex items-center px-1 pb-2 gap-2">
+          <Breadcrumbs items={[
+            { label: "Dashboard",            href: "/" },
+            { label: "Company Management",   href: "/company-management" },
+            { label: lastCrumb },
+          ]} />
+          <div className="flex-1" />
+          {isView && <StatusBadge label="Read Only" color="warning" />}
+        </div>
 
         {/* ── Company Details ── */}
         <Card className="card-glass">

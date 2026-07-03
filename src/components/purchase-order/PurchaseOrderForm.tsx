@@ -290,9 +290,7 @@ export function PurchaseOrderForm({ mode, orderId }: PurchaseOrderFormProps) {
               <div className="w-px h-4 bg-gray-200" />
               <ButtonLink href={`/purchase-order/${orderId}/edit`} variant="pill-primary">Edit PO</ButtonLink>
             </>
-          ) : (
-            <StatusBadge label={isCreate ? `Draft ${poNumber}` : "Editing"} color="warning" pulse />
-          )
+          ) : undefined
         }
       />
 
