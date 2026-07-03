@@ -3,7 +3,7 @@
 import { useState, useCallback, useMemo } from "react";
 import Image from "next/image";
 import { Icon } from "@/components/ui/Icon";
-import { DashboardPageHeader } from "@/components/layout/PageHeader";
+import { Breadcrumbs } from "@/components/layout/PageHeader";
 import { StickyFooter } from "@/components/layout/StickyFooter";
 import { Button } from "@/components/ui/Button";
 import { ButtonLink } from "@/components/ui/ButtonLink";
@@ -282,24 +282,27 @@ export function ShipmentForm({ mode, shipmentId }: ShipmentFormProps) {
   return (
     <div className="flex-1 flex flex-col antialiased text-slate-800 bg-transparent">
 
-      {/* ═══ PAGE HEADER ═══ */}
-      <DashboardPageHeader
-        breadcrumbs={
-          isView
-            ? [
-                { label: "Dashboard", href: "/" },
-                { label: "Shipments", href: "/shipments" },
-                { label: shipmentNumber },
-              ]
-            : [
-                { label: "Dashboard", href: "/" },
-                { label: "Shipments", href: "/shipments" },
-                { label: shipmentNumber, href: `/shipments/${shipmentId}` },
-                { label: "Edit" },
-              ]
-        }
-        rightContent={
-          isView ? (
+      {/* ═══ MAIN CONTENT ═══ */}
+      <main className="flex-1 px-6 py-4 pb-20 space-y-3">
+
+        {/* ═══ PAGE HEADER ═══ */}
+        <div className="flex items-center px-1 pb-2 gap-2">
+          <Breadcrumbs items={
+            isView
+              ? [
+                  { label: "Dashboard", href: "/" },
+                  { label: "Shipments", href: "/shipments" },
+                  { label: shipmentNumber },
+                ]
+              : [
+                  { label: "Dashboard", href: "/" },
+                  { label: "Shipments", href: "/shipments" },
+                  { label: shipmentNumber, href: `/shipments/${shipmentId}` },
+                  { label: "Edit" },
+                ]
+          } />
+          <div className="flex-1" />
+          {isView ? (
             <>
               <StatusBadge label={statusInfo.label} color={statusInfo.color} />
               <div className="w-px h-4 bg-gray-200" />
@@ -307,15 +310,11 @@ export function ShipmentForm({ mode, shipmentId }: ShipmentFormProps) {
             </>
           ) : (
             <StatusBadge label="Editing" color="warning" pulse />
-          )
-        }
-      />
+          )}
+        </div>
 
-      {/* ═══ PROGRESS STEPPER ═══ */}
-      {!isView && <ProgressPill steps={steps} />}
-
-      {/* ═══ MAIN CONTENT ═══ */}
-      <main className="flex-1 px-6 py-4 pb-20 space-y-3">
+        {/* ═══ PROGRESS STEPPER ═══ */}
+        {!isView && <ProgressPill steps={steps} />}
 
         {/* ── Shipment Details ── */}
         <Card className="card-glass">
