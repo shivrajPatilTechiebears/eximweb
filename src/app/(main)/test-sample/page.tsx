@@ -1,207 +1,280 @@
 "use client";
+
 import { useState } from "react";
-import { Footer } from "@/components/layout/Footer";
-import { MetricCard } from "@/components/cards/MetricCard";
-import { DataTable, type TableColumn } from "@/components/table/DataTable";
-import { Pagination } from "@/components/table/Pagination";
-import { SearchBar } from "@/components/ui/SearchBar";
-import { FilterDropdown } from "@/components/ui/FilterDropdown";
-import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
-import { ViewTestSampleModal } from "@/components/ui/ViewTestSampleModal";
-import { ColumnVisibilitySelector } from "@/components/ui/ColumnVisibilitySelector";
 import { Icon } from "@/components/ui/Icon";
+import { Breadcrumbs } from "@/components/layout/PageHeader";
+import { SearchInput } from "@/components/ui/SearchInput";
+import { ExcelTable, type Column } from "@/components/table/DataTable";
+import { TableActions } from "@/components/table/TableActions";
+import { ColumnSelector } from "@/components/ui/ColumnSelector";
+import { Pagination } from "@/components/ui/Pagination";
+import { Button } from "@/components/ui/Button";
+import { TabbedTable } from "@/components/table/TabbedTable";
+import { ViewTestSampleModal } from "@/components/test-sample/ViewTestSampleModal";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// ── Data ───────────────────────────────────────────────────────────────────────
 
-type StatusVariant = "muted";
-
-interface MetricItem {
-  title: string;
-  value: number;
-  subtitle: string;
-}
+type TestSampleStatus = "pending" | "open" | "failed";
 
 interface TestSample {
-  id: number;
-  sampleNo: string;
-  itemName: string;
-  sampleQty: number;
-  uom: string;
-  sampleBatchNo: string;
-  status: StatusVariant;
+  id: string; sampleNo: string; itemName: string; sampleQty: number;
+  uom: string; sampleBatchNo: string; status: TestSampleStatus;
+  poNumber: string; shipmentNumber: string;
+  sampleImages: { src: string; label: string }[];
+  documents: { label: string }[];
+  testReports: { label: string }[];
 }
 
-interface TableFilter {
-  icon: string;
-  label: string;
-}
-
-// ─── Page data ────────────────────────────────────────────────────────────────
-
-const METRICS: MetricItem[] = [
-  { title: "Total no of test sample", value: 6, subtitle: "All Time" },
-  { title: "Total no of pending", value: 5, subtitle: "Waiting" },
-  { title: "Total no of Open", value: 5, subtitle: "Active" },
-  { title: "Total no of Failed", value: 5, subtitle: "Rejected" },
-];
-
-const TABLE_CONFIG = {
-  title: "Dashboard",
-  description: "List Of Purchase order",
+const STATUS_STYLE: Record<TestSampleStatus, string> = {
+  pending: "bg-gray-100 text-gray-600",
+  open: "badge-info",
+  failed: "bg-red-50 text-red-600",
 };
-
-const TABLE_FILTERS: TableFilter[] = [
-  { icon: "filter_list", label: "All Statuses" },
-  { icon: "calendar_today", label: "Last 30 Days" },
-];
-
-const PAGINATION = { current: 1, total: 10, totalPages: 3 };
 
 const TEST_SAMPLES: TestSample[] = [
   {
-    id: 1,
-    sampleNo: "SM-00012",
-    itemName: "Steel-01",
-    sampleQty: 5,
-    uom: "Kg",
-    sampleBatchNo: "Batch-1",
-    status: "muted",
+    id: "TS-001", sampleNo: "SM-00012", itemName: "Steel-01", sampleQty: 5, uom: "Kg", sampleBatchNo: "Batch-1", status: "pending",
+    poNumber: "PO-2024-00139", shipmentNumber: "SHP-2024-0001",
+    sampleImages: [{ src: "/images/gallery/1.jpg", label: "Img-001" }, { src: "/images/gallery/2.png", label: "Img-002" }],
+    documents: [{ label: "Invoice-PDF" }],
+    testReports: [],
   },
   {
-    id: 2,
-    sampleNo: "SM-00012",
-    itemName: "Iron-01",
-    sampleQty: 5,
-    uom: "Kg",
-    sampleBatchNo: "Batch-2",
-    status: "muted",
+    id: "TS-002", sampleNo: "SM-00012", itemName: "Iron-01", sampleQty: 5, uom: "Kg", sampleBatchNo: "Batch-2", status: "open",
+    poNumber: "PO-2024-00139", shipmentNumber: "SHP-2024-0001",
+    sampleImages: [{ src: "/images/gallery/3.png", label: "Img-003" }],
+    documents: [{ label: "Packing-List-PDF" }],
+    testReports: [],
   },
   {
-    id: 3,
-    sampleNo: "SM-00012",
-    itemName: "Iron-01",
-    sampleQty: 5,
-    uom: "Kg",
-    sampleBatchNo: "Batch-2",
-    status: "muted",
+    id: "TS-003", sampleNo: "SM-00012", itemName: "Iron-01", sampleQty: 5, uom: "Kg", sampleBatchNo: "Batch-2", status: "failed",
+    poNumber: "PO-2024-00140", shipmentNumber: "SHP-2024-0002",
+    sampleImages: [{ src: "/images/gallery/4.png", label: "Img-004" }],
+    documents: [{ label: "Invoice-PDF" }],
+    testReports: [{ label: "Report-001" }, { label: "Report-002" }],
   },
 ];
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
+const TABS: { label: string; statuses: TestSampleStatus[] | null }[] = [
+  { label: "All", statuses: null },
+  { label: "Pending", statuses: ["pending"] },
+  { label: "Open", statuses: ["open"] },
+  { label: "Failed", statuses: ["failed"] },
+];
 
-export default function TestSamplePage() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
-    id: true,
-    sampleNo: true,
-    itemName: true,
-    sampleQty: true,
-    uom: true,
-    sampleBatchNo: true,
-    status: true,
-    actions: true,
-  });
+const COLUMN_KEYS = [
+  "sampleNo", "itemName", "sampleQty", "uom", "sampleBatchNo", "status", "actions",
+] as const;
 
-  const COLUMNS: TableColumn<TestSample>[] = [
+const DEFAULT_VISIBLE = new Set<string>(COLUMN_KEYS);
+
+const PAGE_SIZE = 10;
+
+const CX = {
+  statVal: "text-gray-700 font-semibold",
+  statSep: "text-gray-300",
+} as const;
+
+// ── Page ───────────────────────────────────────────────────────────────────────
+
+export default function TestSampleListPage() {
+  const [samples, setSamples] = useState([...TEST_SAMPLES]);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [viewSample, setViewSample] = useState<TestSample | null>(null);
+  const [search, setSearch] = useState("");
+  const [activeTab, setActiveTab] = useState(0);
+  const [sortKey, setSortKey] = useState<string | null>(null);
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [visibleCols, setVisibleCols] = useState<Set<string>>(DEFAULT_VISIBLE);
+  const [currentPage, setCurrentPage] = useState(1);
+  const handleSort = (key: string) => {
+    if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    else { setSortKey(key); setSortDir("asc"); }
+  };
+
+  const handleTabChange = (tab: number) => { setActiveTab(tab); setCurrentPage(1); };
+  const handleSearchChange = (value: string) => { setSearch(value); setCurrentPage(1); };
+  const toggleCol = (key: string) =>
+    setVisibleCols((prev) => { const n = new Set(prev); n.has(key) ? n.delete(key) : n.add(key); n.add("actions"); return n; });
+
+  const tabStatuses = TABS[activeTab].statuses;
+
+  const filteredSamples = [...samples]
+    .filter((s) => {
+      if (tabStatuses && !tabStatuses.includes(s.status)) return false;
+      if (!search) return true;
+      const q = search.toLowerCase();
+      return s.sampleNo.toLowerCase().includes(q) || s.itemName.toLowerCase().includes(q) || s.sampleBatchNo.toLowerCase().includes(q);
+    })
+    .sort((a, b) => {
+      if (!sortKey) return 0;
+      const av = String((a as unknown as Record<string, unknown>)[sortKey] ?? "");
+      const bv = String((b as unknown as Record<string, unknown>)[sortKey] ?? "");
+      return sortDir === "asc" ? av.localeCompare(bv, undefined, { numeric: true }) : bv.localeCompare(av, undefined, { numeric: true });
+    });
+
+  const totalPages = Math.max(1, Math.ceil(filteredSamples.length / PAGE_SIZE));
+  const pagedSamples = filteredSamples.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  // ── Column definitions ────────────────────────────────────────────────────────
+
+  const allColumns: Column<TestSample>[] = [
     {
-      field: "id",
-      header: "Sr/N",
-      body: (row) => <span className="text-on-surface font-medium">{row.id}</span>,
+      key: "sampleNo", header: "Sample No", sortable: true, align: "left",
+      cell: (row) => (
+        <button
+          onClick={() => setViewSample(row)}
+          className="text-[11px] font-semibold text-[#884D70] hover:underline underline-offset-2"
+        >
+          {row.sampleNo}
+        </button>
+      ),
     },
     {
-      field: "sampleNo",
-      header: "Sample No",
-      body: (row) => <span className="text-primary font-bold">{row.sampleNo}</span>,
+      key: "itemName", header: "Item Name", sortable: true, align: "left",
+      cell: (row) => <span className="text-[11px] text-slate-800 font-medium">{row.itemName}</span>,
     },
     {
-      field: "itemName",
-      header: "Item name",
-      body: (row) => <span className="text-on-surface">{row.itemName}</span>,
+      key: "sampleQty", header: "Sample Qty", sortable: true, align: "right",
+      cell: (row) => <span className="text-[11px] font-semibold text-slate-800 tabular-nums">{row.sampleQty}</span>,
     },
     {
-      field: "sampleQty",
-      header: "SampleQty",
-      center: true,
-      body: (row) => <span className="text-on-surface">{row.sampleQty}</span>,
+      key: "uom", header: "UOM", sortable: false, align: "center",
+      cell: (row) => <span className="text-[11px] text-gray-600 font-medium tracking-wide">{row.uom}</span>,
     },
     {
-      field: "uom",
-      header: "UOM",
-      body: (row) => <span className="text-on-surface">{row.uom}</span>,
+      key: "sampleBatchNo", header: "Sample Batch No", sortable: true, align: "left",
+      cell: (row) => <span className="cell-text font-semibold">{row.sampleBatchNo}</span>,
     },
     {
-      field: "sampleBatchNo",
-      header: "Sample batch No",
-      body: (row) => <span className="text-on-surface font-semibold">{row.sampleBatchNo}</span>,
+      key: "status", header: "Status", sortable: true, align: "center",
+      cell: (row) => (
+        <span className={`status-badge ${STATUS_STYLE[row.status]}`}>
+          {row.status}
+        </span>
+      ),
     },
     {
-      field: "status",
-      header: "Status",
-      center: true,
-      body: (row) => <Badge variant={row.status} label="NA" />,
-    },
-    {
-      field: "actions",
-      header: "Actions",
-      center: true,
-      body: () => (
-        <div className="flex items-center justify-center gap-1.5">
-          <Button variant="icon" title="View" onClick={() => setIsModalOpen(true)}>
-            <Icon name="visibility" size={18} />
-          </Button>
-        </div>
+      key: "actions", header: "Actions", sortable: false, align: "right",
+      cell: (row) => (
+        <TableActions
+          onView={() => setViewSample(row)}
+          onDelete={() => setDeleteId(deleteId === row.id ? null : row.id)}
+        />
       ),
     },
   ];
+
+  const shownCols = allColumns.filter((c) => visibleCols.has(c.key));
+
+  // ── Delete confirmation row ───────────────────────────────────────────────────
+
+  const expandedRow = (row: TestSample, colSpan: number) =>
+    deleteId !== row.id ? null : (
+      <tr className="bg-red-100/50 backdrop-blur-sm">
+        <td colSpan={colSpan} className="px-4 py-2.5 border-b border-red-100">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] text-red-700 font-medium">
+              Delete <strong>{row.sampleNo}</strong>? This cannot be undone.
+            </span>
+            <div className="flex gap-2">
+              <Button
+                variant="danger"
+                onClick={() => { setSamples((p) => p.filter((s) => s.id !== row.id)); setDeleteId(null); }}
+              >
+                Confirm
+              </Button>
+              <Button variant="ghost-glass" onClick={() => setDeleteId(null)}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </td>
+      </tr>
+    );
+
+  // ── Status bar ────────────────────────────────────────────────────────────────
+
+  const statusBar = (
+    <>
+      <div className="flex items-center gap-4 text-[10px] text-gray-500">
+        <span>Count: <strong className={CX.statVal}>{filteredSamples.length}</strong></span>
+        <span className={CX.statSep}>|</span>
+        <span>Pending: <strong className="text-gray-600 font-semibold">{samples.filter((s) => s.status === "pending").length}</strong></span>
+        <span className={CX.statSep}>·</span>
+        <span>Open: <strong className="text-sky-600 font-semibold">{samples.filter((s) => s.status === "open").length}</strong></span>
+        <span className={CX.statSep}>·</span>
+        <span>Failed: <strong className="text-red-600 font-semibold">{samples.filter((s) => s.status === "failed").length}</strong></span>
+      </div>
+      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+    </>
+  );
+
+  // ── Render ────────────────────────────────────────────────────────────────────
+
   return (
     <div className="flex-1 flex flex-col antialiased text-slate-800">
-      <main className="p-6 space-y-5 flex-1 overflow-x-hidden">
-        {/* Metric Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          {METRICS.map((metric) => (
-            <MetricCard key={metric.title} {...metric} />
-          ))}
+
+
+      <main className="flex-1 px-6 pt-3 pb-4 flex flex-col gap-2">
+
+        <div className="flex items-center justify-between gap-2 px-1">
+          <Breadcrumbs items={[{ label: "Dashboard", href: "/" }, { label: "Test Sample" }]} />
+          <div className="flex items-center gap-2">
+            <SearchInput value={search} onChange={handleSearchChange} placeholder="Search samples…" />
+            <div className="w-px h-4 bg-gray-300/60 shrink-0" />
+            <ColumnSelector
+              columns={allColumns.filter((c) => c.key !== "actions")}
+              visibleColumns={visibleCols}
+              onToggle={toggleCol}
+            />
+            <Button variant="cta-secondary">
+              <Icon name="download" size={13} />
+              Export
+            </Button>
+          </div>
         </div>
 
-        {/* Test Sample Table */}
-        <DataTable
-          title={TABLE_CONFIG.title}
-          description={TABLE_CONFIG.description}
-          toolbarActions={
-            <>
-              <SearchBar />
-              {TABLE_FILTERS.map((f) => (
-                <FilterDropdown
-                  key={f.label}
-                  label={f.label}
-                  options={[]}
-                  active={new Set()}
-                  onChange={() => {}}
-                />
-              ))}
-              <ColumnVisibilitySelector
-                columns={COLUMNS}
-                visibleColumns={visibleColumns}
-                onVisibilityChange={setVisibleColumns}
+        <TabbedTable
+          selectedIndex={activeTab}
+          onChange={handleTabChange}
+          tabs={TABS.map((tab) => ({
+            label: tab.label,
+            count: tab.statuses
+              ? samples.filter((s) => tab.statuses!.includes(s.status)).length
+              : samples.length,
+            content: (
+              <ExcelTable<TestSample>
+                columns={shownCols}
+                data={pagedSamples}
+                rowKey={(row) => row.id}
+                sortKey={sortKey}
+                sortDir={sortDir}
+                onSort={handleSort}
+                rowClassName={(row, i) =>
+                  deleteId === row.id
+                    ? "bg-red-100/60"
+                    : i % 2 === 0
+                      ? "bg-white/45 hover:bg-white/70"
+                      : "bg-white/20 hover:bg-white/50"
+                }
+                expandedRow={expandedRow}
+                emptyMessage="No test samples found."
+                statusBar={statusBar}
+                className=""
+                statusBarClassName="table-status-bar-glass"
               />
-              <Button variant="cta-secondary" icon="download">
-                Export CSV
-              </Button>
-            </>
-          }
-          columns={COLUMNS.filter((col) => visibleColumns[col.field])}
-          data={TEST_SAMPLES}
-          rowKey={(row) => row.id.toString()}
-          showingCurrent={PAGINATION.current}
-          showingTotal={PAGINATION.total}
-          pagination={<Pagination {...PAGINATION} />}
+            ),
+          }))}
         />
+
       </main>
 
-      <Footer />
-
-      <ViewTestSampleModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <ViewTestSampleModal
+        isOpen={viewSample !== null}
+        onClose={() => setViewSample(null)}
+        sample={viewSample}
+      />
     </div>
   );
 }

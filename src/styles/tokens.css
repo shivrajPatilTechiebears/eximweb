@@ -61,11 +61,6 @@
   --radius-full: 9999px;
 
   /* Custom Spacing Tokens */
-  --spacing-xs: 2px;
-  --spacing-sm: 6px;
-  --spacing-md: 12px;
-  --spacing-lg: 16px;
-  --spacing-xl: 20px;
   --spacing-gutter: 12px;
   --spacing-sidebar-width: 240px;
 

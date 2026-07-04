@@ -70,6 +70,13 @@ export const NAV_PILLS: NavPill[] = [
           { label: "All Samples", href: "/test-sample", icon: "format_list_bulleted" },
         ],
       },
+      {
+        label: "Weighment",
+        href: "/weighment",
+        sub: [
+          { label: "All Weighments", href: "/weighment", icon: "format_list_bulleted" },
+        ],
+      },
     ],
   },
   {
