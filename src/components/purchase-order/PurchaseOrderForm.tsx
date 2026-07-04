@@ -3,7 +3,7 @@
 import { useState, useCallback, useMemo } from "react";
 import Image from "next/image";
 import { Icon } from "@/components/ui/Icon";
-import { Breadcrumbs } from "@/components/layout/PageHeader";
+import { DashboardPageHeader } from "@/components/layout/PageHeader";
 import { StickyFooter } from "@/components/layout/StickyFooter";
 import { Button } from "@/components/ui/Button";
 import { ButtonLink } from "@/components/ui/ButtonLink";
@@ -261,43 +261,44 @@ export function PurchaseOrderForm({ mode, orderId }: PurchaseOrderFormProps) {
   return (
     <div className="flex-1 flex flex-col antialiased text-slate-800 bg-transparent">
 
-      {/* ═══ MAIN CONTENT ═══ */}
-      <main className="flex-1 px-6 py-4 pb-20 space-y-3">
-
-        {/* ═══ PAGE HEADER ═══ */}
-        <div className="flex items-center px-1 pb-2 gap-2">
-          <Breadcrumbs items={
-            isCreate
-              ? [
-                  { label: "Dashboard", href: "/" },
-                  { label: "Purchase Orders", href: "/purchase-order" },
-                  { label: "Create" },
-                ]
-              : isView
-              ? [
-                  { label: "Dashboard", href: "/" },
-                  { label: "Purchase Orders", href: "/purchase-order" },
-                  { label: poNumber },
-                ]
-              : [
-                  { label: "Dashboard", href: "/" },
-                  { label: "Purchase Orders", href: "/purchase-order" },
-                  { label: poNumber, href: `/purchase-order/${orderId}` },
-                  { label: "Edit" },
-                ]
-          } />
-          <div className="flex-1" />
-          {isView && (
+      {/* ═══ PAGE HEADER ═══ */}
+      <DashboardPageHeader
+        breadcrumbs={
+          isCreate
+            ? [
+                { label: "Dashboard", href: "/" },
+                { label: "Purchase Orders", href: "/purchase-order" },
+                { label: "Create" },
+              ]
+            : isView
+            ? [
+                { label: "Dashboard", href: "/" },
+                { label: "Purchase Orders", href: "/purchase-order" },
+                { label: poNumber },
+              ]
+            : [
+                { label: "Dashboard", href: "/" },
+                { label: "Purchase Orders", href: "/purchase-order" },
+                { label: poNumber, href: `/purchase-order/${orderId}` },
+                { label: "Edit" },
+              ]
+        }
+        rightContent={
+          isView ? (
             <>
               <StatusBadge label={statusInfo.label} color={statusInfo.color} />
               <div className="w-px h-4 bg-gray-200" />
               <ButtonLink href={`/purchase-order/${orderId}/edit`} variant="pill-primary">Edit PO</ButtonLink>
             </>
-          )}
-        </div>
+          ) : undefined
+        }
+      />
 
-        {/* ═══ PROGRESS STEPPER ═══ */}
-        {!isView && <ProgressPill steps={steps} />}
+      {/* ═══ PROGRESS STEPPER ═══ */}
+      {!isView && <ProgressPill steps={steps} />}
+
+      {/* ═══ MAIN CONTENT ═══ */}
+      <main className="flex-1 px-6 py-4 pb-20 space-y-3">
 
         {/* ── Order Details ── */}
         <Card className="card-glass">

@@ -3,7 +3,7 @@
 import { useState, useCallback, useMemo } from "react";
 import Image from "next/image";
 import { Icon } from "@/components/ui/Icon";
-import { Breadcrumbs } from "@/components/layout/PageHeader";
+import { DashboardPageHeader } from "@/components/layout/PageHeader";
 import { StickyFooter } from "@/components/layout/StickyFooter";
 import { Button } from "@/components/ui/Button";
 import { ButtonLink } from "@/components/ui/ButtonLink";
@@ -27,7 +27,7 @@ import {
 import type { ShipmentDetailsFields, ShipmentLineItem, ScheduleRow } from "./types";
 
 export type ShipmentFormProps = {
-  mode: "view" | "edit";
+  mode: "create" | "view" | "edit";
   shipmentId?: string;
 };
 
@@ -72,7 +72,9 @@ function ItemImageCell({ imageUrl, disabled, onAttach }: { imageUrl?: string; di
 }
 
 export function ShipmentForm({ mode, shipmentId }: ShipmentFormProps) {
+  const isCreate = mode === "create";
   const isView = mode === "view";
+  const isEdit = mode === "edit";
   const disabled = isView;
 
   const record = shipmentId ? MOCK_SHIPMENTS[shipmentId] : undefined;
@@ -282,39 +284,46 @@ export function ShipmentForm({ mode, shipmentId }: ShipmentFormProps) {
   return (
     <div className="flex-1 flex flex-col antialiased text-slate-800 bg-transparent">
 
-      {/* ═══ MAIN CONTENT ═══ */}
-      <main className="flex-1 px-6 py-4 pb-20 space-y-3">
-
-        {/* ═══ PAGE HEADER ═══ */}
-        <div className="flex items-center px-1 pb-2 gap-2">
-          <Breadcrumbs items={
-            isView
-              ? [
-                  { label: "Dashboard", href: "/" },
-                  { label: "Shipments", href: "/shipments" },
-                  { label: shipmentNumber },
-                ]
-              : [
-                  { label: "Dashboard", href: "/" },
-                  { label: "Shipments", href: "/shipments" },
-                  { label: shipmentNumber, href: `/shipments/${shipmentId}` },
-                  { label: "Edit" },
-                ]
-          } />
-          <div className="flex-1" />
-          {isView ? (
+      {/* ═══ PAGE HEADER ═══ */}
+      <DashboardPageHeader
+        breadcrumbs={
+          isCreate
+            ? [
+                { label: "Dashboard", href: "/" },
+                { label: "Shipments", href: "/shipments" },
+                { label: "Create" },
+              ]
+            : isView
+            ? [
+                { label: "Dashboard", href: "/" },
+                { label: "Shipments", href: "/shipments" },
+                { label: shipmentNumber },
+              ]
+            : [
+                { label: "Dashboard", href: "/" },
+                { label: "Shipments", href: "/shipments" },
+                { label: shipmentNumber, href: `/shipments/${shipmentId}` },
+                { label: "Edit" },
+              ]
+        }
+        rightContent={
+          isView ? (
             <>
               <StatusBadge label={statusInfo.label} color={statusInfo.color} />
               <div className="w-px h-4 bg-gray-200" />
               <ButtonLink href={`/shipments/${shipmentId}/edit`} variant="pill-primary">Edit Shipment</ButtonLink>
             </>
           ) : (
-            <StatusBadge label="Editing" color="warning" pulse />
-          )}
-        </div>
+            <StatusBadge label={isCreate ? `Draft ${shipmentNumber}` : "Editing"} color="warning" pulse />
+          )
+        }
+      />
 
-        {/* ═══ PROGRESS STEPPER ═══ */}
-        {!isView && <ProgressPill steps={steps} />}
+      {/* ═══ PROGRESS STEPPER ═══ */}
+      {!isView && <ProgressPill steps={steps} />}
+
+      {/* ═══ MAIN CONTENT ═══ */}
+      <main className="flex-1 px-6 py-4 pb-20 space-y-3">
 
         {/* ── Shipment Details ── */}
         <Card className="card-glass">
@@ -515,16 +524,22 @@ export function ShipmentForm({ mode, shipmentId }: ShipmentFormProps) {
           { label: "Total Packages", value: totalPackages.toLocaleString("en-US"), highlight: true },
         ]}
         actions={
-          isView ? (
+          isCreate ? (
             <>
-              <ButtonLink href="/shipments" variant="pill-ghost">Back to List</ButtonLink>
-              <ButtonLink href={`/shipments/${shipmentId}/edit`} variant="cta-sunset">Edit Shipment</ButtonLink>
+              <ButtonLink href="/shipments" variant="cta-ghost">Cancel</ButtonLink>
+              <Button variant="cta-secondary" icon="save">Save as Draft</Button>
+              <Button variant="cta-sunset" icon="check">Submit Shipment</Button>
             </>
-          ) : (
+          ) : isEdit ? (
             <>
               <ButtonLink href={`/shipments/${shipmentId}`} variant="cta-ghost">Cancel</ButtonLink>
               <Button variant="pill-secondary">Save Changes</Button>
               <Button variant="cta-sunset" icon="check">Submit Shipment</Button>
+            </>
+          ) : (
+            <>
+              <ButtonLink href="/shipments" variant="pill-ghost">Back to List</ButtonLink>
+              <ButtonLink href={`/shipments/${shipmentId}/edit`} variant="cta-sunset">Edit Shipment</ButtonLink>
             </>
           )
         }

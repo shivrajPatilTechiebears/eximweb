@@ -290,6 +290,9 @@ export default function ShipmentsListPage() {
               <Icon name="download" size={13} />
               Export
             </Button>
+            <Link href="/shipments/create">
+              <Button variant="cta-sunset" icon="add">Create Shipment</Button>
+            </Link>
           </div>
         </div>
 
