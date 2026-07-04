@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import { NavProvider } from "@/components/layout/NavProvider";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta-sans",
@@ -24,7 +23,7 @@ export default function RootLayout({
     <html lang="en" className={plusJakartaSans.variable}>
       <head></head>
       <body>
-        <NavProvider>{children}</NavProvider>
+        {children}
       </body>
     </html>
   );

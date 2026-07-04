@@ -1,7 +1,7 @@
 import React from "react";
 import { Icon } from "./Icon";
 
-export type ButtonVariant = "cta" | "cta-secondary" | "cta-ghost" | "cta-sunset" | "primary" | "secondary" | "outlined" | "text" | "text-brand" | "icon" | "icon-danger" | "icon-brand" | "icon-brand-danger" | "add" | "pill-primary" | "pill-secondary" | "pill-ghost" | "brand" | "danger" | "ghost-glass" | "menu-item" | "unstyled";
+export type ButtonVariant = "cta" | "cta-secondary" | "cta-ghost" | "cta-sunset" | "primary" | "secondary" | "outlined" | "text" | "text-brand" | "icon" | "icon-danger" | "icon-brand" | "icon-brand-danger" | "add" | "pill-primary" | "pill-secondary" | "pill-ghost" | "brand" | "danger" | "ghost-glass" | "menu-item" | "nav-pill" | "tab-pill" | "icon-nav" | "user-menu" | "unstyled";
 
 export const buttonVariantStyles: Record<ButtonVariant, string> = {
   /** Gradient pill CTA — primary action in page headers and key surfaces */
@@ -61,6 +61,18 @@ export const buttonVariantStyles: Record<ButtonVariant, string> = {
   /** Dropdown menu item — full-width row in floating menus */
   "menu-item":
     "btn-menu-item",
+  /** Rounded-full nav pill (FloatingNavbar) — pair with "nav-pill-active"/"nav-pill-inactive" via className */
+  "nav-pill":
+    "nav-pill",
+  /** Rounded-[10px] flyout tab pill (SecondaryNav) — pair with "tab-pill-active"/"tab-pill-inactive" via className */
+  "tab-pill":
+    "tab-pill",
+  /** Icon-only, brand-tinted circular hover — navbar icon actions (e.g. notifications bell) */
+  "icon-nav":
+    "p-1.5 text-[#884D70]/50 hover:text-[#884D70] hover:bg-[#884D70]/10 rounded-full transition-colors",
+  /** Compound avatar + label pill — navbar user menu trigger */
+  "user-menu":
+    "flex items-center gap-1.5 px-2 py-1 hover:bg-[#884D70]/10 rounded-full transition-colors shrink-0",
   /** No base styles — fully styled via className, for one-off shapes (chips, custom pills) */
   unstyled:
     "",
