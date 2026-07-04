@@ -19,10 +19,11 @@ import { ExcelTable, type Column } from "@/components/table/DataTable";
 import { TabbedTable } from "@/components/table/TabbedTable";
 import {
   MOCK_SHIPMENTS, STATUS_STYLE,
-  PURCHASE_ORDER_OPTIONS, VENDOR_OPTIONS, SHIPMENT_TYPE_OPTIONS, TRANSPORT_MODE_OPTIONS,
+  PO_TYPE_OPTIONS, PURCHASE_ORDER_OPTIONS, VENDOR_OPTIONS, SHIPMENT_TYPE_OPTIONS, TRANSPORT_MODE_OPTIONS,
   TRANSPORTER_OPTIONS, ASSET_TYPE_OPTIONS, INCOTERMS_OPTIONS, CLEARANCE_STATUS_OPTIONS,
   DESTINATION_LOCATION_OPTIONS, ASSET_NUMBER_LABEL, DEFAULT_ASSET_NUMBER_LABEL,
-  SHIPMENT_DETAIL_KEYS, TRANSPORTER_ROUTE_KEYS, CUSTOMS_SCHEDULE_KEYS,
+  SHIPMENT_DETAIL_KEYS, TRANSPORTER_VEHICLE_KEYS, ORIGIN_DESTINATION_KEYS, CUSTOMS_SCHEDULE_KEYS,
+  SECTION_ENABLED,
 } from "./types";
 import type { ShipmentDetailsFields, ShipmentLineItem, ScheduleRow } from "./types";
 
@@ -32,7 +33,7 @@ export type ShipmentFormProps = {
 };
 
 const DEFAULT_DETAILS: ShipmentDetailsFields = {
-  purchaseOrderId: "", vendorId: "", shipmentType: "", transportMode: "", trackingNumber: "",
+  poType: "", purchaseOrderId: "", vendorId: "", shipmentType: "", transportMode: "", trackingNumber: "",
   transporterName: "", transporterMobile: "", driverName: "", driverMobile: "", driverLicenseNo: "",
   assetType: "", assetNumber: "",
   originAddress: "", originCity: "", originState: "", originCountry: "", originPincode: "", originPort: "",
@@ -131,6 +132,18 @@ export function ShipmentForm({ mode, shipmentId }: ShipmentFormProps) {
   const totalWeight = lineItems.reduce((s, i) => s + i.scheduledQuantity * i.unitWeight, 0);
   const totalPackages = lineItems.reduce((s, i) => s + i.numberOfPackages, 0);
 
+  // Central switchboard for section enablement — add more entries to SECTION_ENABLED
+  // in types.ts to gray out other sections under other conditions; nothing here needs to change.
+  const sectionEnabled = {
+    transporterVehicle: SECTION_ENABLED.transporterVehicle(details),
+  };
+  const transporterVehicleDisabled = disabled || !sectionEnabled.transporterVehicle;
+
+  const transporterRouteKeys = [
+    ...(sectionEnabled.transporterVehicle ? TRANSPORTER_VEHICLE_KEYS : []),
+    ...ORIGIN_DESTINATION_KEYS,
+  ];
+
   const steps = [
     {
       label: "Shipment Details", icon: "local_shipping",
@@ -138,7 +151,7 @@ export function ShipmentForm({ mode, shipmentId }: ShipmentFormProps) {
     },
     {
       label: "Transporter & Route", icon: "map",
-      complete: TRANSPORTER_ROUTE_KEYS.every((k) => Boolean(details[k])),
+      complete: transporterRouteKeys.every((k) => Boolean(details[k])),
     },
     {
       label: "Line Items", icon: "inventory_2",
@@ -330,6 +343,12 @@ export function ShipmentForm({ mode, shipmentId }: ShipmentFormProps) {
           <CardHeader title="Shipment Details" hint={disabled ? undefined : "Tab · Enter to move between fields"} />
           <div className="px-5 py-4 grid grid-cols-4 gap-x-4 gap-y-3">
             <FormCombobox
+              disabled={disabled} label="PO Type"
+              value={details.poType}
+              onChange={(v) => handleDetailsChange("poType", v)}
+              options={PO_TYPE_OPTIONS}
+            />
+            <FormCombobox
               disabled={disabled} label="Purchase Order"
               value={details.purchaseOrderId}
               onChange={(v) => handleDetailsChange("purchaseOrderId", v)}
@@ -364,46 +383,53 @@ export function ShipmentForm({ mode, shipmentId }: ShipmentFormProps) {
 
         {/* ── Transporter & Vehicle ── */}
         <Card className="card-glass">
-          <CardHeader title="Transporter & Vehicle" hint={disabled ? undefined : "Assigned by vendor after PO is sent"} />
+          <CardHeader
+            title="Transporter & Vehicle"
+            hint={
+              disabled ? undefined
+              : !sectionEnabled.transporterVehicle ? "Not required for Peddler POs"
+              : "Assigned by vendor after PO is sent"
+            }
+          />
           <div className="px-5 py-4 grid grid-cols-4 gap-x-4 gap-y-3">
             <FormCombobox
-              disabled={disabled} label="Transporter"
+              disabled={transporterVehicleDisabled} label="Transporter"
               value={details.transporterName}
               onChange={(v) => handleDetailsChange("transporterName", v)}
               options={TRANSPORTER_OPTIONS}
             />
             <FormInput
-              disabled={disabled} label="Transporter Mobile"
+              disabled={transporterVehicleDisabled} label="Transporter Mobile"
               value={details.transporterMobile}
               onChange={(v) => handleDetailsChange("transporterMobile", v)}
               placeholder="+91 98000 00000"
             />
             <FormInput
-              disabled={disabled} label="Driver Name"
+              disabled={transporterVehicleDisabled} label="Driver Name"
               value={details.driverName}
               onChange={(v) => handleDetailsChange("driverName", v)}
               placeholder="Ramesh Kumar"
             />
             <FormInput
-              disabled={disabled} label="Driver Mobile"
+              disabled={transporterVehicleDisabled} label="Driver Mobile"
               value={details.driverMobile}
               onChange={(v) => handleDetailsChange("driverMobile", v)}
               placeholder="+91 98000 00000"
             />
             <FormInput
-              disabled={disabled} label="Driver License No."
+              disabled={transporterVehicleDisabled} label="Driver License No."
               value={details.driverLicenseNo}
               onChange={(v) => handleDetailsChange("driverLicenseNo", v)}
               placeholder="MH05 20230098171"
             />
             <FormCombobox
-              disabled={disabled} label="Asset Type"
+              disabled={transporterVehicleDisabled} label="Asset Type"
               value={details.assetType}
               onChange={(v) => handleDetailsChange("assetType", v)}
               options={ASSET_TYPE_OPTIONS}
             />
             <FormInput
-              disabled={disabled} label={assetNumberLabel}
+              disabled={transporterVehicleDisabled} label={assetNumberLabel}
               value={details.assetNumber}
               onChange={(v) => handleDetailsChange("assetNumber", v)}
               placeholder="MH-12-AQ-9082"

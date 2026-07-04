@@ -57,7 +57,7 @@ export function FormCombobox({
       >
         <div className="relative">
           {/* Input row */}
-          <div className="flex items-center w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus-within:border-[#884D70]/50 focus-within:ring-1 focus-within:ring-[#884D70]/10 transition-all disabled:opacity-50">
+          <div className={`flex items-center w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus-within:border-[#884D70]/50 focus-within:ring-1 focus-within:ring-[#884D70]/10 transition-all ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}>
             <ComboboxInput
               displayValue={(opt: ComboboxOption | null) => opt?.label ?? ""}
               onChange={(e) => setQuery(e.target.value)}

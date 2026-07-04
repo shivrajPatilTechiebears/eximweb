@@ -7,6 +7,7 @@ import { MOCK_PURCHASE_ORDERS } from "@/components/purchase-order/types";
 // (audit metadata) — these are backend-assigned, not user-entered form fields.
 
 export interface ShipmentDetailsFields {
+  poType: string;
   purchaseOrderId: string;
   vendorId: string;
   shipmentType: string;
@@ -56,10 +57,14 @@ export interface ShipmentDetailsFields {
   internalNotes: string;
 }
 
-// Field-group key lists — used to derive per-section "complete" checks in the stepper.
-export const SHIPMENT_DETAIL_KEYS = ["purchaseOrderId", "vendorId", "shipmentType", "transportMode", "trackingNumber"] as const;
-export const TRANSPORTER_ROUTE_KEYS = [
+// Field-group key lists — used to derive per-section "complete" checks in the stepper,
+// and to know which keys belong to a section that can be conditionally disabled (see
+// SECTION_ENABLED below).
+export const SHIPMENT_DETAIL_KEYS = ["poType", "purchaseOrderId", "vendorId", "shipmentType", "transportMode", "trackingNumber"] as const;
+export const TRANSPORTER_VEHICLE_KEYS = [
   "transporterName", "transporterMobile", "driverName", "driverMobile", "driverLicenseNo", "assetType", "assetNumber",
+] as const;
+export const ORIGIN_DESTINATION_KEYS = [
   "originAddress", "originCity", "originState", "originCountry", "originPincode",
   "destinationAddress", "destinationCity", "destinationState", "destinationCountry", "destinationPincode",
 ] as const;
@@ -67,6 +72,15 @@ export const CUSTOMS_SCHEDULE_KEYS = [
   "estimatedDepartureDate", "estimatedArrivalDate",
   "billOfLadingNumber", "invoiceNumber", "incoterms", "clearanceStatus",
 ] as const;
+
+// ── Section enablement ───────────────────────────────────────────────────────
+// Single place to add "gray out section X when Y" rules. Each entry is a section id →
+// predicate; a section's fields are editable when its predicate returns true, and
+// grayed out (disabled, not hidden) when false. To disable another section under
+// some condition, just add one entry here — nothing else to touch.
+export const SECTION_ENABLED: Record<string, (details: ShipmentDetailsFields) => boolean> = {
+  transporterVehicle: (details) => details.poType !== "PEDDLER",
+};
 
 export interface ShipmentLineItem {
   id: number;
@@ -89,6 +103,12 @@ export interface ScheduleRow {
 }
 
 // ── Options ──────────────────────────────────────────────────────────────────
+
+export const PO_TYPE_OPTIONS: ComboboxOption[] = [
+  { label: "Peddler", value: "PEDDLER" },
+  { label: "Industrial", value: "INDUSTRIAL" },
+  { label: "Import", value: "IMPORT" },
+];
 
 export const PURCHASE_ORDER_OPTIONS: ComboboxOption[] = Object.entries(MOCK_PURCHASE_ORDERS).map(
   ([id, po]) => ({ label: po.poNumber, value: id })
@@ -194,7 +214,7 @@ export const MOCK_SHIPMENTS: Record<string, ShipmentRecord> = {
     shipmentNumber: "SHP-2024-0001",
     status: "IN_TRANSIT",
     details: {
-      purchaseOrderId: "PO-001", vendorId: "VEN-001", shipmentType: "IMPORT", transportMode: "SHIP",
+      poType: "IMPORT", purchaseOrderId: "PO-001", vendorId: "VEN-001", shipmentType: "IMPORT", transportMode: "SHIP",
       trackingNumber: "MAEU771822",
       transporterName: "maersk", transporterMobile: "+91 98765 00011", driverName: "—", driverMobile: "—", driverLicenseNo: "—",
       assetType: "VESSEL", assetNumber: "MEDU8822910",
@@ -224,7 +244,7 @@ export const MOCK_SHIPMENTS: Record<string, ShipmentRecord> = {
     shipmentNumber: "SHP-2024-0002",
     status: "SCHEDULED",
     details: {
-      purchaseOrderId: "PO-002", vendorId: "VEN-002", shipmentType: "DOMESTIC", transportMode: "TRUCK",
+      poType: "PEDDLER", purchaseOrderId: "PO-002", vendorId: "VEN-002", shipmentType: "DOMESTIC", transportMode: "TRUCK",
       trackingNumber: "SFLG-90231",
       transporterName: "safelogistics", transporterMobile: "+91 98001 22334", driverName: "Shivraj Patil",
       driverMobile: "+91 98765 43210", driverLicenseNo: "MH05 20230098171",
