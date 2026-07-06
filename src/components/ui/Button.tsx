@@ -1,7 +1,7 @@
 import React from "react";
 import { Icon } from "./Icon";
 
-export type ButtonVariant = "cta" | "cta-secondary" | "cta-ghost" | "cta-sunset" | "primary" | "secondary" | "outlined" | "text" | "text-brand" | "icon" | "icon-danger" | "icon-brand" | "icon-brand-danger" | "add" | "pill-primary" | "pill-secondary" | "pill-ghost" | "brand" | "danger" | "ghost-glass" | "menu-item" | "nav-pill" | "tab-pill" | "icon-nav" | "user-menu" | "unstyled";
+export type ButtonVariant = "cta" | "cta-secondary" | "cta-ghost" | "cta-sunset" | "primary" | "secondary" | "outlined" | "text" | "text-brand" | "icon" | "icon-danger" | "icon-brand" | "icon-brand-danger" | "add" | "pill-primary" | "pill-secondary" | "pill-ghost" | "brand" | "danger" | "ghost-glass" | "menu-item" | "nav-pill" | "tab-pill" | "icon-nav" | "user-menu" | "modal-close" | "unstyled";
 
 export const buttonVariantStyles: Record<ButtonVariant, string> = {
   /** Gradient pill CTA — primary action in page headers and key surfaces */
@@ -73,6 +73,9 @@ export const buttonVariantStyles: Record<ButtonVariant, string> = {
   /** Compound avatar + label pill — navbar user menu trigger */
   "user-menu":
     "flex items-center gap-1.5 px-2 py-1 hover:bg-[#884D70]/10 rounded-full transition-colors shrink-0",
+  /** Square icon-only, brand-tinted hover — modal header close button */
+  "modal-close":
+    "w-7 h-7 flex items-center justify-center rounded-lg text-[#884D70]/50 hover:text-[#884D70] hover:bg-[#884D70]/10 transition-all",
   /** No base styles — fully styled via className, for one-off shapes (chips, custom pills) */
   unstyled:
     "",

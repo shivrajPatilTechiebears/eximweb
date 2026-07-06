@@ -10,7 +10,8 @@ import { ColumnSelector } from "@/components/ui/ColumnSelector";
 import { Pagination } from "@/components/ui/Pagination";
 import { Button } from "@/components/ui/Button";
 import { TabbedTable } from "@/components/table/TabbedTable";
-import { ViewTestSampleModal } from "@/components/test-sample/ViewTestSampleModal";
+import { GlassModal } from "@/components/ui/GlassModal";
+import { TestSampleForm, type TestSampleFields } from "@/components/test-sample/TestSampleForm";
 
 // ── Data ───────────────────────────────────────────────────────────────────────
 
@@ -19,7 +20,7 @@ type TestSampleStatus = "pending" | "open" | "failed";
 interface TestSample {
   id: string; sampleNo: string; itemName: string; sampleQty: number;
   uom: string; sampleBatchNo: string; status: TestSampleStatus;
-  poNumber: string; shipmentNumber: string;
+  poId: string; shipmentNumber: string;
   sampleImages: { src: string; label: string }[];
   documents: { label: string }[];
   testReports: { label: string }[];
@@ -34,21 +35,21 @@ const STATUS_STYLE: Record<TestSampleStatus, string> = {
 const TEST_SAMPLES: TestSample[] = [
   {
     id: "TS-001", sampleNo: "SM-00012", itemName: "Steel-01", sampleQty: 5, uom: "Kg", sampleBatchNo: "Batch-1", status: "pending",
-    poNumber: "PO-2024-00139", shipmentNumber: "SHP-2024-0001",
+    poId: "PO-001", shipmentNumber: "SHP-2024-0001",
     sampleImages: [{ src: "/images/gallery/1.jpg", label: "Img-001" }, { src: "/images/gallery/2.png", label: "Img-002" }],
     documents: [{ label: "Invoice-PDF" }],
     testReports: [],
   },
   {
     id: "TS-002", sampleNo: "SM-00012", itemName: "Iron-01", sampleQty: 5, uom: "Kg", sampleBatchNo: "Batch-2", status: "open",
-    poNumber: "PO-2024-00139", shipmentNumber: "SHP-2024-0001",
+    poId: "PO-001", shipmentNumber: "SHP-2024-0001",
     sampleImages: [{ src: "/images/gallery/3.png", label: "Img-003" }],
     documents: [{ label: "Packing-List-PDF" }],
     testReports: [],
   },
   {
     id: "TS-003", sampleNo: "SM-00012", itemName: "Iron-01", sampleQty: 5, uom: "Kg", sampleBatchNo: "Batch-2", status: "failed",
-    poNumber: "PO-2024-00140", shipmentNumber: "SHP-2024-0002",
+    poId: "PO-002", shipmentNumber: "SHP-2024-0002",
     sampleImages: [{ src: "/images/gallery/4.png", label: "Img-004" }],
     documents: [{ label: "Invoice-PDF" }],
     testReports: [{ label: "Report-001" }, { label: "Report-002" }],
@@ -77,10 +78,24 @@ const CX = {
 
 // ── Page ───────────────────────────────────────────────────────────────────────
 
+type ModalState = { mode: "create" | "view" | "edit"; row?: TestSample };
+
+const MODAL_TITLE: Record<ModalState["mode"], string> = {
+  create: "Create Sample",
+  view: "View Test Sample Details",
+  edit: "Edit Test Sample Details",
+};
+
+const toFields = (row: TestSample): TestSampleFields => ({
+  poId: row.poId, shipmentNumber: row.shipmentNumber, itemName: row.itemName,
+  sampleQty: String(row.sampleQty), sampleBatchNo: row.sampleBatchNo, uom: row.uom,
+  sampleImages: row.sampleImages, documents: row.documents, testReports: row.testReports,
+});
+
 export default function TestSampleListPage() {
   const [samples, setSamples] = useState([...TEST_SAMPLES]);
   const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [viewSample, setViewSample] = useState<TestSample | null>(null);
+  const [modal, setModal] = useState<ModalState | null>(null);
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState(0);
   const [sortKey, setSortKey] = useState<string | null>(null);
@@ -123,7 +138,7 @@ export default function TestSampleListPage() {
       key: "sampleNo", header: "Sample No", sortable: true, align: "left",
       cell: (row) => (
         <button
-          onClick={() => setViewSample(row)}
+          onClick={() => setModal({ mode: "view", row })}
           className="text-[11px] font-semibold text-[#884D70] hover:underline underline-offset-2"
         >
           {row.sampleNo}
@@ -158,7 +173,8 @@ export default function TestSampleListPage() {
       key: "actions", header: "Actions", sortable: false, align: "right",
       cell: (row) => (
         <TableActions
-          onView={() => setViewSample(row)}
+          onView={() => setModal({ mode: "view", row })}
+          onEdit={() => setModal({ mode: "edit", row })}
           onDelete={() => setDeleteId(deleteId === row.id ? null : row.id)}
         />
       ),
@@ -232,6 +248,9 @@ export default function TestSampleListPage() {
               <Icon name="download" size={13} />
               Export
             </Button>
+            <Button variant="cta-sunset" icon="add" onClick={() => setModal({ mode: "create" })}>
+              Create Sample
+            </Button>
           </div>
         </div>
 
@@ -270,11 +289,54 @@ export default function TestSampleListPage() {
 
       </main>
 
-      <ViewTestSampleModal
-        isOpen={viewSample !== null}
-        onClose={() => setViewSample(null)}
-        sample={viewSample}
-      />
+      <GlassModal
+        isOpen={modal !== null}
+        onClose={() => setModal(null)}
+        title={modal ? MODAL_TITLE[modal.mode] : ""}
+        icon="description"
+      >
+        {modal && (
+          <TestSampleForm
+            mode={modal.mode}
+            initial={modal.row ? toFields(modal.row) : undefined}
+            onCancel={() => setModal(null)}
+            onSubmit={(fields) => {
+              if (modal.mode === "create") {
+                const nextNum = Math.max(0, ...samples.map((s) => parseInt(s.id.replace("TS-", ""), 10) || 0)) + 1;
+                setSamples((prev) => [...prev, {
+                  id: `TS-${String(nextNum).padStart(3, "0")}`,
+                  sampleNo: `SM-${String(10011 + nextNum).padStart(5, "0")}`,
+                  itemName: fields.itemName,
+                  sampleQty: Number(fields.sampleQty) || 0,
+                  uom: fields.uom,
+                  sampleBatchNo: fields.sampleBatchNo,
+                  status: "pending",
+                  poId: fields.poId,
+                  shipmentNumber: fields.shipmentNumber,
+                  sampleImages: fields.sampleImages,
+                  documents: fields.documents,
+                  testReports: [],
+                }]);
+              } else if (modal.mode === "edit" && modal.row) {
+                const rowId = modal.row.id;
+                setSamples((prev) => prev.map((s) => (s.id === rowId ? {
+                  ...s,
+                  itemName: fields.itemName,
+                  sampleQty: Number(fields.sampleQty) || 0,
+                  uom: fields.uom,
+                  sampleBatchNo: fields.sampleBatchNo,
+                  poId: fields.poId,
+                  shipmentNumber: fields.shipmentNumber,
+                  sampleImages: fields.sampleImages,
+                  documents: fields.documents,
+                  testReports: fields.testReports,
+                } : s)));
+              }
+              setModal(null);
+            }}
+          />
+        )}
+      </GlassModal>
     </div>
   );
 }
